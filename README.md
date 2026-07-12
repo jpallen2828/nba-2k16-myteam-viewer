@@ -2,6 +2,25 @@
 
 An unofficial, non-commercial companion app for browsing archived NBA 2K16 MyTEAM cards and injecting selected cards into a roster loaded in a local copy of NBA 2K16.
 
+## Screenshots
+
+Click any screenshot to view it at full size.
+
+<table>
+  <tr>
+    <td width="50%" align="center"><a href="docs/screenshots/home-page.png"><img src="docs/screenshots/home-page.png" alt="MyTEAM Viewer home page" width="100%"></a><br><sub>Browse the card archive</sub></td>
+    <td width="50%" align="center"><a href="docs/screenshots/create-a-team.png"><img src="docs/screenshots/create-a-team.png" alt="Create a team screen" width="100%"></a><br><sub>Create a custom team</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><a href="docs/screenshots/draft-screen.png"><img src="docs/screenshots/draft-screen.png" alt="MyTEAM draft screen" width="100%"></a><br><sub>Draft a lineup</sub></td>
+    <td width="50%" align="center"><a href="docs/screenshots/random-team.png"><img src="docs/screenshots/random-team.png" alt="Random team generator" width="100%"></a><br><sub>Generate a random team</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><a href="docs/screenshots/injection-screen.png"><img src="docs/screenshots/injection-screen.png" alt="Roster injection screen" width="100%"></a><br><sub>Choose a roster and team</sub></td>
+    <td width="50%" align="center"><a href="docs/screenshots/in-game-result.png"><img src="docs/screenshots/in-game-result.png" alt="Injected team in NBA 2K16" width="100%"></a><br><sub>See the result in NBA 2K16</sub></td>
+  </tr>
+</table>
+
 ## Requirements
 
 - A legally obtained Windows copy of NBA 2K16.
