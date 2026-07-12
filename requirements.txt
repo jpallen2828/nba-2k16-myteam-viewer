@@ -1,0 +1,7 @@
+# Runtime dependencies
+Pillow>=10.0
+pywebview>=5.0
+requests>=2.31
+
+# Required only when building the standalone Windows executables.
+pyinstaller>=6.0

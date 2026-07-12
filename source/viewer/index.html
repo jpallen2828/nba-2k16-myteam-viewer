@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NBA 2K16 MyTEAM Archive</title>
+  <link rel="stylesheet" href="styles.css?v=15">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <div class="brand">
+      <img class="brand-mark" src="assets/2k16-mark.png?v=2" alt="NBA 2K16">
+      <div><h1>MyTEAM Archive</h1><p>The complete NBA 2K16 card collection</p></div>
+    </div>
+    <label class="search-wrap">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.15A7.5 7.5 0 1 1 4 11.5a7.5 7.5 0 0 1 15 0Z"/></svg>
+      <input id="search" type="search" autocomplete="off" placeholder="Search players, collections, themes…">
+      <kbd>/</kbd>
+    </label>
+  </header>
+
+  <main class="app-shell">
+    <aside class="filters" id="filters">
+      <div class="filter-heading"><span>Filters</span><button id="clearFilters" class="text-button">Reset</button></div>
+      <label class="field"><span>Gem tier</span><select id="tierFilter"><option value="">All tiers</option></select></label>
+      <label class="field"><span>Franchise</span><select id="teamFilter"><option value="">All franchises</option></select></label>
+      <label class="field"><span>Position</span><select id="positionFilter"><option value="">All positions</option></select></label>
+      <label class="field"><span>Theme</span><select id="themeFilter"><option value="">All themes</option></select></label>
+      <label class="field"><span>Minimum overall</span><select id="overallFilter">
+        <option value="0">Any overall</option><option value="99">99</option><option value="95">95+</option>
+        <option value="90">90+</option><option value="85">85+</option><option value="80">80+</option>
+        <option value="75">75+</option><option value="70">70+</option>
+      </select></label>
+      <label class="field sort-field-hidden"><span>Sort cards</span><select id="sortFilter">
+        <option value="overall">Overall: high to low</option><option value="name">Player: A–Z</option>
+        <option value="year-desc">Season: newest first</option><option value="year-asc">Season: oldest first</option>
+        <option value="id-desc">Card ID: newest first</option>
+      </select></label>
+    </aside>
+
+    <section class="collection">
+      <div class="collection-bar">
+        <div><p class="eyebrow">CARD DATABASE</p><h2 id="resultTitle">Loading collection…</h2></div>
+        <div class="collection-actions">
+          <button id="customTeam" class="custom-team-button">Create your own team</button>
+          <button id="draftTeam" class="draft-team-button">Draft a team</button>
+          <button id="randomTeam" class="random-team-button">Create a random team</button>
+          <button id="mobileFilter" class="filter-toggle">Filters</button>
+        </div>
+      </div>
+      <div id="activeFilters" class="active-filters"></div>
+      <div id="cardGrid" class="card-grid" aria-live="polite"></div>
+      <div class="load-zone"><button id="loadMore" class="load-more">Load more cards</button></div>
+    </section>
+  </main>
+
+  <div id="detailModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <article class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
+      <button class="modal-close" data-close-modal aria-label="Close card details">×</button>
+      <div class="detail-art-column"><div id="detailGlow" class="detail-glow"></div><img id="detailArt" alt="" onerror="retryCardArt(this)"></div>
+      <div class="detail-content">
+        <div class="detail-heading"><div><p id="detailCollection" class="eyebrow"></p><h2 id="detailName"></h2><div id="detailChips" class="detail-chips"></div></div><div id="detailOverall" class="overall-orb"></div></div>
+        <nav class="tabs" aria-label="Card details">
+          <button class="tab active" data-tab="attributes">Attributes</button>
+          <button class="tab" data-tab="tendencies">Tendencies</button>
+          <button class="tab" data-tab="badges">Badges</button>
+          <button class="tab" data-tab="information">Information</button>
+          <button class="tab" data-tab="hot-zones">Hot Zones</button>
+        </nav>
+        <div id="tabContent" class="tab-content"></div>
+      </div>
+    </article>
+  </div>
+
+  <div id="lineupModal" class="lineup-modal" aria-hidden="true">
+    <div class="lineup-backdrop" data-close-lineup></div>
+    <section class="lineup-panel" role="dialog" aria-modal="true" aria-labelledby="lineupTitle">
+      <button class="modal-close" data-close-lineup aria-label="Close random lineup">×</button>
+      <header class="lineup-heading">
+        <div><p class="eyebrow">RANDOM STARTING FIVE</p><h2 id="lineupTitle">Your MyTEAM Lineup</h2><p>One eligible card at every position, with no gem or overall restrictions.</p></div>
+        <div class="lineup-heading-actions"><button id="loadRandomLineup" class="secondary-button">Load saved lineup</button><button id="injectRandomLineup" class="inject-lineup-button">Inject into roster</button><button id="saveRandomLineup" class="save-lineup-button">Save lineup</button><button id="rerollTeam" class="reroll-button"><span aria-hidden="true">↻</span> Generate another</button></div>
+      </header>
+      <div id="lineupGrid" class="lineup-grid"></div>
+    </section>
+  </div>
+
+  <div id="draftModal" class="draft-modal" aria-hidden="true">
+    <div class="lineup-backdrop" data-close-draft></div>
+    <section class="draft-panel" role="dialog" aria-modal="true" aria-labelledby="draftTitle">
+      <button class="modal-close" data-close-draft aria-label="Close team draft">×</button>
+      <header class="lineup-heading">
+        <div><h2 id="draftTitle">Draft a Team</h2><p>Choose one starter and one backup at every position, then two final bench picks before the diamond round.</p></div>
+        <div class="lineup-heading-actions"><button id="clearDraft" class="secondary-button">Start over</button><button id="loadDraftLineup" class="secondary-button">Load saved lineup</button><button id="injectDraftLineup" class="inject-lineup-button">Inject into roster</button><button id="saveDraftLineup" class="save-lineup-button">Save lineup</button><div class="draft-mode-buttons" aria-label="Draft odds mode"><button id="ballerDraftMode" class="draft-mode-button draft-mode-baller" data-draft-mode="baller" type="button">Baller Draft</button><button id="defaultDraftMode" class="draft-mode-button draft-mode-default active" data-draft-mode="default" type="button">Default Draft</button><button id="budgetDraftMode" class="draft-mode-button draft-mode-budget" data-draft-mode="budget" type="button">Budget Draft</button></div></div>
+      </header>
+      <div id="diamondRound" class="diamond-round"></div>
+      <div id="draftGrid" class="draft-grid"></div>
+    </section>
+  </div>
+
+  <div id="draftChoiceModal" class="draft-choice-modal" aria-hidden="true">
+    <div class="choice-backdrop"></div>
+    <section class="choice-panel" role="dialog" aria-modal="true" aria-labelledby="choiceTitle">
+      <header class="choice-heading"><div><p class="eyebrow">ON THE CLOCK</p><h2 id="choiceTitle">Choose a Player</h2><p id="choiceSubtitle"></p></div><button id="viewLineupFromChoices" class="secondary-button choice-lineup-button" hidden>View lineup</button></header>
+      <div id="draftChoiceGrid" class="draft-choice-grid"></div>
+    </section>
+  </div>
+
+  <div id="customModal" class="custom-modal" aria-hidden="true">
+    <div class="lineup-backdrop" data-close-custom></div>
+    <section class="custom-panel" role="dialog" aria-modal="true" aria-labelledby="customTitle">
+      <button class="modal-close" data-close-custom aria-label="Close custom team builder">Ã—</button>
+      <header class="lineup-heading">
+        <div><p class="eyebrow">CUSTOM TEAM BUILDER</p><h2 id="customTitle">Create Your Own Team</h2><p>Pick any 13 cards. Positions and duplicates are allowed.</p></div>
+        <div class="lineup-heading-actions"><button id="clearCustomTeam" class="secondary-button">Clear team</button><button id="loadCustomLineup" class="secondary-button">Load saved lineup</button><button id="injectCustomLineup" class="inject-lineup-button">Inject into roster</button><button id="saveCustomLineup" class="save-lineup-button">Save lineup</button></div>
+      </header>
+      <div class="custom-builder">
+        <section class="custom-selected-card">
+          <div class="custom-subheading"><strong id="customCount">0/13 selected</strong><span>Click a selected card to remove it.</span></div>
+          <div id="customSelectedGrid" class="custom-selected-grid"></div>
+        </section>
+        <section class="custom-picker-card">
+          <div class="custom-picker-bar">
+            <input id="customSearch" class="custom-search" type="search" autocomplete="off" placeholder="Search any card to add...">
+            <select id="customTierFilter" class="custom-filter"><option value="">All tiers</option></select>
+            <select id="customPositionFilter" class="custom-filter"><option value="">All positions</option></select>
+            <select id="customTeamFilter" class="custom-filter"><option value="">All franchises</option></select>
+          </div>
+          <div id="customPickerGrid" class="custom-picker-grid"></div>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <div id="injectionModal" class="injection-modal" aria-hidden="true">
+    <div class="lineup-backdrop" data-close-injection></div>
+    <section class="injection-panel" role="dialog" aria-modal="true" aria-labelledby="injectionTitle">
+      <button class="modal-close" data-close-injection aria-label="Close roster injector">×</button>
+      <header class="lineup-heading">
+        <div>
+          <p class="eyebrow">ROSTER INJECTOR</p>
+          <h2 id="injectionTitle">Send this lineup to NBA 2K16</h2>
+          <p>Open NBA 2K16, load the exact roster you choose here, then verify it before injecting. The injection writes into the live roster currently open in-game.</p>
+        </div>
+        <div class="lineup-heading-actions"><button id="refreshRosters" class="secondary-button">Detect rosters</button></div>
+      </header>
+      <div class="injection-body">
+        <section class="injection-card">
+          <h3>1. Pick the roster file</h3>
+          <p id="rosterHint">If you just created a roster in game, click Detect rosters and choose the newest one.</p>
+          <div class="manual-roster-folder">
+            <label for="manualRosterDir">Manual roster folder override</label>
+            <div class="manual-roster-row">
+              <input id="manualRosterDir" type="text" placeholder="Paste NBA 2K16 folder or OfflineStorage\\User\\remote folder">
+              <button id="saveRosterDir" class="secondary-button">Use this folder</button>
+            </div>
+            <small id="manualRosterDirStatus">Useful if the app is reading the wrong 2K16 roster directory.</small>
+          </div>
+          <select id="rosterSelect" class="injection-select"></select>
+          <button id="verifyLoadedRoster" class="verify-roster-button">Verify roster is open in 2K16</button>
+          <button id="resetRosterTracking" class="reset-roster-button">Reset selected roster</button>
+          <button id="confirmLoadedRoster" class="confirm-roster-button" hidden>I have this roster open in 2K16</button>
+          <div id="loadedRosterStatus" class="loaded-roster-status">Roster has not been verified yet.</div>
+        </section>
+        <section class="injection-card">
+          <div class="injection-card-heading">
+            <h3 id="injectionTeamHeading">2. Choose an NBA team</h3>
+            <button id="toggleHistoricTeams" class="secondary-button" type="button">Switch to historic teams</button>
+          </div>
+          <p>Teams already prepared for this roster are dimmed; selecting one will overwrite that team again.</p>
+          <div id="injectionTeamGrid" class="injection-team-grid"></div>
+        </section>
+        <section class="injection-card injection-summary-card">
+          <h3>3. Confirm</h3>
+          <div id="injectionSummary" class="injection-summary">Choose a roster and team to continue.</div>
+          <button id="confirmInjection" class="inject-lineup-button" disabled>Inject lineup</button>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <div id="saveToast" class="save-toast" role="status" aria-live="polite"></div>
+
+  <div id="savedLineupModal" class="saved-lineup-modal" aria-hidden="true">
+    <div class="lineup-backdrop" data-close-saved-lineups></div>
+    <section class="saved-lineup-panel" role="dialog" aria-modal="true" aria-labelledby="savedLineupTitle">
+      <button class="modal-close" data-close-saved-lineups aria-label="Close saved lineups">×</button>
+      <p class="eyebrow">SAVED LINEUPS</p>
+      <h2 id="savedLineupTitle">Load Saved Lineup</h2>
+      <p id="savedLineupHint">Choose a saved lineup to restore it inside the app.</p>
+      <div id="savedLineupList" class="saved-lineup-list"></div>
+    </section>
+  </div>
+
+  <div id="unlockTeamModal" class="unlock-team-modal" aria-hidden="true">
+    <div class="lineup-backdrop" data-cancel-team-unlock></div>
+    <section class="unlock-team-panel" role="dialog" aria-modal="true" aria-labelledby="unlockTeamTitle">
+      <p class="eyebrow">TEAM LOCK</p>
+      <h2 id="unlockTeamTitle">Unlock this team?</h2>
+      <p>This will unlock the team to be potentially overwritten. You will lose team data if you overwrite after unlocking this team. Would you like to proceed?</p>
+      <div class="unlock-team-actions">
+        <button id="cancelTeamUnlock" class="secondary-button">Cancel</button>
+        <button id="confirmTeamUnlock" class="danger-button">Unlock team</button>
+      </div>
+    </section>
+  </div>
+
+  <template id="cardTemplate">
+    <button class="card-tile">
+      <div class="art-frame"><img loading="lazy" alt=""></div>
+      <div class="card-copy"><div><h3></h3><p class="card-subtitle"></p></div><span class="card-overall"></span></div>
+    </button>
+  </template>
+  <script src="app.js?v=32" defer></script>
+</body>
+</html>

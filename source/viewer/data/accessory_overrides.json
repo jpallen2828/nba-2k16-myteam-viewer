@@ -1,0 +1,39 @@
+{
+  "notes": [
+    "Explicit safe row-byte accessory overrides captured from fresh historic Kareem Abdul-Jabbar on 2026-07-06.",
+    "These fields are applied by player display name during live injection after normal identity/source copies.",
+    "shoe_packed writes player-row offsets 0x110-0x113; sock_length_home writes 0x0FD; sock_length_away writes 0x126."
+  ],
+  "players": {
+    "George Mikan": {
+      "shoe_packed": "95 41 65 40",
+      "sock_length_home": "82",
+      "sock_length_away": "FD"
+    },
+    "Rick Barry": {
+      "shoe_packed": "95 41 65 40",
+      "sock_length_home": "82",
+      "sock_length_away": "FD"
+    },
+    "Bob Cousy": {
+      "shoe_packed": "95 41 65 40",
+      "sock_length_home": "82",
+      "sock_length_away": "FD"
+    },
+    "Bob Pettit": {
+      "shoe_packed": "95 41 65 40",
+      "sock_length_home": "82",
+      "sock_length_away": "FD"
+    },
+    "Connie Hawkins": {
+      "shoe_packed": "95 41 65 40",
+      "sock_length_home": "82",
+      "sock_length_away": "FD"
+    },
+    "Wes Unseld": {
+      "shoe_packed": "95 41 65 40",
+      "sock_length_home": "82",
+      "sock_length_away": "FD"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+build/
+dist/
+release/
+*.zip
+__pycache__/
+*.pyc
+nba2k16-myteam-compatibility-report.json
+source/viewer/data/card-images/
+source/viewer/data/live_source_captures/
