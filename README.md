@@ -12,13 +12,14 @@ An unofficial, non-commercial companion app for browsing archived NBA 2K16 MyTEA
 
 ## Using the App
 
-1. Start NBA 2K16 and load the roster you want to edit.
-2. Start `NBA 2K16 MyTEAM Viewer.exe`.
-3. Browse, draft, or create a lineup in the viewer.
-4. Open the roster injector, choose the correct roster file, and select the team to overwrite.
-5. If the app cannot automatically verify the loaded roster, only use the manual confirmation button when that exact roster is already open in NBA 2K16.
-6. On the first injection for a newly detected NBA 2K16 executable build, the viewer may take a short moment to create a local compatibility profile. Later injections with that same build use the saved profile and should be much faster.
-7. In NBA 2K16, rebuild the rotations for the team you overwrote, then save the roster. This is recommended for the best in-game experience.
+1. Download the application package [here](https://github.com/jpallen2828/nba-2k16-myteam-viewer/releases) and extract the ZIP to local storage.
+2. Start NBA 2K16 and load the roster you want to edit.
+3. Start `NBA 2K16 MyTEAM Viewer.exe`.
+4. Browse, draft, or create a lineup in the viewer.
+5. Open the roster injector, choose the correct roster file, and select the team to overwrite.
+6. If the app cannot automatically verify the loaded roster, only use the manual confirmation button when that exact roster is already open in NBA 2K16.
+7. On the first injection for a newly detected NBA 2K16 executable build, the viewer may take a short moment to create a local compatibility profile. Later injections with that same build use the saved profile and should be much faster.
+8. In NBA 2K16, rebuild the rotations for the team you overwrote, then save the roster. This is recommended for the best in-game experience.
 
 If the app cannot detect the installation or roster folder, run `Diagnose NBA 2K16 Install.exe` and include the generated compatibility report when asking for support.
 
@@ -28,12 +29,13 @@ Because this is an unsigned fan-made tool, Windows Defender or SmartScreen may w
 
 Special thanks to my friend Ray for helping to fix some of the tendencies, gear, hot zones, and more of many of these players. This project would not be as good without him.
 
-## Source build
+## Build from source
 
-Run from the `source` directory on Windows with Python 3.13 and the dependencies in `viewer/requirements-desktop.txt`:
+The prebuilt ZIP is the recommended option for most users. To build the application yourself, use Windows with Python 3.13 or newer and run these commands from the repository's top-level folder:
 
 ```powershell
-py -3.13 build_public_release.py
+py -3.13 -m pip install -r requirements.txt
+py -3.13 source\build_public_release.py
 ```
 
 The source repository may exclude large generated caches or release-only assets. Build outputs are created under `build/`, `dist/`, and `release/`.
