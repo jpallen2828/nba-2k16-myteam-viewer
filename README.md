@@ -24,6 +24,10 @@ If the app cannot detect the installation or roster folder, run `Diagnose NBA 2K
 
 Because this is an unsigned fan-made tool, Windows Defender or SmartScreen may warn about it or block it even when downloaded from the official project release. Users who trust the release and have reviewed the source code may need to allow or whitelist `NBA 2K16 MyTEAM Viewer.exe` in Windows Security for the app to run normally.
 
+## Acknowledgments
+
+Special thanks to my friend Ray for helping to fix some of the tendencies, gear, hot zones, and more of many of these players. This project would not be as good without him.
+
 ## Source build
 
 Run from the `source` directory on Windows with Python 3.13 and the dependencies in `viewer/requirements-desktop.txt`:
