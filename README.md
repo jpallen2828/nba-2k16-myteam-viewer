@@ -26,7 +26,7 @@ Click any screenshot to view it at full size.
 - A legally obtained Windows copy of NBA 2K16.
 - Windows 10 or newer.
 - NBA 2K16 must be running with the intended roster loaded before using roster injection.
-- Patch 0 and other executable builds can be used if the app can read the expected live roster structure.
+- Must use a Patch 0 or Patch 10 version of the game.
 - This project does not include, install, replace, or download NBA 2K16 executables, DLLs, archive containers, roster saves, or other game files.
 
 ## Using the App

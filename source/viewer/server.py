@@ -196,6 +196,183 @@ ACTUAL_TEAM_SLOTS = {
 
 INJECTION_TEAMS = NBA_TEAMS + CLASSIC_TEAMS
 
+# Classic-team row positions are not stable across NBA 2K16 executable builds.
+# Patch 0 stores its classic rosters in a compact 13-player layout beginning at
+# row 766.  Later builds use the configured map above.  Detect the Patch 0
+# layout from multiple clean roster anchors before selecting a slot from it.
+CLASSIC_TEAM_SIGNATURE_FALLBACKS = {
+    "'95-'96 Seattle SuperSonics": ("Gary Payton", "Shawn Kemp", "Detlef Schrempf"),
+}
+PATCH0_CLASSIC_TEAM_SLOTS = {
+    team: (766 + index * 13, 13)
+    for index, team in enumerate(CLASSIC_TEAMS)
+}
+PATCH0_CLASSIC_LAYOUT_ANCHORS = {
+    770: "Bill Russell",
+    805: "Jerry West",
+    1040: "Michael Jordan",
+    1351: "Mario Chalmers",
+}
+# Patch 0 also uses different current-NBA roster capacities. These positions
+# were measured from a clean Patch 0 roster, not inferred from the later-build
+# table. Golden State ends at row 420 and Washington begins at row 421.
+PATCH0_NBA_TEAM_SLOTS = {
+    "Philadelphia 76ers": (0, 15),
+    "Milwaukee Bucks": (15, 15),
+    "Chicago Bulls": (30, 14),
+    "Cleveland Cavaliers": (44, 13),
+    "Boston Celtics": (57, 15),
+    "Los Angeles Clippers": (72, 14),
+    "Memphis Grizzlies": (86, 15),
+    "Atlanta Hawks": (101, 14),
+    "Miami Heat": (115, 15),
+    "Charlotte Hornets": (130, 15),
+    "Utah Jazz": (145, 15),
+    "Sacramento Kings": (160, 15),
+    "New York Knicks": (175, 14),
+    "Los Angeles Lakers": (189, 14),
+    "Orlando Magic": (203, 14),
+    "Dallas Mavericks": (217, 15),
+    "Brooklyn Nets": (232, 15),
+    "Denver Nuggets": (247, 15),
+    "Indiana Pacers": (262, 15),
+    "New Orleans Pelicans": (277, 13),
+    "Detroit Pistons": (290, 15),
+    "Toronto Raptors": (305, 15),
+    "Houston Rockets": (320, 13),
+    "San Antonio Spurs": (333, 15),
+    "Phoenix Suns": (348, 13),
+    "Oklahoma City Thunder": (361, 15),
+    "Minnesota Timberwolves": (376, 15),
+    "Portland Trail Blazers": (391, 15),
+    "Golden State Warriors": (406, 15),
+    "Washington Wizards": (421, 15),
+}
+PATCH0_NBA_LAYOUT_ANCHORS = {
+    0: "Tony Wroten",
+    44: "Kyrie Irving",
+    115: "Goran Dragic",
+    217: "Deron Williams",
+    406: "Stephen Curry",
+}
+
+
+def classic_team_signature_names(team: str) -> set[str]:
+    fallback = CLASSIC_TEAM_SIGNATURE_FALLBACKS.get(team, ())
+    names = {norm_name(name) for name in fallback}
+    match = re.fullmatch(r"'(\d{2})-'(\d{2}) (.+)", team)
+    if not match:
+        return names
+    year = 1900 + int(match.group(2))
+    if year < 1960:
+        year += 100
+    franchise = match.group(3)
+    for card in CARDS:
+        if str(card.get("year") or "") == str(year) and str(card.get("franchise") or "") == franchise:
+            key = norm_name(str(card.get("name") or ""))
+            if key:
+                names.add(key)
+    return names
+
+
+def live_team_name_by_slot(live_players: list[dict]) -> dict[int, str]:
+    return {
+        int(player["roster_index"]): norm_name(str(player.get("full_name") or ""))
+        for player in live_players
+        if player.get("roster_index") is not None
+    }
+
+
+def is_patch0_classic_layout(names_by_slot: dict[int, str]) -> bool:
+    """Return true only when the live roster matches Patch 0's classic rows."""
+    return all(
+        names_by_slot.get(slot) == norm_name(name)
+        for slot, name in PATCH0_CLASSIC_LAYOUT_ANCHORS.items()
+    )
+
+
+def is_patch0_nba_layout(names_by_slot: dict[int, str]) -> bool:
+    """Allow a few already-injected teams while recognizing Patch 0 safely."""
+    matched = sum(
+        names_by_slot.get(slot) == norm_name(name)
+        for slot, name in PATCH0_NBA_LAYOUT_ANCHORS.items()
+    )
+    return matched >= 3
+
+
+def resolve_live_team_slots(team: str, live_players: list[dict]) -> tuple[int, int, dict]:
+    """Resolve the actual live row range, failing closed for unknown layouts."""
+    configured_start, configured_count = ACTUAL_TEAM_SLOTS[team]
+    names_by_slot = live_team_name_by_slot(live_players)
+    if team not in CLASSIC_TEAMS:
+        if is_patch0_nba_layout(names_by_slot):
+            patch0_start, patch0_count = PATCH0_NBA_TEAM_SLOTS[team]
+            return patch0_start, patch0_count, {
+                "source": "detected-patch0-nba-layout",
+                "matched_anchors": sum(
+                    names_by_slot.get(slot) == norm_name(name)
+                    for slot, name in PATCH0_NBA_LAYOUT_ANCHORS.items()
+                ),
+            }
+        return configured_start, configured_count, {"source": "configured-nba-layout"}
+
+    expected_names = classic_team_signature_names(team)
+    if len(expected_names) < 3:
+        raise RuntimeError(
+            f"Cannot safely identify {team} on this NBA 2K16 build because its live team signature is incomplete. "
+            "No players were written."
+        )
+    if is_patch0_classic_layout(names_by_slot):
+        patch0_start, patch0_count = PATCH0_CLASSIC_TEAM_SLOTS[team]
+        return patch0_start, patch0_count, {
+            "source": "detected-patch0-classic-layout",
+            "matched_anchors": len(PATCH0_CLASSIC_LAYOUT_ANCHORS),
+        }
+    configured_names = {
+        names_by_slot.get(slot, "")
+        for slot in range(configured_start, configured_start + configured_count)
+    }
+    configured_score = len(expected_names & configured_names)
+    # Three independent roster names is enough to identify a 13-player classic
+    # team, while preventing a missing team from being confused with a nearby one.
+    minimum_score = 3
+    if configured_score >= minimum_score:
+        return configured_start, configured_count, {
+            "source": "validated-configured-classic-layout",
+            "matched_names": configured_score,
+        }
+
+    candidates: list[tuple[int, int]] = []
+    # Search the classic portion only.  A team can have 11--15 rows depending
+    # on the original roster, so use its configured capacity as the window.
+    for start in range(700, 1800):
+        # Requiring an expected player at the first row prevents the same
+        # roster from matching a number of overlapping 13-row windows.
+        if names_by_slot.get(start, "") not in expected_names:
+            continue
+        candidate_names = {names_by_slot.get(slot, "") for slot in range(start, start + configured_count)}
+        score = len(expected_names & candidate_names)
+        if score >= minimum_score:
+            candidates.append((score, start))
+    if not candidates:
+        raise RuntimeError(
+            f"{team} is not present in a recognizable form in this NBA 2K16 build. "
+            "No players were written; choose a team that exists in this version."
+        )
+    candidates.sort(key=lambda item: (-item[0], item[1]))
+    best_score, best_start = candidates[0]
+    equally_good = [start for score, start in candidates if score == best_score]
+    if len(equally_good) != 1:
+        raise RuntimeError(
+            f"{team} matched multiple possible classic-team blocks on this NBA 2K16 build. "
+            "No players were written because the target could not be identified safely."
+        )
+    return best_start, configured_count, {
+        "source": "live-classic-signature-layout",
+        "matched_names": best_score,
+        "configured_start": configured_start,
+    }
+
 POSITION_TEMPLATE = {
     "PG": 417,  # Stephen Curry
     "SG": 418,  # Klay Thompson
@@ -2185,14 +2362,14 @@ def verify_loaded_roster(roster_path: Path, tracking: dict | None = None) -> dic
 
 def live_inject_lineup(team: str, players: list[dict], previous_team_record: dict | None = None) -> tuple[list[dict], list[dict], dict]:
     myteam, roster = load_live_tools()
-    team_start, team_count = ACTUAL_TEAM_SLOTS[team]
-    if len(players) > team_count:
-        raise ValueError(f"{team} only has {team_count} visible roster slots in this save.")
 
     pid, array_base, exe_path, handle = myteam.open_game(write=True)
     try:
         live_data = roster.read_memory(handle, array_base, roster.DEFAULT_SLOTS * roster.PLAYER_STRIDE)
         live_players = roster.parse_players(live_data, roster.DEFAULT_SLOTS)
+        team_start, team_count, team_resolution = resolve_live_team_slots(team, live_players)
+        if len(players) > team_count:
+            raise ValueError(f"{team} only has {team_count} visible roster slots in this save.")
         players_by_name: dict[str, list[int]] = {}
         for player in live_players:
             key = norm_name(str(player.get("full_name") or ""))
@@ -2518,6 +2695,12 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             "process_id": pid,
             "game_executable": str(exe_path),
             "array_base": f"0x{array_base:X}",
+            "team_slot_resolution": {
+                "team": team,
+                "start": team_start,
+                "count": team_count,
+                **team_resolution,
+            },
             "team": team,
             "slot_count": len(changes),
             "post_write_verification": post_write,
