@@ -1360,17 +1360,29 @@ function bucketFillHotZone(pixels, width, height, startX, startY, fillColor) {
 function paintHotZoneChart(canvas, zones) {
   const template = new Image();
   template.onload = () => {
-    canvas.width = template.naturalWidth; canvas.height = template.naturalHeight;
-    const context = canvas.getContext("2d", { willReadFrequently: true });
-    context.drawImage(template, 0, 0);
-    const image = context.getImageData(0, 0, canvas.width, canvas.height);
-    for (const [zone, point] of Object.entries(hotZoneSeedPoints)) {
-      const stateValue = Number(zones[zone]);
-      if (stateValue !== 1) bucketFillHotZone(image.data, canvas.width, canvas.height, point[0], point[1], hotZoneColors[stateValue] || hotZoneNeutral);
+    try {
+      canvas.width = template.naturalWidth; canvas.height = template.naturalHeight;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      context.drawImage(template, 0, 0);
+      const image = context.getImageData(0, 0, canvas.width, canvas.height);
+      for (const [zone, point] of Object.entries(hotZoneSeedPoints)) {
+        const stateValue = Number(zones[zone]);
+        if (stateValue !== 1) bucketFillHotZone(image.data, canvas.width, canvas.height, point[0], point[1], hotZoneColors[stateValue] || hotZoneNeutral);
+      }
+      context.putImageData(image, 0, 0);
+    } catch (error) {
+      showHotZoneRenderError(canvas);
     }
-    context.putImageData(image, 0, 0);
   };
+  template.onerror = () => showHotZoneRenderError(canvas);
   template.src = hotZoneTemplateUrl;
+}
+
+function showHotZoneRenderError(canvas) {
+  const message = document.createElement("div");
+  message.className = "empty-state";
+  message.innerHTML = "<p>Hot-zone chart artwork could not be loaded.</p>";
+  canvas.replaceWith(message);
 }
 
 function renderHotZones(card) {
