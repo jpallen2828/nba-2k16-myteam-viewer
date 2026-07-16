@@ -511,6 +511,34 @@ FACE_OVERRIDES_RELATIVE_PATH = Path("roster_build") / "face_id_overrides.json"
 JERSEY_OVERRIDES_RELATIVE_PATH = Path("roster_build") / "jersey_number_overrides.json"
 HAND_BYTE_OFFSET = 0x0CA
 DUNK_HAND_BYTE_OFFSET = 0x0CB
+# Release Timing is a two-bit field embedded in a byte that also contains
+# unrelated signature data.  The values below were measured by changing
+# Stephen Curry through each in-game option, then confirmed across the clean
+# and MyTEAM-exclusive source rosters.
+RELEASE_TIMING_OFFSET = 0x15F
+RELEASE_TIMING_MASK = 0xC0
+RELEASE_TIMING_NORMAL = 0x00
+RELEASE_TIMING_QUICK = 0x40
+RELEASE_TIMING_SLOW = 0x80
+# This explicit table is the injection authority.  It combines the clean-roster
+# scan with the MyTEAM-exclusive current-team scan.  Names absent from it are
+# deliberately Normal.  "pattymills" aliases the clean roster's Patrick Mills
+# spelling used by the card database.
+RELEASE_TIMING_QUICK_PLAYER_KEYS = {
+    "andreiguodala", "andremiller", "anthonymorrow", "bobbyportis",
+    "brandonjennings", "brandonknight", "brianteweber", "djaugustin",
+    "damianlillard", "darrellarthur", "devinbooker", "dujedukan",
+    "ericgordon", "garyharris", "geraldgreen", "giannisantetokounmpo",
+    "jjbarea", "jjredick", "jrsmith", "jamesjones", "jeffgreen",
+    "joejohnson", "kembawalker", "kentaviouscaldwellpope",
+    "khrismiddleton", "klaythompson", "kylekorver", "kyrieirving",
+    "langstongalloway", "larrybird", "marcobelinelli", "mariohezonja",
+    "nickyoung", "nikstauskas", "patrickmills", "pattymills",
+    "quincypondexter", "rexchapman", "rodneystuckey", "russsmith",
+    "sethcurry", "sonnyweems", "stephencurry", "stevenovak", "tonywroten",
+    "treyburke", "tylawson", "tyusjones", "willbarton",
+}
+RELEASE_TIMING_SLOW_PLAYER_KEYS = {"manutebol"}
 STABLE_TEMPLATE_RANGES = [
     # Broad template ranges carry hidden team/body/display fields in NBA 2K16.
     # Keep this disabled for live injection until individual safe offsets are mapped.
@@ -1178,6 +1206,37 @@ def copy_accessories_from_clean_source(target: bytearray, source: bytes, source_
             target[offset:stop] = source[offset:stop]
             copied.append(f"{label}@0x{offset:X}-0x{stop - 1:X} from {source_label}")
     return copied
+
+
+def apply_release_timing_from_clean_source(target: bytearray, card: dict, clean_source: dict | None) -> str:
+    """Write a card's verified release-speed bits without copying other data.
+
+    The explicit player table is authoritative, including MyTEAM-exclusive
+    players which do not always resolve through the clean-source matcher.
+    Preserve bits 0-5 in the destination because they are not part of the
+    Release Timing UI setting.  Normal is the intentional default for every
+    other card.
+    """
+    speed_bits = RELEASE_TIMING_NORMAL
+    player_key = norm_name(str(card.get("name") or ""))
+    source_label = "explicit_default_normal"
+    if player_key in RELEASE_TIMING_QUICK_PLAYER_KEYS:
+        speed_bits = RELEASE_TIMING_QUICK
+        source_label = "explicit_player_table"
+    elif player_key in RELEASE_TIMING_SLOW_PLAYER_KEYS:
+        speed_bits = RELEASE_TIMING_SLOW
+        source_label = "explicit_player_table"
+    if len(target) <= RELEASE_TIMING_OFFSET:
+        return ""
+    target[RELEASE_TIMING_OFFSET] = (
+        (int(target[RELEASE_TIMING_OFFSET]) & ~RELEASE_TIMING_MASK) | speed_bits
+    )
+    label = {
+        RELEASE_TIMING_NORMAL: "normal",
+        RELEASE_TIMING_QUICK: "quick",
+        RELEASE_TIMING_SLOW: "slow",
+    }[speed_bits]
+    return f"release_timing={label}@0x{RELEASE_TIMING_OFFSET:X} ({source_label})"
 
 
 def clean_source_appearance_float_writes(clean_source: dict | None, myteam) -> list[dict]:
@@ -2585,6 +2644,12 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             )
             if exclusive_source_fields:
                 stats["myteam_exclusive_source_overrides"] = exclusive_source_fields
+            # Do this after every signature-source override.  Release Timing
+            # lives at 0x15F rather than in the normal signature allow-list,
+            # and only its high two bits are the in-game speed setting.
+            release_timing_write = apply_release_timing_from_clean_source(edited, card, clean_source)
+            if release_timing_write:
+                stats["release_timing_field_written"] = release_timing_write
             hidden_display_fields = apply_named_hidden_display_fields(edited, card, myteam)
             if hidden_display_fields:
                 stats["hidden_display_named_fields_written"] = hidden_display_fields
