@@ -458,6 +458,14 @@ PLAYER_TEMPLATE_ALIASES = {
 }
 
 SPECIAL_PLAYER_FIELD_OVERRIDES = {
+    "lucmbahamoute": {
+        "first_name": "Luc",
+        "last_name": "Mbah a Moute",
+    },
+    "nene": {
+        "first_name": "",
+        "last_name": "Nenê",
+    },
     "gheorghemuresan": {
         "height_inches": 91,
         "appearance_height_cm": 232.0,
@@ -883,6 +891,8 @@ def apply_card_to_record(
     first, last = split_name(card.get("name") or "")
     player_key = norm_player_name(card.get("name") or "")
     field_override = SPECIAL_PLAYER_FIELD_OVERRIDES.get(player_key, {})
+    first = str(field_override.get("first_name", first))
+    last = str(field_override.get("last_name", last))
     record[0x00:0x24] = encode_text(last, 36)
     record[0x24:0x48] = encode_text(first, 36)
     record[0x1F0:0x1F2] = int(destination_index).to_bytes(2, "little")
