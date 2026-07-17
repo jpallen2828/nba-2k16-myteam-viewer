@@ -2112,7 +2112,15 @@ def apply_handedness_override(target: bytearray, value: str | dict[str, str]) ->
     }
 
 
-def apply_myteam_exclusive_source_override(target: bytearray, card: dict, overrides: dict[str, dict], myteam) -> dict:
+def apply_myteam_exclusive_source_override(
+    target: bytearray,
+    card: dict,
+    overrides: dict[str, dict],
+    myteam,
+    exclusive_source_record: bytes | None = None,
+    module_base: int | None = None,
+    executable_sha256: str = "",
+) -> dict:
     override = overrides.get(norm_name(str(card.get("name") or "")))
     if not override:
         return {}
@@ -2147,14 +2155,25 @@ def apply_myteam_exclusive_source_override(target: bytearray, card: dict, overri
             applied["jersey_number"] = int(jersey_number)
         except (TypeError, ValueError):
             pass
-    college_hex = str(override.get("college_bytes_0x68_0x6A") or "").strip()
-    try:
-        college_bytes = bytes.fromhex(college_hex)
-    except ValueError:
-        college_bytes = b""
-    if len(college_bytes) == 3 and len(target) >= 0x6B:
-        target[0x68:0x6B] = college_bytes
-        applied["college_bytes_0x68_0x6A"] = college_hex.upper()
+    # The From/college field is an eight-byte pointer, not a portable three-byte
+    # value. Prefer the verified live exclusive source row. If that row is not
+    # present, reconstruct the pointer only for the exact executable build from
+    # which its module-relative RVA was captured.
+    from_pointer = override.get("from_pointer")
+    if exclusive_source_record and len(exclusive_source_record) >= 0x70:
+        target[0x68:0x70] = exclusive_source_record[0x68:0x70]
+        applied["from"] = override.get("from", "")
+        applied["from_pointer_source"] = "live_myteam_exclusive_row"
+    elif isinstance(from_pointer, dict) and module_base is not None:
+        expected_hash = str(from_pointer.get("executable_sha256") or "").strip().upper()
+        try:
+            pointer_rva = int(str(from_pointer.get("rva") or "0"), 0)
+        except (TypeError, ValueError):
+            pointer_rva = 0
+        if pointer_rva > 0 and expected_hash and expected_hash == executable_sha256.strip().upper():
+            struct.pack_into("<Q", target, 0x68, int(module_base) + pointer_rva)
+            applied["from"] = override.get("from", "")
+            applied["from_pointer_source"] = "verified_executable_relative_pointer"
     signature_bytes = override.get("signature_bytes")
     signature_fields: list[str] = []
     if isinstance(signature_bytes, dict):
@@ -2213,9 +2232,12 @@ def myteam_exclusive_appearance_float_writes(card: dict, overrides: dict[str, di
         return []
     writes: list[dict] = []
     try:
-        height_cm = round(float(override["height_inches"]) * 2.54, 6)
+        height_cm = round(float(override.get("appearance_height_cm")), 6)
     except (TypeError, ValueError):
-        height_cm = None
+        try:
+            height_cm = round(float(override["height_inches"]) * 2.54, 6)
+        except (TypeError, ValueError):
+            height_cm = None
     if height_cm is not None:
         writes.append({"name": "myteam_exclusive_source_height_cm", "offset": 0x00, "value": height_cm})
     wingspan_cm = override.get("appearance_wingspan_cm")
@@ -2456,6 +2478,8 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
     try:
         live_data = roster.read_memory(handle, array_base, roster.DEFAULT_SLOTS * roster.PLAYER_STRIDE)
         live_players = roster.parse_players(live_data, roster.DEFAULT_SLOTS)
+        module_base = array_base - roster.PLAYER_ARRAY_RVA
+        executable_sha256 = roster.sha256(exe_path)
         team_start, team_count, team_resolution = resolve_live_team_slots(team, live_players)
         if len(players) > team_count:
             raise ValueError(f"{team} only has {team_count} visible roster slots in this save.")
@@ -2666,11 +2690,25 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             special_fields = apply_special_player_field_overrides(edited, card, myteam)
             if special_fields:
                 stats["special_player_field_overrides"] = special_fields
+            exclusive_source_record = None
+            exclusive_profile = myteam_exclusive_source_overrides.get(name_key) or {}
+            try:
+                exclusive_source_index = int(exclusive_profile.get("source_roster_index"))
+            except (TypeError, ValueError):
+                exclusive_source_index = -1
+            exclusive_start = exclusive_source_index * roster.PLAYER_STRIDE
+            if 0 <= exclusive_source_index < roster.DEFAULT_SLOTS and exclusive_start + roster.PLAYER_STRIDE <= len(live_data):
+                candidate = live_data[exclusive_start:exclusive_start + roster.PLAYER_STRIDE]
+                if norm_name(record_full_name(candidate)) == name_key:
+                    exclusive_source_record = candidate
             exclusive_source_fields = apply_myteam_exclusive_source_override(
                 edited,
                 card,
                 myteam_exclusive_source_overrides,
                 myteam,
+                exclusive_source_record,
+                module_base,
+                executable_sha256,
             )
             if exclusive_source_fields:
                 stats["myteam_exclusive_source_overrides"] = exclusive_source_fields
@@ -2717,10 +2755,12 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             appearance_writes = myteam.appearance_float_writes(card)
             if clean_source and name_key not in myteam_exclusive_source_overrides:
                 appearance_writes.extend(clean_source_appearance_float_writes(clean_source, myteam))
-            appearance_writes.extend(myteam_exclusive_appearance_float_writes(card, myteam_exclusive_source_overrides, myteam))
             # Player-specific appearance fixes, like Dirk's normalized height/wingspan,
             # must win over copied era-source appearance floats.
             appearance_writes.extend(myteam.appearance_float_writes(card))
+            # A verified MyTEAM-exclusive source profile is more specific than
+            # generic card metadata and therefore owns the final linked height.
+            appearance_writes.extend(myteam_exclusive_appearance_float_writes(card, myteam_exclusive_source_overrides, myteam))
             appearance_byte_writes = []
             if hasattr(myteam, "appearance_byte_writes"):
                 jersey_value = myteam.get_jersey_number(edited) if hasattr(myteam, "get_jersey_number") else None
