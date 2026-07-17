@@ -1725,6 +1725,13 @@ def card_jersey_override(card: dict, overrides: dict) -> int | None:
                     return int(direct[key])
                 except (TypeError, ValueError):
                     return None
+    name = norm_name(str(card.get("name") or ""))
+    exclusive_players = overrides.get("myteamExclusivePlayers", {}) if isinstance(overrides, dict) else {}
+    if isinstance(exclusive_players, dict) and name in exclusive_players:
+        try:
+            return int(exclusive_players[name])
+        except (TypeError, ValueError):
+            return None
     resolved = overrides.get("resolvedCards", {}) if isinstance(overrides, dict) else {}
     if isinstance(resolved, dict):
         for key in card_key_aliases(card):
@@ -1733,7 +1740,6 @@ def card_jersey_override(card: dict, overrides: dict) -> int | None:
                     return int(resolved[key])
                 except (TypeError, ValueError):
                     return None
-    name = norm_name(str(card.get("name") or ""))
     year = str(card.get("year") or "Current").strip().casefold()
     franchise = norm_name(str(card.get("franchise") or card.get("team") or ""))
     combo = overrides.get("playerTeamYears", {}) if isinstance(overrides, dict) else {}

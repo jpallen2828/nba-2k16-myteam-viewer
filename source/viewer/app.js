@@ -1323,9 +1323,11 @@ function jerseyNumberForCard(card) {
   const cardKey = `${card.id}/${card.slug || ""}`;
   const direct = overrides.cards || {};
   if (Number.isFinite(Number(direct[cardKey]))) return Number(direct[cardKey]);
+  const name = hotZoneNameKey(card.name);
+  const exclusivePlayers = overrides.myteamExclusivePlayers || {};
+  if (Number.isFinite(Number(exclusivePlayers[name]))) return Number(exclusivePlayers[name]);
   const resolved = overrides.resolvedCards || {};
   if (Number.isFinite(Number(resolved[cardKey]))) return Number(resolved[cardKey]);
-  const name = hotZoneNameKey(card.name);
   const year = String(card.year || card.edition || "Current").trim().toLowerCase();
   const franchise = hotZoneNameKey(card.franchise || card.team);
   const combos = overrides.playerTeamYears || {};
