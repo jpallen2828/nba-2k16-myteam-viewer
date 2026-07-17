@@ -10814,11 +10814,6 @@
                              "kind":  "missing",
                              "contentType":  "image/svg+xml"
                          },
-    "9972-amare-stoudemire":  {
-                                  "path":  "data/card-images/9972-amare-stoudemire.png",
-                                  "kind":  "official",
-                                  "contentType":  "image/png"
-                              },
     "9973-steve-nash":  {
                             "path":  "data/card-images/9973-steve-nash.png",
                             "kind":  "official",

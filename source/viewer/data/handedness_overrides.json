@@ -13,7 +13,10 @@
     "Connie Hawkins": "Right",
     "Dale Ellis": "Right",
     "Dan Majerle": "Right",
-    "Darius Miles": "Left",
+    "Darius Miles": {
+      "dominant_hand": "Right",
+      "dominant_dunk_hand": "Right"
+    },
     "Dave Bing": "Right",
     "Dave Cowens": "Left",
     "David Thompson": "Right",
@@ -27,12 +30,18 @@
     "Glenn Robinson": "Right",
     "Grant Hill": "Right",
     "Jack Sikma": "Right",
-    "Jalen Rose": "Left",
+    "Jalen Rose": {
+      "dominant_hand": "Left",
+      "dominant_dunk_hand": "Left"
+    },
     "Jamaal Wilkes": "Left",
     "Jamal Mashburn": "Right",
     "Jason Kidd": "Right",
     "Jay Williams": "Right",
-    "Jerry Stackhouse": "Right",
+    "Jerry Stackhouse": {
+      "dominant_hand": "Right",
+      "dominant_dunk_hand": "Right"
+    },
     "Josh Huestis": "Right",
     "Keith Van Horn": "Right",
     "Kenny Anderson": "Left",
@@ -46,11 +55,17 @@
     "Mark Jackson": "Right",
     "Michael Redd": "Left",
     "Micheal Ray Richardson": "Right",
-    "Mike Bibby": "Right",
+    "Mike Bibby": {
+      "dominant_hand": "Right",
+      "dominant_dunk_hand": "Right"
+    },
     "Nate Archibald": "Left",
     "Peja Stojakovic": "Right",
     "Ralph Sampson": "Right",
-    "Reggie Lewis": "Right",
+    "Reggie Lewis": {
+      "dominant_hand": "Right",
+      "dominant_dunk_hand": "Right"
+    },
     "Rex Chapman": "Right",
     "Rick Barry": "Right",
     "Rik Smits": "Right",

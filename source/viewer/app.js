@@ -2,7 +2,7 @@ const state = {
   cards: [], filtered: [], visible: 48, selected: null, tab: "attributes", returnToLineup: false,
   returnToDraft: false, returnToDraftChoices: false,
   randomLineup: [], draftSelections: {}, draftTarget: null, draftOptions: [], draftDiamondSelection: null, draftMode: "default",
-  customSelections: [], customFiltered: [], imageManifest: {}, injectionState: null, injectionKind: null, injectionRosterPath: "", injectionTeam: "", injectionTeamMode: "nba", unlockedInjectionTeams: {}, pendingUnlockTeam: "", loadedRosterVerification: null, manualLoadedRosterConfirm: false,
+  customSelections: [], customFiltered: [], imageManifest: {}, jerseyNumberOverrides: { cards: {}, playerTeamYears: {}, players: {} }, injectionState: null, injectionKind: null, injectionRosterPath: "", injectionTeam: "", injectionTeamMode: "nba", unlockedInjectionTeams: {}, pendingUnlockTeam: "", loadedRosterVerification: null, manualLoadedRosterConfirm: false,
   savedLineups: [], savedLineupKind: "", myteamExclusiveNames: new Set()
 };
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -1318,12 +1318,31 @@ function renderBadges(card) {
     : `<div class="empty-state"><p>This archived layout preserved badge totals but not the individual badge names.</p></div>`;
   return `${estimateNote}<div class="badge-summary">${totals}</div><div class="badge-groups">${list}</div>`;
 }
+function jerseyNumberForCard(card) {
+  const overrides = state.jerseyNumberOverrides || {};
+  const cardKey = `${card.id}/${card.slug || ""}`;
+  const direct = overrides.cards || {};
+  if (Number.isFinite(Number(direct[cardKey]))) return Number(direct[cardKey]);
+  const resolved = overrides.resolvedCards || {};
+  if (Number.isFinite(Number(resolved[cardKey]))) return Number(resolved[cardKey]);
+  const name = hotZoneNameKey(card.name);
+  const year = String(card.year || card.edition || "Current").trim().toLowerCase();
+  const franchise = hotZoneNameKey(card.franchise || card.team);
+  const combos = overrides.playerTeamYears || {};
+  for (const key of [`${name}|${year}|${franchise}`, `${name}|${year}`, `${name}|${franchise}`]) {
+    if (Number.isFinite(Number(combos[key]))) return Number(combos[key]);
+  }
+  const players = overrides.players || {};
+  return Number.isFinite(Number(players[name])) ? Number(players[name]) : null;
+}
+
 function renderInformation(card) {
+  const jerseyNumber = jerseyNumberForCard(card);
   const values = [
     ["Season / edition", card.year || card.edition || "Current"], ["Franchise", card.franchise], ["Collection", card.collection || "—"],
     ["Theme", card.theme || "—"], ["Position", [card.position,card.secondaryPosition].filter(Boolean).join(" / ") || "—"],
     ["Height", card.height || "—"], ["Weight", card.weight ? `${card.weight} lb` : "—"], ["Age", card.age ?? "—"],
-    ["From", card.from || "—"], ["Nickname", card.nickname || "—"], ["Plays", card.plays || "—"], ["Card ID", card.id]
+    ["From", card.from || "—"], ["Jersey number", jerseyNumber ?? "—"], ["Plays", card.plays || "—"], ["Card ID", card.id]
   ];
   return `<div class="info-grid">${values.map(([label,value]) => `<div class="info-item"><span>${label}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}</div>
     ${card.archiveUrl ? `<a class="archive-link" target="_blank" rel="noreferrer" href="${escapeHtml(card.archiveUrl)}">Open preserved source page ↗</a>` : ""}`;
@@ -1409,6 +1428,8 @@ async function start() {
   try {
     state.cards = await fetch("data/cards.json?v=2", { cache: "force-cache" }).then(response => { if (!response.ok) throw new Error("Could not load card database"); return response.json(); });
     state.imageManifest = await fetch("data/offline-images.json?v=2", { cache: "force-cache" }).then(response => response.ok ? response.json() : {});
+    const jerseyData = await fetch("data/jersey_number_overrides.json?v=2", { cache: "force-cache" }).then(response => response.ok ? response.json() : {});
+    state.jerseyNumberOverrides = jerseyData;
     const exclusiveData = await fetch("data/myteam_exclusive_source_overrides.json?v=2", { cache: "force-cache" }).then(response => response.ok ? response.json() : {});
     state.myteamExclusiveNames = new Set(Object.keys(exclusiveData.players || {}).map(hotZoneNameKey));
     addOptions(elements.tier, new Set(state.cards.map(card => card.tier)), tierOrder);

@@ -1081,7 +1081,7 @@ def load_jersey_overrides() -> dict:
     return {"cards": {}, "playerTeamYears": {}, "players": {}}
 
 
-def load_handedness_overrides() -> dict[str, str]:
+def load_handedness_overrides() -> dict[str, str | dict[str, str]]:
     candidates = [
         ROOT / "data" / "handedness_overrides.json",
         output_root() / "data" / "handedness_overrides.json",
@@ -1091,19 +1091,30 @@ def load_handedness_overrides() -> dict[str, str]:
             data = json.loads(path.read_text(encoding="utf-8-sig"))
         except (OSError, json.JSONDecodeError):
             continue
-        overrides: dict[str, str] = {}
+        overrides: dict[str, str | dict[str, str]] = {}
+
+        def normalize_handedness(value: object) -> str | dict[str, str] | None:
+            if isinstance(value, dict):
+                dominant = str(value.get("dominant_hand") or "").strip().title()
+                dunk = str(value.get("dominant_dunk_hand") or "").strip().title()
+                if dominant in {"Left", "Right"} and dunk in {"Left", "Right", "Either"}:
+                    return {"dominant_hand": dominant, "dominant_dunk_hand": dunk}
+                return None
+            side = str(value or "").strip().title()
+            return side if side in {"Left", "Right"} else None
+
         cards = data.get("cards") if isinstance(data, dict) else None
         if isinstance(cards, dict):
             for key, value in cards.items():
-                side = str(value or "").strip().title()
-                if side in {"Left", "Right"}:
-                    overrides[str(key)] = side
+                handedness = normalize_handedness(value)
+                if handedness:
+                    overrides[str(key)] = handedness
         players = data.get("players") if isinstance(data, dict) else None
         if isinstance(players, dict):
             for name, value in players.items():
-                side = str(value or "").strip().title()
-                if side in {"Left", "Right"}:
-                    overrides[norm_name(str(name))] = side
+                handedness = normalize_handedness(value)
+                if handedness:
+                    overrides[norm_name(str(name))] = handedness
         if not overrides:
             continue
         return overrides
@@ -1714,6 +1725,14 @@ def card_jersey_override(card: dict, overrides: dict) -> int | None:
                     return int(direct[key])
                 except (TypeError, ValueError):
                     return None
+    resolved = overrides.get("resolvedCards", {}) if isinstance(overrides, dict) else {}
+    if isinstance(resolved, dict):
+        for key in card_key_aliases(card):
+            if key in resolved:
+                try:
+                    return int(resolved[key])
+                except (TypeError, ValueError):
+                    return None
     name = norm_name(str(card.get("name") or ""))
     year = str(card.get("year") or "Current").strip().casefold()
     franchise = norm_name(str(card.get("franchise") or card.get("team") or ""))
@@ -2067,16 +2086,21 @@ def copy_handedness_from_source(target: bytearray, source: bytes | bytearray) ->
     }
 
 
-def apply_handedness_override(target: bytearray, side: str) -> dict:
-    side = str(side or "").strip().title()
-    if side not in {"Left", "Right"}:
+def apply_handedness_override(target: bytearray, value: str | dict[str, str]) -> dict:
+    if isinstance(value, dict):
+        dominant_hand = str(value.get("dominant_hand") or "").strip().title()
+        dominant_dunk_hand = str(value.get("dominant_dunk_hand") or "").strip().title()
+    else:
+        dominant_hand = str(value or "").strip().title()
+        dominant_dunk_hand = dominant_hand
+    if dominant_hand not in {"Left", "Right"} or dominant_dunk_hand not in {"Left", "Right", "Either"}:
         return {}
     before = decode_handedness(target)
-    set_handedness(target, side, side)
+    set_handedness(target, dominant_hand, dominant_dunk_hand)
     return {
         "source": "handedness_overrides",
-        "dominant_hand": side,
-        "dominant_dunk_hand": side,
+        "dominant_hand": dominant_hand,
+        "dominant_dunk_hand": dominant_dunk_hand,
         "before": before,
         "after": decode_handedness(target),
     }
@@ -2644,6 +2668,11 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             )
             if exclusive_source_fields:
                 stats["myteam_exclusive_source_overrides"] = exclusive_source_fields
+            # A card-specific number is authoritative over a generic player
+            # source row (for example, the 96 OVR Bob Cousy Diamond uses #14).
+            if jersey_override is not None and hasattr(myteam, "set_jersey_number"):
+                myteam.set_jersey_number(edited, jersey_override)
+                stats["final_card_jersey_number"] = jersey_override
             # Do this after every signature-source override.  Release Timing
             # lives at 0x15F rather than in the normal signature allow-list,
             # and only its high two bits are the in-game speed setting.
