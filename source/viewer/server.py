@@ -1713,49 +1713,44 @@ def load_previous_injection_shells(previous_team_record: dict | None, stride: in
     return shells
 
 
-def card_jersey_override(card: dict, overrides: dict) -> int | None:
+def normalize_jersey_number(value) -> int | str | None:
+    text = str(value).strip()
+    if text == "00":
+        return "00"
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def card_jersey_override(card: dict, overrides: dict) -> int | str | None:
     hardcoded = CARD_JERSEY_NUMBER_OVERRIDES.get(f"{card.get('id')}/{card.get('slug')}")
     if hardcoded is not None:
-        return int(hardcoded)
+        return normalize_jersey_number(hardcoded)
     direct = overrides.get("cards", {}) if isinstance(overrides, dict) else {}
     if isinstance(direct, dict):
         for key in card_key_aliases(card):
             if key in direct:
-                try:
-                    return int(direct[key])
-                except (TypeError, ValueError):
-                    return None
+                return normalize_jersey_number(direct[key])
     name = norm_name(str(card.get("name") or ""))
     exclusive_players = overrides.get("myteamExclusivePlayers", {}) if isinstance(overrides, dict) else {}
     if isinstance(exclusive_players, dict) and name in exclusive_players:
-        try:
-            return int(exclusive_players[name])
-        except (TypeError, ValueError):
-            return None
+        return normalize_jersey_number(exclusive_players[name])
     resolved = overrides.get("resolvedCards", {}) if isinstance(overrides, dict) else {}
     if isinstance(resolved, dict):
         for key in card_key_aliases(card):
             if key in resolved:
-                try:
-                    return int(resolved[key])
-                except (TypeError, ValueError):
-                    return None
+                return normalize_jersey_number(resolved[key])
     year = str(card.get("year") or "Current").strip().casefold()
     franchise = norm_name(str(card.get("franchise") or card.get("team") or ""))
     combo = overrides.get("playerTeamYears", {}) if isinstance(overrides, dict) else {}
     if isinstance(combo, dict):
         for key in (f"{name}|{year}|{franchise}", f"{name}|{year}", f"{name}|{franchise}"):
             if key in combo:
-                try:
-                    return int(combo[key])
-                except (TypeError, ValueError):
-                    return None
+                return normalize_jersey_number(combo[key])
     players = overrides.get("players", {}) if isinstance(overrides, dict) else {}
     if isinstance(players, dict) and name in players:
-        try:
-            return int(players[name])
-        except (TypeError, ValueError):
-            return None
+        return normalize_jersey_number(players[name])
     return None
 
 
@@ -1802,7 +1797,7 @@ def resolve_card_clean_source(
     return None, ""
 
 
-def jersey_from_template_entry(template_entry: dict | None, stride: int, myteam) -> int | None:
+def jersey_from_template_entry(template_entry: dict | None, stride: int, myteam) -> int | str | None:
     if not template_entry or not hasattr(myteam, "get_jersey_number"):
         return None
     try:
@@ -1812,7 +1807,7 @@ def jersey_from_template_entry(template_entry: dict | None, stride: int, myteam)
     if len(record) != stride:
         return None
     try:
-        return int(myteam.get_jersey_number(record))
+        return normalize_jersey_number(myteam.get_jersey_number(record))
     except (TypeError, ValueError):
         return None
 
@@ -1824,7 +1819,7 @@ def stable_card_jersey_number(
     clean_source: dict | None,
     stride: int,
     myteam,
-) -> tuple[int | None, str]:
+) -> tuple[int | str | None, str]:
     explicit = card_jersey_override(card, overrides)
     if explicit is not None:
         return explicit, "jersey_number_overrides"
@@ -1833,7 +1828,7 @@ def stable_card_jersey_number(
         return template_jersey, "exact_card_template"
     if clean_source and hasattr(myteam, "get_jersey_number"):
         try:
-            return int(myteam.get_jersey_number(clean_source["record"])), "clean_roster_source"
+            return normalize_jersey_number(myteam.get_jersey_number(clean_source["record"])), "clean_roster_source"
         except (TypeError, ValueError):
             pass
     return None, ""
@@ -2151,8 +2146,11 @@ def apply_myteam_exclusive_source_override(
     jersey_number = override.get("jersey_number")
     if jersey_number is not None and hasattr(myteam, "set_jersey_number"):
         try:
-            myteam.set_jersey_number(target, int(jersey_number))
-            applied["jersey_number"] = int(jersey_number)
+            normalized_jersey = normalize_jersey_number(jersey_number)
+            if normalized_jersey is None:
+                raise ValueError("invalid jersey number")
+            myteam.set_jersey_number(target, normalized_jersey)
+            applied["jersey_number"] = normalized_jersey
         except (TypeError, ValueError):
             pass
     # The From/college field is an eight-byte pointer, not a portable three-byte

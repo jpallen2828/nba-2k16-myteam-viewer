@@ -823,9 +823,9 @@ def set_packed_bits(record: bytearray, bit_offset: int, bit_count: int, value: i
             record[byte_index] &= ~mask
 
 
-def get_jersey_number(record: bytes | bytearray) -> int:
+def get_jersey_number(record: bytes | bytearray) -> int | str:
     packed = get_packed_bits(record, JERSEY_NUMBER_BIT_OFFSET, JERSEY_NUMBER_BIT_COUNT)
-    return 0 if packed == 100 else packed
+    return "00" if packed == 100 else packed
 
 
 def set_jersey_number(record: bytearray, value: int | str) -> None:
@@ -886,7 +886,7 @@ def apply_card_to_record(
     card: dict,
     destination_index: int,
     face_id_override: int | dict | None = None,
-    jersey_number_override: int | None = None,
+    jersey_number_override: int | str | None = None,
 ) -> dict:
     first, last = split_name(card.get("name") or "")
     player_key = norm_player_name(card.get("name") or "")
@@ -927,10 +927,11 @@ def apply_card_to_record(
 
     jersey_number_written = None
     if field_override.get("jersey_number") is not None:
-        jersey_number_override = int(field_override["jersey_number"])
+        jersey_number_override = field_override["jersey_number"]
     if jersey_number_override is not None:
         try:
-            jersey_number_written = max(0, min(99, int(jersey_number_override)))
+            jersey_text = str(jersey_number_override).strip()
+            jersey_number_written = "00" if jersey_text == "00" else max(0, min(99, int(jersey_text)))
             set_jersey_number(record, jersey_number_written)
         except (TypeError, ValueError):
             jersey_number_written = None

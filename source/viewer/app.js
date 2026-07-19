@@ -1319,23 +1319,28 @@ function renderBadges(card) {
   return `${estimateNote}<div class="badge-summary">${totals}</div><div class="badge-groups">${list}</div>`;
 }
 function jerseyNumberForCard(card) {
+  const normalize = value => {
+    if (value === null || value === undefined || value === "") return null;
+    if (String(value).trim() === "00") return "00";
+    return Number.isFinite(Number(value)) ? Number(value) : null;
+  };
   const overrides = state.jerseyNumberOverrides || {};
   const cardKey = `${card.id}/${card.slug || ""}`;
   const direct = overrides.cards || {};
-  if (Number.isFinite(Number(direct[cardKey]))) return Number(direct[cardKey]);
+  if (normalize(direct[cardKey]) !== null) return normalize(direct[cardKey]);
   const name = hotZoneNameKey(card.name);
   const exclusivePlayers = overrides.myteamExclusivePlayers || {};
-  if (Number.isFinite(Number(exclusivePlayers[name]))) return Number(exclusivePlayers[name]);
+  if (normalize(exclusivePlayers[name]) !== null) return normalize(exclusivePlayers[name]);
   const resolved = overrides.resolvedCards || {};
-  if (Number.isFinite(Number(resolved[cardKey]))) return Number(resolved[cardKey]);
+  if (normalize(resolved[cardKey]) !== null) return normalize(resolved[cardKey]);
   const year = String(card.year || card.edition || "Current").trim().toLowerCase();
   const franchise = hotZoneNameKey(card.franchise || card.team);
   const combos = overrides.playerTeamYears || {};
   for (const key of [`${name}|${year}|${franchise}`, `${name}|${year}`, `${name}|${franchise}`]) {
-    if (Number.isFinite(Number(combos[key]))) return Number(combos[key]);
+    if (normalize(combos[key]) !== null) return normalize(combos[key]);
   }
   const players = overrides.players || {};
-  return Number.isFinite(Number(players[name])) ? Number(players[name]) : null;
+  return normalize(players[name]);
 }
 
 function renderInformation(card) {
