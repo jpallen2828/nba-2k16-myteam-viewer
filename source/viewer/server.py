@@ -31,6 +31,8 @@ DATA_PATH = ROOT / "data" / "cards.json"
 MYTEAM_EXCLUSIVE_SOURCE_OVERRIDES_PATH = ROOT / "data" / "myteam_exclusive_source_overrides.json"
 ACCESSORY_OVERRIDES_PATH = ROOT / "data" / "accessory_overrides.json"
 CARD_CLEAN_SOURCE_OVERRIDES_PATH = ROOT / "data" / "card_clean_source_overrides.json"
+PLAY_INITIATOR_OVERRIDES_PATH = ROOT / "data" / "play_initiator_overrides.json"
+CARD_GAMEPLAY_OVERRIDES_PATH = ROOT / "data" / "card_gameplay_overrides.json"
 if getattr(sys, "frozen", False):
     cache_root = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "NBA2K16MyTEAMViewer"
     ART_CACHE = cache_root / "cache" / "art"
@@ -1177,6 +1179,81 @@ def load_accessory_overrides() -> dict[str, dict]:
     return {}
 
 
+def load_play_initiator_overrides() -> dict:
+    candidates = [
+        PLAY_INITIATOR_OVERRIDES_PATH,
+        output_root() / "data" / "play_initiator_overrides.json",
+    ]
+    for path in dict.fromkeys(candidates):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8-sig"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if isinstance(data, dict):
+            return data
+    return {"cards": {}, "players": {}}
+
+
+def card_play_initiator_override(card: dict, overrides: dict) -> bool | None:
+    card_key = f"{card.get('id')}/{card.get('slug')}"
+    cards = overrides.get("cards") if isinstance(overrides, dict) else None
+    if isinstance(cards, dict) and card_key in cards and isinstance(cards[card_key], bool):
+        return cards[card_key]
+    players = overrides.get("players") if isinstance(overrides, dict) else None
+    name_key = norm_name(str(card.get("name") or ""))
+    if isinstance(players, dict) and name_key in players and isinstance(players[name_key], bool):
+        return players[name_key]
+    return None
+
+
+def load_card_gameplay_overrides() -> dict:
+    candidates = [
+        CARD_GAMEPLAY_OVERRIDES_PATH,
+        output_root() / "data" / "card_gameplay_overrides.json",
+    ]
+    for path in dict.fromkeys(candidates):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8-sig"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if isinstance(data, dict):
+            return data
+    return {"cards": {}, "profiles": {}}
+
+
+def card_gameplay_profile(card: dict, overrides: dict) -> tuple[str, dict] | None:
+    card_key = f"{card.get('id')}/{card.get('slug')}"
+    cards = overrides.get("cards") if isinstance(overrides, dict) else None
+    profiles = overrides.get("profiles") if isinstance(overrides, dict) else None
+    if not isinstance(cards, dict) or not isinstance(profiles, dict):
+        return None
+    profile_name = cards.get(card_key)
+    if not isinstance(profile_name, str):
+        return None
+
+    def resolve_profile(name: str, seen: set[str]) -> dict | None:
+        if name in seen:
+            return None
+        profile = profiles.get(name)
+        if not isinstance(profile, dict):
+            return None
+        base_name = profile.get("base_profile")
+        if not isinstance(base_name, str) or not base_name:
+            return dict(profile)
+        base = resolve_profile(base_name, {*seen, name})
+        if not isinstance(base, dict):
+            return None
+        merged = {**base, **profile}
+        for field in ("signature_bytes", "tendencies"):
+            base_values = base.get(field) if isinstance(base.get(field), dict) else {}
+            profile_values = profile.get(field) if isinstance(profile.get(field), dict) else {}
+            merged[field] = {**base_values, **profile_values}
+        return merged
+
+    profile = resolve_profile(profile_name, set())
+    return (profile_name, profile) if isinstance(profile, dict) else None
+
+
 def parse_hex_bytes(value: object) -> bytes:
     if isinstance(value, list):
         return bytes(int(item) & 0xFF for item in value)
@@ -1191,12 +1268,7 @@ def apply_accessory_override(record: bytearray, card: dict, overrides: dict[str,
     if not override:
         return []
     writes: list[str] = []
-    byte_fields = [
-        ("shoe_packed", 0x110, 4),
-        ("sock_length_home", 0x0FD, 1),
-        ("sock_length_away", 0x126, 1),
-    ]
-    for name, offset, size in byte_fields:
+    for offset, size, name in ACCESSORY_FIELD_RANGES:
         if name not in override:
             continue
         raw = parse_hex_bytes(override.get(name))
@@ -1598,6 +1670,7 @@ def mapped_player_fields(record: bytes | bytearray, myteam) -> dict:
         "height_inches_normal": height,
         "weight_lbs": weight,
         "jersey_number": jersey,
+        "play_initiator": myteam.get_play_initiator(record) if hasattr(myteam, "get_play_initiator") else None,
         "signature_digest": hashlib.sha1(bytes(record[0x3C0:0x419])).hexdigest()[:12],
         "hidden_display_named_fields": hidden_display_named_fields(record),
     }
@@ -2224,6 +2297,64 @@ def apply_myteam_exclusive_source_override(
     return applied
 
 
+def apply_card_gameplay_override(target: bytearray, card: dict, overrides: dict, myteam) -> dict:
+    resolved = card_gameplay_profile(card, overrides)
+    if not resolved:
+        return {}
+    profile_name, profile = resolved
+    applied: dict[str, object] = {
+        "profile": profile_name,
+        "source_player": profile.get("player_name", ""),
+        "source_roster_index": profile.get("source_roster_index", ""),
+    }
+    signature_fields: list[str] = []
+    signature_bytes = profile.get("signature_bytes")
+    if isinstance(signature_bytes, dict):
+        for offset, size, label in VERIFIED_SIGNATURE_FIELD_RANGES:
+            try:
+                raw = bytes.fromhex(str(signature_bytes.get(label) or ""))
+            except ValueError:
+                continue
+            stop = offset + size
+            if len(raw) == size and 0 <= offset < stop <= len(target):
+                target[offset:stop] = raw
+                signature_fields.append(f"{label}@0x{offset:X}-0x{stop - 1:X}")
+    if signature_fields:
+        applied["signature_fields"] = signature_fields
+
+    tendency_fields: list[str] = []
+    tendencies = profile.get("tendencies")
+    if isinstance(tendencies, dict):
+        for field, value in tendencies.items():
+            try:
+                if myteam.set_tendency(target, str(field), int(value)):
+                    tendency_fields.append(str(field))
+            except (TypeError, ValueError):
+                continue
+    if tendency_fields:
+        applied["tendency_fields"] = tendency_fields
+
+    release_timing_bits = profile.get("release_timing_bits")
+    try:
+        if isinstance(release_timing_bits, str):
+            release_timing_bits = int(release_timing_bits, 0)
+        else:
+            release_timing_bits = int(release_timing_bits)
+    except (TypeError, ValueError):
+        release_timing_bits = None
+    if release_timing_bits in {RELEASE_TIMING_NORMAL, RELEASE_TIMING_QUICK, RELEASE_TIMING_SLOW}:
+        target[RELEASE_TIMING_OFFSET] = (
+            (int(target[RELEASE_TIMING_OFFSET]) & ~RELEASE_TIMING_MASK)
+            | int(release_timing_bits)
+        )
+        applied["release_timing"] = {
+            RELEASE_TIMING_NORMAL: "normal",
+            RELEASE_TIMING_QUICK: "quick",
+            RELEASE_TIMING_SLOW: "slow",
+        }[release_timing_bits]
+    return applied
+
+
 def myteam_exclusive_appearance_float_writes(card: dict, overrides: dict[str, dict], myteam=None) -> list[dict]:
     override = overrides.get(norm_name(str(card.get("name") or "")))
     if not override or override.get("height_inches") is None:
@@ -2491,6 +2622,8 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
         handedness_overrides = load_handedness_overrides()
         myteam_exclusive_source_overrides = load_myteam_exclusive_source_overrides()
         accessory_overrides = load_accessory_overrides()
+        play_initiator_overrides = load_play_initiator_overrides()
+        card_gameplay_overrides = load_card_gameplay_overrides()
         # Full saved player rows are intentionally unsafe as live-memory sources.
         # We still load the bank so MyTEAM-only players can borrow only stable
         # identity chunks (body/signatures/accessories) after a safe live row has
@@ -2710,6 +2843,10 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             )
             if exclusive_source_fields:
                 stats["myteam_exclusive_source_overrides"] = exclusive_source_fields
+            play_initiator_override = card_play_initiator_override(card, play_initiator_overrides)
+            if play_initiator_override is not None and hasattr(myteam, "set_play_initiator"):
+                myteam.set_play_initiator(edited, play_initiator_override)
+                stats["final_play_initiator"] = play_initiator_override
             # A card-specific number is authoritative over a generic player
             # source row (for example, the 96 OVR Bob Cousy Diamond uses #14).
             if jersey_override is not None and hasattr(myteam, "set_jersey_number"):
@@ -2721,6 +2858,14 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             release_timing_write = apply_release_timing_from_clean_source(edited, card, clean_source)
             if release_timing_write:
                 stats["release_timing_field_written"] = release_timing_write
+            card_gameplay_override_fields = apply_card_gameplay_override(
+                edited,
+                card,
+                card_gameplay_overrides,
+                myteam,
+            )
+            if card_gameplay_override_fields:
+                stats["card_gameplay_override"] = card_gameplay_override_fields
             hidden_display_fields = apply_named_hidden_display_fields(edited, card, myteam)
             if hidden_display_fields:
                 stats["hidden_display_named_fields_written"] = hidden_display_fields
@@ -2780,6 +2925,7 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             copied_ranges.extend(stats.get("signature_fields") or [])
             copied_ranges.extend(stats.get("clean_source_signature_fields") or [])
             copied_ranges.extend(stats.get("saved_signature_fields") or [])
+            copied_ranges.extend((stats.get("card_gameplay_override") or {}).get("signature_fields") or [])
             stats["safe_row_injection"] = True
             stats["debug_report"] = injection_debug_report(
                 card,
@@ -2823,6 +2969,8 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 "face_id_override": face_id_override or "",
                 "jersey_number_override": jersey_override if jersey_override is not None else "",
                 "jersey_number_override_source": jersey_override_source,
+                "play_initiator_override": play_initiator_override if play_initiator_override is not None else "",
+                "card_gameplay_profile": card_gameplay_override_fields.get("profile", ""),
                 "write_stats": stats,
             })
         if not changes:

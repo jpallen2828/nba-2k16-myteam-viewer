@@ -2,7 +2,8 @@
   "notes": [
     "Explicit safe row-byte accessory overrides captured from fresh historic Kareem Abdul-Jabbar on 2026-07-06.",
     "These fields are applied by player display name during live injection after normal identity/source copies.",
-    "shoe_packed writes player-row offsets 0x110-0x113; sock_length_home writes 0x0FD; sock_length_away writes 0x126."
+    "Overrides use the named safe accessory ranges in server.py, including shoes, socks, headbands, packed gear, and mouthpieces.",
+    "Ron Artest's deterministic gear bytes were copied from the clean Roster0010 Metta World Peace row at slot 209."
   ],
   "players": {
     "George Mikan": {
@@ -34,6 +35,14 @@
       "shoe_packed": "95 41 65 40",
       "sock_length_home": "82",
       "sock_length_away": "FD"
+    },
+    "Ron Artest": {
+      "sock_length_home": "00",
+      "shoe_packed": "1C 05 47 11",
+      "headband_hidden": "00",
+      "sock_length_away": "27",
+      "gear_accessory_packed": "00 44 A1 50 50 50 55 50 50 50 50 50 50 50 50 50",
+      "mouthpiece_hidden": "06"
     }
   }
 }
