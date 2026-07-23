@@ -1,0 +1,10 @@
+{
+  "notes": {
+    "10149/vince-carter": "Use the clean 1999-00 Toronto Raptors Vince Carter row for face, portrait, signatures, appearance, and accessories.",
+    "9454/vince-carter": "Use the clean 1999-00 Toronto Raptors Vince Carter row for face, portrait, signatures, appearance, and accessories."
+  },
+  "overrides": {
+    "10149/vince-carter": 1240,
+    "9454/vince-carter": 1240
+  }
+}

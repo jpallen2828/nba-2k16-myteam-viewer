@@ -425,6 +425,8 @@ APPEARANCE_POINTER_BASE_OFFSET = 0x00
 APPEARANCE_HEIGHT_CM_OFFSET = 0x00
 APPEARANCE_WINGSPAN_CM_OFFSET = 0x04
 SELECTED_PLAYER_POINTER_RVA = 0x024CDD88
+PLAY_INITIATOR_OFFSET = 0x13A
+PLAY_INITIATOR_MASK = 0x04
 HIDDEN_DISPLAY_FIELDS = [
     {"name": "display_height_inches", "offset": 0x100, "size": 4, "type": "float"},
 ]
@@ -853,6 +855,19 @@ def set_positions(record: bytearray, primary: str | None, secondary: str | None 
     if secondary_code == primary_code:
         secondary_code = 5
     record[POSITION_BYTE_OFFSET] = primary_code + (secondary_code << 3)
+
+
+def get_play_initiator(record: bytes | bytearray) -> bool:
+    return len(record) > PLAY_INITIATOR_OFFSET and bool(record[PLAY_INITIATOR_OFFSET] & PLAY_INITIATOR_MASK)
+
+
+def set_play_initiator(record: bytearray, enabled: bool) -> None:
+    if len(record) <= PLAY_INITIATOR_OFFSET:
+        return
+    if enabled:
+        record[PLAY_INITIATOR_OFFSET] |= PLAY_INITIATOR_MASK
+    else:
+        record[PLAY_INITIATOR_OFFSET] &= ~PLAY_INITIATOR_MASK
 
 
 IDENTITY_ID_FIELDS = {
