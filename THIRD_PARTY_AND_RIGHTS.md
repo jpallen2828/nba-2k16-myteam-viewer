@@ -6,4 +6,4 @@ The project code is covered by the license included in this repository. That lic
 
 Some releases may reference or display archived basketball card data, player names, team names, images, or other third-party material. Those materials remain the property of their respective rights holders.
 
-The app requires a user's own local copy of NBA 2K16. It does not include or link to the game executable, game DLLs, game archive files, DRM-bypass files, original roster saves, or files copied from another user's installation.
+The app requires a user's own local copy of NBA 2K16. It does not include or link to the game executable, game DLLs, game archive files, DRM-bypass files, original 2K roster saves, or files copied from another user's installation. The release includes one custom compatibility roster created for the viewer's expanded college-team injection feature.

@@ -19,7 +19,7 @@ const elements = {
   customModal: $("#customModal"), customSelectedGrid: $("#customSelectedGrid"), customPickerGrid: $("#customPickerGrid"),
   customCount: $("#customCount"), customSearch: $("#customSearch"), customTier: $("#customTierFilter"), customPosition: $("#customPositionFilter"), customTeam: $("#customTeamFilter"),
   injectionModal: $("#injectionModal"), rosterSelect: $("#rosterSelect"), rosterHint: $("#rosterHint"),
-  injectionTeamGrid: $("#injectionTeamGrid"), injectionTeamHeading: $("#injectionTeamHeading"), toggleHistoricTeams: $("#toggleHistoricTeams"), injectionSummary: $("#injectionSummary"), confirmInjection: $("#confirmInjection"),
+  injectionTeamGrid: $("#injectionTeamGrid"), injectionTeamHeading: $("#injectionTeamHeading"), toggleHistoricTeams: $("#toggleHistoricTeams"), toggleCollegeTeams: $("#toggleCollegeTeams"), injectionSummary: $("#injectionSummary"), confirmInjection: $("#confirmInjection"),
   verifyLoadedRoster: $("#verifyLoadedRoster"), resetRosterTracking: $("#resetRosterTracking"), confirmLoadedRoster: $("#confirmLoadedRoster"), loadedRosterStatus: $("#loadedRosterStatus"),
   manualRosterDir: $("#manualRosterDir"), saveRosterDir: $("#saveRosterDir"), manualRosterDirStatus: $("#manualRosterDirStatus"),
   unlockTeamModal: $("#unlockTeamModal"), confirmTeamUnlock: $("#confirmTeamUnlock"),
@@ -1008,12 +1008,31 @@ function renderRosterSelect() {
   setLoadedRosterStatus(null);
 }
 function renderInjectionTeams() {
-  const historic = state.injectionTeamMode === "historic";
-  const teams = historic ? state.injectionState?.classicTeams || [] : state.injectionState?.teams || [];
+  const mode = state.injectionTeamMode;
+  const teams = mode === "historic"
+    ? state.injectionState?.classicTeams || []
+    : mode === "college"
+      ? state.injectionState?.collegeTeams || []
+      : state.injectionState?.teams || [];
   const used = usedTeamsForRoster(state.injectionRosterPath);
   if (state.injectionTeam && !teams.includes(state.injectionTeam)) state.injectionTeam = "";
-  if (elements.injectionTeamHeading) elements.injectionTeamHeading.textContent = historic ? "2. Choose an NBA Classic team" : "2. Choose an NBA team";
-  if (elements.toggleHistoricTeams) elements.toggleHistoricTeams.textContent = historic ? "Switch to NBA teams" : "Switch to historic teams";
+  if (elements.injectionTeamHeading) {
+    elements.injectionTeamHeading.textContent = mode === "historic"
+      ? "2. Choose an NBA Classic team"
+      : mode === "college"
+        ? "2. Choose a compatible college team"
+        : "2. Choose an NBA team";
+  }
+  const alternatives = mode === "nba"
+    ? [["historic", "Historic teams"], ["college", "College teams"]]
+    : mode === "historic"
+      ? [["nba", "NBA teams"], ["college", "College teams"]]
+      : [["nba", "NBA teams"], ["historic", "Historic teams"]];
+  [elements.toggleHistoricTeams, elements.toggleCollegeTeams].forEach((button,index) => {
+    if (!button) return;
+    button.dataset.injectionTeamMode = alternatives[index][0];
+    button.textContent = alternatives[index][1];
+  });
   elements.injectionTeamGrid.innerHTML = teams.map(team => {
     const previouslyInjected = used.has(team);
     return `<button class="team-pick${state.injectionTeam === team ? " selected" : ""}${previouslyInjected ? " previously-injected" : ""}" data-injection-team="${escapeHtml(team)}" ${previouslyInjected ? `title="Already injected on this roster; selecting it will overwrite it"` : ""}>${escapeHtml(team)}</button>`;
@@ -1033,7 +1052,12 @@ function renderInjectionSummary() {
     return;
   }
   if (!state.injectionTeam) {
-    elements.injectionSummary.innerHTML = `<strong>${escapeHtml(roster.name)}</strong> selected. Choose ${state.injectionTeamMode === "historic" ? "an NBA Classic team" : "an NBA team"}.`;
+    const destinationLabel = state.injectionTeamMode === "historic"
+      ? "an NBA Classic team"
+      : state.injectionTeamMode === "college"
+        ? "a compatible college team"
+        : "an NBA team";
+    elements.injectionSummary.innerHTML = `<strong>${escapeHtml(roster.name)}</strong> selected. Choose ${destinationLabel}.`;
     return;
   }
   elements.injectionSummary.innerHTML = `Ready to inject <strong>${players.length} players</strong> into <strong>${escapeHtml(state.injectionTeam)}</strong> on <strong>${escapeHtml(roster.name)}</strong>. Keep NBA 2K16 open with that roster loaded, then save in-game after it succeeds.`;
@@ -1511,12 +1535,16 @@ elements.rosterSelect.addEventListener("change", () => { state.injectionRosterPa
 elements.verifyLoadedRoster.addEventListener("click", verifyLoadedRoster);
 elements.resetRosterTracking.addEventListener("click", resetSelectedRosterTracking);
 elements.confirmLoadedRoster.addEventListener("click", confirmLoadedRosterOpen);
-if (elements.toggleHistoricTeams) elements.toggleHistoricTeams.addEventListener("click", () => {
-  state.injectionTeamMode = state.injectionTeamMode === "historic" ? "nba" : "historic";
+function selectInjectionTeamMode(event) {
+  const mode = event.currentTarget?.dataset?.injectionTeamMode;
+  if (!["nba", "historic", "college"].includes(mode)) return;
+  state.injectionTeamMode = mode;
   state.injectionTeam = "";
   renderInjectionTeams();
   renderInjectionSummary();
-});
+}
+if (elements.toggleHistoricTeams) elements.toggleHistoricTeams.addEventListener("click", selectInjectionTeamMode);
+if (elements.toggleCollegeTeams) elements.toggleCollegeTeams.addEventListener("click", selectInjectionTeamMode);
 elements.injectionTeamGrid.addEventListener("click", event => {
   const team = event.target.closest("[data-injection-team]");
   if (!team) return;
