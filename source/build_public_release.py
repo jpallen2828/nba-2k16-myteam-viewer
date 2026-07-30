@@ -19,6 +19,7 @@ BUILD = PUBLIC_ROOT / "build"
 DIST = PUBLIC_ROOT / "dist"
 RELEASE = PUBLIC_ROOT / "release"
 APP_NAME = "NBA 2K16 MyTEAM Viewer"
+COMPATIBILITY_ROSTER_NAME = "Myteam Compatibility roster"
 
 
 def add_data(path: Path, destination: str) -> str:
@@ -39,6 +40,11 @@ def make_icon() -> Path:
 
 def main() -> int:
     icon = make_icon()
+    compatibility_roster = PUBLIC_ROOT / COMPATIBILITY_ROSTER_NAME
+    if not compatibility_roster.is_file():
+        raise FileNotFoundError(
+            f"Required release file is missing: {compatibility_roster}"
+        )
     for path in (BUILD, DIST, RELEASE):
         if path.exists():
             shutil.rmtree(path)
@@ -70,7 +76,8 @@ def main() -> int:
 
     shutil.copy2(DIST / f"{APP_NAME}.exe", RELEASE / f"{APP_NAME}.exe")
     shutil.copy2(DIST / "Diagnose NBA 2K16 Install.exe", RELEASE / "Diagnose NBA 2K16 Install.exe")
-    for name in ("README.md", "GAME_FILES_NOT_INCLUDED.md", "THIRD_PARTY_AND_RIGHTS.md", "LICENSE", "requirements.txt"):
+    shutil.copy2(compatibility_roster, RELEASE / COMPATIBILITY_ROSTER_NAME)
+    for name in ("README.md", "RELEASE_NOTES.md", "GAME_FILES_NOT_INCLUDED.md", "THIRD_PARTY_AND_RIGHTS.md", "LICENSE", "requirements.txt"):
         shutil.copy2(PUBLIC_ROOT / name, RELEASE / name)
 
     archive = PUBLIC_ROOT / f"{APP_NAME}.zip"

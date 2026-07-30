@@ -117,6 +117,73 @@ CLASSIC_TEAMS = [
     "'12-'13 Miami Heat",
 ]
 
+COLLEGE_TEAMS = [
+    "Kansas Jayhawks",
+    "Georgetown Hoyas",
+    "Arizona Wildcats",
+    "Louisville Cardinals",
+    "UCLA Bruins",
+    "Connecticut Huskies",
+    "Texas Longhorns",
+    "Michigan Wolverines",
+    "Villanova Wildcats",
+    "Wisconsin Badgers",
+]
+
+# Compatibility fingerprint for the expanded hidden-college roster captured on
+# 2026-07-29. TEAMDATA begins 0x2C6268 bytes after the player array on the
+# supported executable, and each team record is 0x6E8 bytes. Player pointers,
+# team labels, internal IDs, and counts survive player-row injections, so they
+# remain safe validation anchors after users inject into the roster repeatedly.
+COLLEGE_TEAMDATA_RELATIVE_OFFSET = 0x2C6268
+COLLEGE_TEAMDATA_STRIDE = 0x6E8
+COLLEGE_TEAMDATA_NICKNAME_OFFSET = 0x15C
+COLLEGE_TEAMDATA_CITY_OFFSET = 0x18E
+COLLEGE_TEAMDATA_INTERNAL_ID_OFFSET = 0x2F8
+COLLEGE_TEAMDATA_PLAYER_COUNT_OFFSET = 0x301
+COLLEGE_TEAM_LAYOUTS = {
+    "Kansas Jayhawks": {
+        "team_index": 0x40, "internal_id": 0x262, "city": "Kansas", "nickname": "Jayhawks",
+        "slots": [1468, 1469, 1470, 1471, 1472, 1473, 1474, 1475, 1476, 1477, 1478, 1479, 2029, 2172, 2158],
+    },
+    "Georgetown Hoyas": {
+        "team_index": 0x41, "internal_id": 0x263, "city": "Georgetown", "nickname": "Hoyas",
+        "slots": [1480, 1481, 1482, 1483, 1484, 1485, 1486, 1487, 1488, 1489, 1490, 1491, 2142, 2161, 2168],
+    },
+    "Arizona Wildcats": {
+        "team_index": 0x42, "internal_id": 0x264, "city": "Arizona", "nickname": "Wildcats",
+        "slots": [1492, 1493, 1494, 1495, 1496, 1497, 1498, 1499, 1500, 1501, 1502, 1503, 2154, 2032, 2109],
+    },
+    "Louisville Cardinals": {
+        "team_index": 0x43, "internal_id": 0x265, "city": "Louisville", "nickname": "Cardinals",
+        "slots": [1504, 1505, 2021, 1508, 1509, 1507, 1506, 1514, 1515, 1511, 1513, 1512, 1510, 1516],
+    },
+    "UCLA Bruins": {
+        "team_index": 0x44, "internal_id": 0x266, "city": "UCLA", "nickname": "Bruins",
+        "slots": [1517, 1518, 1519, 1520, 1521, 1522, 1523, 1524, 1525, 1526, 1527, 1528, 2150, 2164, 2149],
+    },
+    "Connecticut Huskies": {
+        "team_index": 0x45, "internal_id": 0x267, "city": "Connecticut", "nickname": "Huskies",
+        "slots": [1529, 1530, 1531, 1532, 1533, 1534, 1535, 1536, 1537, 1538, 1539, 1540, 2099, 2117, 2153],
+    },
+    "Texas Longhorns": {
+        "team_index": 0x46, "internal_id": 0x268, "city": "Texas", "nickname": "Longhorns",
+        "slots": [1541, 1542, 1543, 1544, 1545, 1546, 1547, 1548, 1549, 1550, 1551, 1552, 2135, 2087, 2163],
+    },
+    "Michigan Wolverines": {
+        "team_index": 0x47, "internal_id": 0x269, "city": "Michigan", "nickname": "Wolverines",
+        "slots": [1553, 1554, 1555, 1556, 1557, 1558, 1559, 1560, 1561, 1562, 1563, 1564, 2043, 2125, 2105],
+    },
+    "Villanova Wildcats": {
+        "team_index": 0x48, "internal_id": 0x26A, "city": "Villanova", "nickname": "Wildcats",
+        "slots": [1565, 1566, 1567, 1568, 1569, 1570, 1571, 1572, 1573, 1574, 1575, 1576, 2103, 2050, 2053],
+    },
+    "Wisconsin Badgers": {
+        "team_index": 0x49, "internal_id": 0x26B, "city": "Wisconsin", "nickname": "Badgers",
+        "slots": [1577, 1578, 1579, 1580, 1581, 1582, 1583, 1584, 1585, 1586, 1587, 1588, 2131, 2170, 2169],
+    },
+}
+
 ACTUAL_TEAM_SLOTS = {
     "Philadelphia 76ers": (0, 15),
     "Milwaukee Bucks": (15, 15),
@@ -196,7 +263,7 @@ ACTUAL_TEAM_SLOTS = {
     "'12-'13 Miami Heat": (1400, 13),
 }
 
-INJECTION_TEAMS = NBA_TEAMS + CLASSIC_TEAMS
+INJECTION_TEAMS = NBA_TEAMS + CLASSIC_TEAMS + COLLEGE_TEAMS
 
 # Classic-team row positions are not stable across NBA 2K16 executable builds.
 # Patch 0 stores its classic rosters in a compact 13-player layout beginning at
@@ -374,6 +441,91 @@ def resolve_live_team_slots(team: str, live_players: list[dict]) -> tuple[int, i
         "matched_names": best_score,
         "configured_start": configured_start,
     }
+
+def teamdata_text(record: bytes, offset: int, size: int = 48) -> str:
+    value = record[offset:offset + size].decode("utf-16-le", errors="ignore")
+    return value.split("\0", 1)[0].strip()
+
+
+def validate_college_team_layout(
+    team: str,
+    live_data: bytes,
+    array_base: int,
+    player_stride: int,
+) -> tuple[list[int], dict]:
+    """Validate the expanded college roster without relying on player names."""
+    layout = COLLEGE_TEAM_LAYOUTS.get(team)
+    if not layout:
+        raise ValueError(f"{team} is not a configured college team.")
+    expected_slots = [int(slot) for slot in layout["slots"]]
+    record_offset = (
+        COLLEGE_TEAMDATA_RELATIVE_OFFSET
+        + int(layout["team_index"]) * COLLEGE_TEAMDATA_STRIDE
+    )
+    record = live_data[record_offset:record_offset + COLLEGE_TEAMDATA_STRIDE]
+    if len(record) != COLLEGE_TEAMDATA_STRIDE:
+        raise RuntimeError(
+            "The loaded game does not expose the expected hidden-college TEAMDATA layout. "
+            "No players were written."
+        )
+    city = teamdata_text(record, COLLEGE_TEAMDATA_CITY_OFFSET)
+    nickname = teamdata_text(record, COLLEGE_TEAMDATA_NICKNAME_OFFSET)
+    internal_id = int.from_bytes(
+        record[
+            COLLEGE_TEAMDATA_INTERNAL_ID_OFFSET:
+            COLLEGE_TEAMDATA_INTERNAL_ID_OFFSET + 2
+        ],
+        "little",
+    )
+    player_count = int(record[COLLEGE_TEAMDATA_PLAYER_COUNT_OFFSET])
+    actual_slots: list[int] = []
+    invalid_pointers: list[str] = []
+    for index in range(player_count):
+        pointer = int.from_bytes(record[index * 8:index * 8 + 8], "little")
+        delta = pointer - array_base
+        if pointer < array_base or delta % player_stride:
+            invalid_pointers.append(f"entry {index + 1}=0x{pointer:X}")
+            continue
+        actual_slots.append(delta // player_stride)
+    failures = []
+    if norm_name(city) != norm_name(str(layout["city"])):
+        failures.append(f"city was {city or 'blank'}")
+    if norm_name(nickname) != norm_name(str(layout["nickname"])):
+        failures.append(f"nickname was {nickname or 'blank'}")
+    if internal_id != int(layout["internal_id"]):
+        failures.append(
+            f"internal ID was 0x{internal_id:X}, expected 0x{int(layout['internal_id']):X}"
+        )
+    if player_count != len(expected_slots):
+        failures.append(
+            f"player count was {player_count}, expected {len(expected_slots)}"
+        )
+    if invalid_pointers:
+        failures.append("invalid player pointers: " + ", ".join(invalid_pointers))
+    if actual_slots != expected_slots:
+        failures.append(
+            f"player slot topology was {actual_slots}, expected {expected_slots}"
+        )
+    if failures:
+        raise RuntimeError(
+            f"{team} does not match the supported expanded hidden-college roster "
+            f"({'; '.join(failures)}). No players were written. Load the compatible "
+            "roster, confirm the college teams are visible, and try again."
+        )
+    return expected_slots, {
+        "source": "validated-expanded-hidden-college-teamdata",
+        "team_index": f"0x{int(layout['team_index']):X}",
+        "internal_id": f"0x{internal_id:X}",
+        "teamdata_record_offset": f"player_array+0x{record_offset:X}",
+        "city": city,
+        "nickname": nickname,
+        "declared_player_count": player_count,
+        "slots": expected_slots,
+        # The signature remains valid after player names and attributes change.
+        "name_independent": True,
+        "repeat_injection_safe": True,
+    }
+
 
 POSITION_TEMPLATE = {
     "PG": 417,  # Stephen Curry
@@ -1948,6 +2100,8 @@ def load_live_tools():
 
 
 def team_slot_contains(team: str, slot: int) -> bool:
+    if team in COLLEGE_TEAM_LAYOUTS:
+        return slot in COLLEGE_TEAM_LAYOUTS[team]["slots"]
     if team not in ACTUAL_TEAM_SLOTS:
         return False
     start, count = ACTUAL_TEAM_SLOTS[team]
@@ -2544,18 +2698,33 @@ def verify_loaded_roster(roster_path: Path, tracking: dict | None = None) -> dic
         matched = 0
         details = []
         for team, info in applied.items():
-            if team not in ACTUAL_TEAM_SLOTS:
+            if team not in ACTUAL_TEAM_SLOTS and team not in COLLEGE_TEAM_LAYOUTS:
                 continue
-            team_start, _team_count = ACTUAL_TEAM_SLOTS[team]
+            fallback_slots = (
+                [int(slot) for slot in COLLEGE_TEAM_LAYOUTS[team]["slots"]]
+                if team in COLLEGE_TEAM_LAYOUTS
+                else list(
+                    range(
+                        ACTUAL_TEAM_SLOTS[team][0],
+                        ACTUAL_TEAM_SLOTS[team][0] + ACTUAL_TEAM_SLOTS[team][1],
+                    )
+                )
+            )
             team_checked = 0
             team_matched = 0
             for offset, player in enumerate(info.get("players", [])[:15]):
                 expected = norm_name(str(player.get("name") or ""))
                 if not expected:
                     continue
+                try:
+                    slot = int(player.get("rosterIndex"))
+                except (TypeError, ValueError):
+                    if offset >= len(fallback_slots):
+                        continue
+                    slot = fallback_slots[offset]
                 checked += 1
                 team_checked += 1
-                if names_by_slot.get(team_start + offset) == expected:
+                if names_by_slot.get(slot) == expected:
                     matched += 1
                     team_matched += 1
             if team_checked:
@@ -2609,7 +2778,18 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
         live_players = roster.parse_players(live_data, roster.DEFAULT_SLOTS)
         module_base = array_base - roster.PLAYER_ARRAY_RVA
         executable_sha256 = roster.sha256(exe_path)
-        team_start, team_count, team_resolution = resolve_live_team_slots(team, live_players)
+        if team in COLLEGE_TEAM_LAYOUTS:
+            team_slots, team_resolution = validate_college_team_layout(
+                team,
+                live_data,
+                array_base,
+                roster.PLAYER_STRIDE,
+            )
+            team_start = team_slots[0]
+            team_count = len(team_slots)
+        else:
+            team_start, team_count, team_resolution = resolve_live_team_slots(team, live_players)
+            team_slots = list(range(team_start, team_start + team_count))
         if len(players) > team_count:
             raise ValueError(f"{team} only has {team_count} visible roster slots in this save.")
         players_by_name: dict[str, list[int]] = {}
@@ -2644,7 +2824,7 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
         validation_failures: list[str] = []
         portrait_resolution_log: list[dict] = []
         for offset, item in enumerate(players):
-            destination = team_start + offset
+            destination = team_slots[offset]
             card = item["card"]
             full_card = CARD_MAP.get((str(card.get("id")), str(card.get("slug") or ""))) or CARD_ID_MAP.get(str(card.get("id")))
             if full_card:
@@ -3234,6 +3414,7 @@ class ViewerHandler(SimpleHTTPRequestHandler):
                 "ok": True,
                 "teams": NBA_TEAMS,
                 "classicTeams": CLASSIC_TEAMS,
+                "collegeTeams": COLLEGE_TEAMS,
                 "rosters": rosters,
                 "tracking": tracking,
                 "workspace": str(injection_workspace()),
@@ -3553,7 +3734,7 @@ class ViewerHandler(SimpleHTTPRequestHandler):
                 raise ValueError("Choose a valid NBA 2K16 roster file.")
             team = str(payload.get("team") or "")
             if team not in INJECTION_TEAMS:
-                raise ValueError("Choose a valid NBA or classic team.")
+                raise ValueError("Choose a valid NBA, classic, or college team.")
             kind_key = str(payload.get("kind") or "lineup")
             players = ordered_lineup_players(kind_key, validate_lineup_payload(payload))
             tracking = clean_injection_tracking(load_injection_tracking())
@@ -3630,8 +3811,9 @@ class ViewerHandler(SimpleHTTPRequestHandler):
                         "tier": item["card"].get("tier"),
                         "slot": item["slot"],
                         "position": item["position"],
+                        "rosterIndex": change["roster_index"],
                     }
-                    for item in players
+                    for item, change in zip(players, changes)
                 ],
             }
             if overwrite_unlocked and previous_team_record:

@@ -27,7 +27,7 @@ Click any screenshot to view it at full size.
 - Windows 10 or newer.
 - NBA 2K16 must be running with the intended roster loaded before using roster injection.
 - Must use a Patch 0 or Patch 10 version of the game.
-- This project does not include, install, replace, or download NBA 2K16 executables, DLLs, archive containers, roster saves, or other game files.
+- This project does not include, install, replace, or download NBA 2K16 executables, DLLs, archive containers, or other core game files. The release ZIP includes one custom compatibility roster specifically for the college-team injection feature.
 
 ## Using the App
 
@@ -39,6 +39,23 @@ Click any screenshot to view it at full size.
 6. If the app cannot automatically verify the loaded roster, only use the manual confirmation button when that exact roster is already open in NBA 2K16.
 7. On the first injection for a newly detected NBA 2K16 executable build, the viewer may take a short moment to create a local compatibility profile. Later injections with that same build use the saved profile and should be much faster.
 8. In NBA 2K16, rebuild the rotations for the team you overwrote, then save the roster. This is recommended for the best in-game experience.
+
+College-team injection is available only for the compatible expanded hidden-team roster. The app does not unlock college teams. It verifies the loaded roster's stable TEAMDATA layout before every college write, and prior app injections do not invalidate that check.
+
+### Installing the College-Team Compatibility Roster
+
+The release ZIP includes a file named `Myteam Compatibility roster`. To make it available in NBA 2K16:
+
+1. Open NBA 2K16 and create a new roster.
+2. Close NBA 2K16.
+3. Find your NBA 2K16 roster directory. It is usually inside a path ending in `OfflineStorage\User\remote`.
+4. Delete the newest roster file you just created. Make sure you identify the correct new file before deleting it.
+5. Copy `Myteam Compatibility roster` from the application download into that directory.
+6. Rename the copied compatibility roster to exactly the filename you deleted, including capitalization and number—for example, `Roster0014`.
+7. Start NBA 2K16 and load that roster.
+8. Keep the compatibility roster open while using a college team as the injection destination.
+
+College injection automatically checks the live roster's team layout before writing. The check continues to work after earlier injections made by the application, so the same compatibility roster can be injected multiple times.
 
 If the app cannot detect the installation or roster folder, run `Diagnose NBA 2K16 Install.exe` and include the generated compatibility report when asking for support.
 

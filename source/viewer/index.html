@@ -167,9 +167,12 @@
         <section class="injection-card">
           <div class="injection-card-heading">
             <h3 id="injectionTeamHeading">2. Choose an NBA team</h3>
-            <button id="toggleHistoricTeams" class="secondary-button" type="button">Switch to historic teams</button>
+            <div class="injection-team-mode-actions">
+              <button id="toggleHistoricTeams" class="secondary-button" type="button">Historic teams</button>
+              <button id="toggleCollegeTeams" class="secondary-button" type="button">College teams</button>
+            </div>
           </div>
-          <p>Teams already prepared for this roster are dimmed; selecting one will overwrite that team again.</p>
+          <p>Teams already prepared for this roster are dimmed; selecting one will overwrite that team again. College destinations require the compatible expanded hidden-team roster and are validated from live TEAMDATA before every write.</p>
           <div id="injectionTeamGrid" class="injection-team-grid"></div>
         </section>
         <section class="injection-card injection-summary-card">

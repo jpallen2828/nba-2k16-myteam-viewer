@@ -854,7 +854,11 @@ def set_positions(record: bytearray, primary: str | None, secondary: str | None 
     primary_code = POSITION_CODES[primary_key]
     if secondary_code == primary_code:
         secondary_code = 5
-    record[POSITION_BYTE_OFFSET] = primary_code + (secondary_code << 3)
+    # Bits 6-7 are not position data. Hidden/generated roster players use them
+    # for roster state, so preserve the destination shell's flags.
+    record[POSITION_BYTE_OFFSET] = (
+        int(record[POSITION_BYTE_OFFSET]) & 0xC0
+    ) | primary_code | (secondary_code << 3)
 
 
 def get_play_initiator(record: bytes | bytearray) -> bool:
