@@ -4404,8 +4404,8 @@
                               "kind":  "official",
                               "contentType":  "image/png"
                           },
-    "358-steve-nash":  {
-                           "path":  "data/card-images/358-steve-nash.png",
+    "358-ben-gordon":  {
+                           "path":  "data/card-images/358-ben-gordon.png",
                            "kind":  "official",
                            "contentType":  "image/png"
                        },
@@ -5679,11 +5679,6 @@
                                "kind":  "official",
                                "contentType":  "image/png"
                            },
-    "4841-jonathan-simmons":  {
-                                  "path":  "data/card-images/4841-jonathan-simmons.png",
-                                  "kind":  "official",
-                                  "contentType":  "image/png"
-                              },
     "4841-jonathon-simmons":  {
                                   "path":  "data/card-images/4841-jonathon-simmons.png",
                                   "kind":  "official",

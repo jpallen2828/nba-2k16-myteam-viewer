@@ -22,7 +22,11 @@
 - Updated every Spencer Haywood card to use face and portrait ID `2886`.
 - Updated Sam Cassell's Minnesota Timberwolves and Boston Celtics cards to jersey number `19`.
 - Updated only Greg Anthony's Memphis Grizzlies card to jersey number `2`.
+- Corrected card `358` from Steve Nash to Ben Gordon, assigned it to `UNASSIGNED`, and set jersey number `7`.
+- Removed the duplicate bronze Jonathan Simmons card that used jersey number `0`; the separate jersey-`17` card remains available.
+- Updated the 2013 Patty Mills card to jersey number `8`.
+- Updated every Jeff Taylor card to jersey number `44`.
 
 ### Installation
 
-See the “Installing the College-Team Compatibility Roster” section in `README.md`.
+See the "Installing the College-Team Compatibility Roster" section in `README.md`.
