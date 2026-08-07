@@ -1,5 +1,13 @@
 # Release Notes
 
+## Card-art and card-metadata update - August 7, 2026
+
+- Added 24 exact card-art replacements for Dan Majerle, Cliff Robinson, Carlos Boozer, Allen Crabbe, Manu Ginobili, Jonas Valanciunas, Jalen Rose, Dwight Howard, Reggie Lewis, Otis Thorpe, Marcin Gortat, Jahlil Okafor, Eric Snow, Rolando Blackman, Tyreke Evans, Michael Finley, K.C. Jones, Chuck Person, Norman Powell, Mark Jackson, Josh Smith, Doug McDermott, Darius Miles, and Terry Cummings.
+- Corrected the 2016 83 OVR Dynamic Ratings Jonas Valanciunas and 2016 80 OVR Moments Jahlil Okafor years/editions.
+- Corrected the 2013 83 OVR Manu Ginobili card to Spurs Throwback Thursday.
+- Corrected the 2013 82 OVR Carlos Boozer card to Chicago Bulls Historic (`Bulls Franchise 1`).
+- The Chuck Person artwork visibly identifies the card as 1990 and is assigned to the 1990 81 OVR Pacers Historic entry despite the supplied filename beginning with `89`.
+
 ## Card-art additions - August 7, 2026
 
 - Added exact card artwork for 2016 Danny Green (84 OVR Playoffs), 1997 Damon Stoudamire (84 OVR Historic), 2013 Roy Hibbert (84 OVR Pacers Throwback Thursday), 1989 Kenny Smith (84 OVR Kings Historic), and 1989 Jack Sikma (84 OVR Bucks Historic).
