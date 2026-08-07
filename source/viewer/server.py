@@ -764,6 +764,17 @@ def _safe_custom_stem(card: dict) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]+", "-", raw).strip("-.") or "custom-card"
 
 
+def normalize_custom_player_name(value: object) -> str:
+    """Strip a Card Studio search-result suffix if it was saved as the name."""
+    text = str(value or "").strip()
+    match = re.fullmatch(
+        r"(.+?)\s+[—–]\s+(?:Current|\d{4})\s+[—–]\s+\d+\s+OVR\s+[—–]\s+.+",
+        text,
+        flags=re.IGNORECASE,
+    )
+    return match.group(1).strip() if match else text
+
+
 def load_custom_cards(include_disabled: bool = False) -> list[dict]:
     if not include_disabled and not custom_cards_enabled():
         return []
@@ -831,6 +842,9 @@ def import_custom_card_package(raw: bytes, original_name: str = "") -> dict:
         card["overall"] = max(25, min(99, int(card["overall"])))
     except (TypeError, ValueError) as exc:
         raise ValueError("Custom card ID and overall must be integers.") from exc
+    card["name"] = normalize_custom_player_name(card.get("name"))
+    if not card["name"]:
+        raise ValueError("Custom card player name cannot be blank.")
     card["custom"] = True
     stem = _safe_custom_stem(card)
     art_name = f"{stem}.png"

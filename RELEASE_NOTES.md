@@ -8,6 +8,7 @@
 - Custom cards remain ordered highest-to-lowest by OVR and appear under their authored Viewer theme.
 - Pink Diamond custom cards now share the Diamond draft pool for normal Diamond rolls and the final Diamond round.
 - Card Studio 0.9.0 now supplies searchable official-player presets plus Viewer-matched Theme and Collection dropdowns.
+- Custom-card import now strips an accidentally saved Card Studio search-result suffix from the player name while preserving all authored ratings and injection data.
 
 ## Card Studio Custom-Card Interchange
 
