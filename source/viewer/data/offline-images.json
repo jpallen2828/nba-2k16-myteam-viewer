@@ -720,9 +720,9 @@
                                     "contentType":  "image/png"
                                 },
     "10187-danny-green":  {
-                              "path":  "assets/photo-missing.svg",
-                              "kind":  "missing",
-                              "contentType":  "image/svg+xml"
+                              "path":  "data/card-images/10187-danny-green.png",
+                              "kind":  "official",
+                              "contentType":  "image/png"
                           },
     "10188-allen-crabbe":  {
                                "path":  "assets/photo-missing.svg",
@@ -8495,9 +8495,9 @@
                               "contentType":  "image/svg+xml"
                           },
     "9394-kenny-smith":  {
-                             "path":  "assets/photo-missing.svg",
-                             "kind":  "missing",
-                             "contentType":  "image/svg+xml"
+                             "path":  "data/card-images/9394-kenny-smith.png",
+                             "kind":  "official",
+                             "contentType":  "image/png"
                          },
     "9395-marcus-thornton":  {
                                  "path":  "data/card-images/9395-marcus-thornton.png",
@@ -9000,9 +9000,9 @@
                             "contentType":  "image/png"
                         },
     "9505-damon-stoudamire":  {
-                                  "path":  "assets/photo-missing.svg",
-                                  "kind":  "missing",
-                                  "contentType":  "image/svg+xml"
+                                  "path":  "data/card-images/9505-damon-stoudamire.png",
+                                  "kind":  "official",
+                                  "contentType":  "image/png"
                               },
     "9508-andrea-bargnani":  {
                                  "path":  "data/card-images/9508-andrea-bargnani.png",
@@ -10665,9 +10665,9 @@
                               "contentType":  "image/png"
                           },
     "9932-roy-hibbert":  {
-                             "path":  "assets/photo-missing.svg",
-                             "kind":  "missing",
-                             "contentType":  "image/svg+xml"
+                             "path":  "data/card-images/9932-roy-hibbert.png",
+                             "kind":  "official",
+                             "contentType":  "image/png"
                          },
     "9935-george-hill":  {
                              "path":  "assets/photo-missing.svg",

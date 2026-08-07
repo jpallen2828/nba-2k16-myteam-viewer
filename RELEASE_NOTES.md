@@ -1,5 +1,10 @@
 # Release Notes
 
+## Card-art additions - August 7, 2026
+
+- Added exact card artwork for 2016 Danny Green (84 OVR Playoffs), 1997 Damon Stoudamire (84 OVR Historic), 2013 Roy Hibbert (84 OVR Pacers Throwback Thursday), 1989 Kenny Smith (84 OVR Kings Historic), and 1989 Jack Sikma (84 OVR Bucks Historic).
+- Roy Hibbert artwork is assigned only to the previously corrected 2013 Pacers Throwback card (card ID `9932`).
+
 ## Reversible custom-card visibility and roster text fix - August 6, 2026
 
 - Added a **Manage custom cards** library where individual imported cards can be hidden and restored without deleting their package or artwork.
