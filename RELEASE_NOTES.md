@@ -104,3 +104,10 @@
 ### Installation
 
 See the "Installing the College-Team Compatibility Roster" section in `README.md`.
+# Ray custom roster capture (2026-08-07)
+
+- Added 29 bundled custom cards from the verified Hawks/Heat/Hornets live roster capture. Each card includes its exact scanned attributes, tendencies, badges, hot zones, signature animations, identity IDs, vitals, play-initiator state, body measurements, and gear/accessory bytes.
+- Replaced the 65 OVR 2001 Jerry Stackhouse with the scanned 88 OVR Gold version.
+- Replaced the Bronze 1990 Suns and 1994 Jazz Tom Chambers cards with the scanned 90 OVR Amethyst and 79 OVR Silver versions.
+- Bundled custom cards now travel with the portable release while retaining the existing custom-card enable, hide, and restore controls.
+- Verified captured gear, birth fields, college/from pointers, and linked appearance measurements can now be restored for both custom cards and exact official-card replacements.

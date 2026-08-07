@@ -595,6 +595,8 @@ def roster_display_name(value: str) -> str:
     def cap_piece(piece: str) -> str:
         if not piece:
             return piece
+        if piece != piece.upper() and any(char.isupper() for char in piece[1:]):
+            return piece
         if re.fullmatch(r"(?:[A-Za-z]\.)+", piece):
             return piece.upper()
         if piece.upper() in {"II", "III", "IV", "V"}:

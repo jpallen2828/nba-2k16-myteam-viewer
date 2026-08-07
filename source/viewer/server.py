@@ -782,6 +782,20 @@ def custom_card_root() -> Path:
     return root
 
 
+def bundled_custom_card_roots() -> list[Path]:
+    """Return read-only custom cards shipped with the Viewer release."""
+    return list(dict.fromkeys([
+        ROOT / "data" / "custom-cards",
+        output_root() / "data" / "custom-cards",
+    ]))
+
+
+def custom_card_search_roots() -> list[Path]:
+    # Local imports intentionally come last so a user's re-import can replace a
+    # bundled card with the same stable ID/slug without modifying the install.
+    return [*bundled_custom_card_roots(), custom_card_root()]
+
+
 def custom_cards_enabled() -> bool:
     return bool(load_settings().get("customCardsEnabled", True))
 
@@ -822,6 +836,8 @@ def roster_display_name(value: object) -> str:
 
     def capitalize_piece(piece: str) -> str:
         if not piece:
+            return piece
+        if piece != piece.upper() and any(char.isupper() for char in piece[1:]):
             return piece
         if re.fullmatch(r"(?:[A-Za-z]\.)+", piece):
             return piece.upper()
@@ -949,27 +965,32 @@ def load_custom_cards(include_disabled: bool = False, include_hidden: bool = Fal
         return []
     cards: list[dict] = []
     hidden_keys = hidden_custom_card_keys()
-    for manifest_path in sorted(custom_card_root().glob("*.json")):
-        try:
-            manifest = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
-            if not isinstance(manifest, dict):
-                continue
-            card = manifest.get("card")
-            if manifest.get("format") != CUSTOM_CARD_FORMAT or not isinstance(card, dict):
-                continue
-            art_name = str(manifest.get("storedArt") or f"{manifest_path.stem}.png")
-            if not (custom_card_root() / art_name).is_file():
-                continue
-            item = dict(card)
-            item["name"] = roster_display_name(item.get("name"))
-            item["custom"] = True
-            item["hidden"] = custom_card_key(item) in hidden_keys
-            item["customArtUrl"] = f"/custom-art/{item.get('id')}/{item.get('slug')}"
-            if item["hidden"] and not include_hidden:
-                continue
-            cards.append(item)
-        except (OSError, ValueError, json.JSONDecodeError):
+    resolved: dict[str, dict] = {}
+    for search_root in custom_card_search_roots():
+        if not search_root.is_dir():
             continue
+        for manifest_path in sorted(search_root.glob("*.json")):
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
+                if not isinstance(manifest, dict):
+                    continue
+                card = manifest.get("card")
+                if manifest.get("format") != CUSTOM_CARD_FORMAT or not isinstance(card, dict):
+                    continue
+                art_name = str(manifest.get("storedArt") or f"{manifest_path.stem}.png")
+                if not (search_root / art_name).is_file():
+                    continue
+                item = dict(card)
+                item["name"] = roster_display_name(item.get("name"))
+                item["custom"] = True
+                item["hidden"] = custom_card_key(item) in hidden_keys
+                item["customArtUrl"] = f"/custom-art/{item.get('id')}/{item.get('slug')}"
+                if item["hidden"] and not include_hidden:
+                    continue
+                resolved[custom_card_key(item)] = item
+            except (OSError, ValueError, json.JSONDecodeError):
+                continue
+    cards.extend(resolved.values())
     cards.sort(key=lambda card: (-int(card.get("overall") or 0), str(card.get("name") or "").casefold(), int(card.get("id") or 0)))
     return cards
 
@@ -2856,6 +2877,8 @@ CUSTOM_VITAL_BITS = {
     "injuryDurationDays2": (0x2D0, 0, 20), "forceNonStarter": (0x2D3, 1, 2),
     "playType1": (0x138, 0, 4), "playType2": (0x138, 4, 4),
     "playType3": (0x139, 0, 4), "playType4": (0x139, 4, 4),
+    "birthYear": (0x05E, 0, 12), "birthMonth": (0x05F, 4, 4),
+    "birthDay": (0x060, 0, 5),
 }
 
 CUSTOM_GEAR_OFFSETS = {
@@ -2882,7 +2905,7 @@ def write_packed_bits(target: bytearray, offset: int, bit_start: int, bit_length
 
 def apply_custom_player_data(target: bytearray, card: dict, *, include_signatures: bool = True, include_gear: bool = False) -> dict:
     custom = card.get("customPlayerData")
-    if not card.get("custom") or not isinstance(custom, dict):
+    if not isinstance(custom, dict):
         return {}
     applied: dict[str, object] = {}
     signatures = custom.get("signatures")
@@ -2926,6 +2949,22 @@ def apply_custom_player_data(target: bytearray, card: dict, *, include_signature
     if gear_fields:
         applied["gear_fields"] = gear_fields
     return applied
+
+
+def apply_verified_custom_from_pointer(target: bytearray, card: dict, module_base: int, executable_sha256: str) -> str:
+    """Restore a captured college/from pointer only on its verified game build."""
+    custom = card.get("customPlayerData")
+    if not isinstance(custom, dict):
+        return ""
+    expected_hash = str(custom.get("sourceExecutableSha256") or "").strip().casefold()
+    try:
+        pointer_rva = int(str(custom.get("fromPointerRva") or "0"), 0)
+    except (TypeError, ValueError):
+        return ""
+    if not expected_hash or expected_hash != str(executable_sha256 or "").strip().casefold() or pointer_rva <= 0:
+        return ""
+    struct.pack_into("<Q", target, 0x68, int(module_base) + pointer_rva)
+    return f"module+0x{pointer_rva:X}"
 
 
 def myteam_exclusive_appearance_float_writes(card: dict, overrides: dict[str, dict], myteam=None) -> list[dict]:
@@ -3345,7 +3384,7 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             same_player_quality_fields = myteam.apply_same_player_quality_fields(edited, source, card)
             custom_player_data = card.get("customPlayerData") if isinstance(card.get("customPlayerData"), dict) else {}
             face_id_override = card_face_override(card, face_overrides)
-            if card.get("custom") and custom_player_data:
+            if custom_player_data:
                 inherited_ids = custom_player_data.get("inheritedIdentityIds")
                 try:
                     face_id = int(custom_player_data.get("faceId") or card.get("faceId") or 0)
@@ -3374,7 +3413,7 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 roster.PLAYER_STRIDE,
                 myteam,
             )
-            if card.get("custom"):
+            if custom_player_data:
                 raw_jersey = custom_player_data.get("jerseyNumber", card.get("jerseyNumber"))
                 try:
                     jersey_override = normalize_jersey_number(raw_jersey)
@@ -3405,7 +3444,7 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 )
             handedness_write = {}
             handedness_override = handedness_overrides.get(card_clean_source_key(card), "") or handedness_overrides.get(name_key, "")
-            if card.get("custom") and custom_player_data:
+            if custom_player_data:
                 handedness_override = {
                     "dominant_hand": str(custom_player_data.get("dominantHand") or "Right"),
                     "dominant_dunk_hand": str(custom_player_data.get("dominantDunkHand") or "Right"),
@@ -3490,7 +3529,7 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             if exclusive_source_fields:
                 stats["myteam_exclusive_source_overrides"] = exclusive_source_fields
             play_initiator_override = card_play_initiator_override(card, play_initiator_overrides)
-            if card.get("custom") and "playInitiator" in custom_player_data:
+            if "playInitiator" in custom_player_data:
                 play_initiator_override = bool(custom_player_data.get("playInitiator"))
             if play_initiator_override is not None and hasattr(myteam, "set_play_initiator"):
                 myteam.set_play_initiator(edited, play_initiator_override)
@@ -3521,6 +3560,11 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 stats["custom_card_hot_zones_reapplied"] = custom_hot_zone_fields
                 if custom_hot_zone_unmatched:
                     stats["custom_card_hot_zones_unmatched"] = custom_hot_zone_unmatched
+            custom_from_pointer = apply_verified_custom_from_pointer(
+                edited, card, module_base, executable_sha256,
+            )
+            if custom_from_pointer:
+                stats["custom_card_from_pointer"] = custom_from_pointer
             hidden_display_fields = apply_named_hidden_display_fields(edited, card, myteam)
             if hidden_display_fields:
                 stats["hidden_display_named_fields_written"] = hidden_display_fields
@@ -3554,6 +3598,13 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             accessory_fields = apply_accessory_override(edited, card, accessory_overrides)
             if accessory_fields:
                 stats["accessory_overrides"] = accessory_fields
+            custom_data = card.get("customPlayerData") if isinstance(card.get("customPlayerData"), dict) else {}
+            if custom_data.get("gearCaptureVerified"):
+                verified_gear = apply_custom_player_data(
+                    edited, card, include_signatures=False, include_gear=True,
+                )
+                if verified_gear.get("gear_fields"):
+                    stats["verified_captured_gear"] = verified_gear["gear_fields"]
             if card.get("custom"):
                 # Card Studio cannot author trustworthy NBA 2K16 gear bytes.
                 # Always retain the identical player's clean/live source gear;
@@ -3588,6 +3639,20 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             # A verified MyTEAM-exclusive source profile is more specific than
             # generic card metadata and therefore owns the final linked height.
             appearance_writes.extend(myteam_exclusive_appearance_float_writes(card, myteam_exclusive_source_overrides, myteam))
+            captured_appearance = custom_player_data.get("appearance") if isinstance(custom_player_data, dict) else None
+            if isinstance(captured_appearance, dict):
+                for field, offset in (
+                    ("height_cm", myteam.APPEARANCE_HEIGHT_CM_OFFSET),
+                    ("wingspan_cm", myteam.APPEARANCE_WINGSPAN_CM_OFFSET),
+                ):
+                    try:
+                        appearance_writes.append({
+                            "name": f"verified_capture_{field}",
+                            "offset": offset,
+                            "value": float(captured_appearance[field]),
+                        })
+                    except (KeyError, TypeError, ValueError):
+                        pass
             appearance_byte_writes = []
             if hasattr(myteam, "appearance_byte_writes"):
                 jersey_value = myteam.get_jersey_number(edited) if hasattr(myteam, "get_jersey_number") else None
@@ -3963,7 +4028,10 @@ class ViewerHandler(SimpleHTTPRequestHandler):
                 self.send_error(HTTPStatus.NOT_FOUND)
                 return
             stem = _safe_custom_stem(card)
-            art_path = custom_card_root() / f"{stem}.png"
+            art_path = next(
+                (root / f"{stem}.png" for root in reversed(custom_card_search_roots()) if (root / f"{stem}.png").is_file()),
+                custom_card_root() / f"{stem}.png",
+            )
             if not art_path.is_file():
                 self.send_error(HTTPStatus.NOT_FOUND)
                 return
