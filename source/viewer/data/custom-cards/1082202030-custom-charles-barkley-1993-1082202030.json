@@ -18,8 +18,8 @@
     "promotionLogoId": "mvp",
     "position": "PF",
     "secondaryPosition": "SF",
-    "height": "6'3\"",
-    "heightInches": 75,
+    "height": "6'6\"",
+    "heightInches": 78,
     "weight": 252,
     "age": 22,
     "from": "Auburn",
@@ -334,10 +334,15 @@
       "sourceExecutableSha256": "93635e8a083408d92c1e841d11cfb6d3a35b67a13cb92724746b3b9c5b022b6a",
       "fromPointerRva": "0x72fd0e0",
       "appearance": {
-        "height_cm": 198.120026,
+        "height_cm": 198.12,
         "wingspan_cm": 208.388138
       },
       "sourceRowSha256": "c7efb96065952d1101091a0241db43c1ff3036c0b3c0b13a511e755aad155b4c"
+    },
+    "badgeCounts": {
+      "bronze": 22,
+      "silver": 0,
+      "gold": 0
     }
   }
 }

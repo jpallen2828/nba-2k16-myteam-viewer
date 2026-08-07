@@ -18,8 +18,8 @@
     "promotionLogoId": "historic_players",
     "position": "PG",
     "secondaryPosition": "",
-    "height": "6'4\"",
-    "heightInches": 76,
+    "height": "6'3\"",
+    "heightInches": 75,
     "weight": 190,
     "age": 20,
     "from": "Georgia Tech",
@@ -321,6 +321,11 @@
         "wingspan_cm": 199.602539
       },
       "sourceRowSha256": "8752b8ced3dc6ecbcd82768c52c34a3d96d7bb11aea410d883f83e9f1384f67d"
+    },
+    "badgeCounts": {
+      "bronze": 14,
+      "silver": 0,
+      "gold": 0
     }
   }
 }

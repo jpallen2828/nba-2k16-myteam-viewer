@@ -1350,12 +1350,13 @@ function badgeList(entries, personality = false) {
 }
 
 function renderBadges(card) {
-  const badges = Object.entries(card.badges);
+  const badges = Object.entries(card.badges || {});
   const skillBadges = badges.filter(([name]) => !personalityBadges.has(name)).sort((a,b) => b[1]-a[1] || a[0].localeCompare(b[0]));
   const mentalBadges = badges.filter(([name]) => personalityBadges.has(name)).sort((a,b) => a[0].localeCompare(b[0]));
   const derivedCounts = { bronze: 0, silver: 0, gold: 0 };
   skillBadges.forEach(([,level]) => { if (level === 1) derivedCounts.bronze++; else if (level === 2) derivedCounts.silver++; else if (level === 3) derivedCounts.gold++; });
-  const totals = ["gold","silver","bronze"].map(level => `<div class="badge-total"><strong>${card.badgeCounts[level] ?? (skillBadges.length ? derivedCounts[level] : "—")}</strong><span>${level}</span></div>`).join("");
+  const badgeCounts = card.badgeCounts || {};
+  const totals = ["gold","silver","bronze"].map(level => `<div class="badge-total"><strong>${badgeCounts[level] ?? (skillBadges.length ? derivedCounts[level] : "—")}</strong><span>${level}</span></div>`).join("");
   const estimateNote = card.badgesEstimated ? `<div class="estimate-note"><strong>Estimated badge set</strong><span>These badges were generated from the player's attributes and recovered 2K16 MyTEAM badge patterns.</span></div>` : "";
   const list = badges.length ? badgeList(skillBadges) + badgeList(mentalBadges, true)
     : `<div class="empty-state"><p>This archived layout preserved badge totals but not the individual badge names.</p></div>`;

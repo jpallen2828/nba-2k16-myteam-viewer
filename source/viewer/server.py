@@ -3653,6 +3653,9 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                         })
                     except (KeyError, TypeError, ValueError):
                         pass
+            # Explicit player-wide corrections are authoritative over an older
+            # captured linked height while retaining that capture's wingspan.
+            appearance_writes.extend(myteam.appearance_float_writes(card))
             appearance_byte_writes = []
             if hasattr(myteam, "appearance_byte_writes"):
                 jersey_value = myteam.get_jersey_number(edited) if hasattr(myteam, "get_jersey_number") else None

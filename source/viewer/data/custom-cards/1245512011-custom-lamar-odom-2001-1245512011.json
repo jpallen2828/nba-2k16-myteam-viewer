@@ -18,8 +18,8 @@
     "promotionLogoId": "historic_players",
     "position": "PF",
     "secondaryPosition": "SF",
-    "height": "6'3\"",
-    "heightInches": 75,
+    "height": "6'10\"",
+    "heightInches": 82,
     "weight": 210,
     "age": 22,
     "from": "Rhode Island",
@@ -308,10 +308,15 @@
       "sourceExecutableSha256": "93635e8a083408d92c1e841d11cfb6d3a35b67a13cb92724746b3b9c5b022b6a",
       "fromPointerRva": "0x7305840",
       "appearance": {
-        "height_cm": 208.279984,
+        "height_cm": 208.28,
         "wingspan_cm": 218.844864
       },
       "sourceRowSha256": "b7eee078d8797c75681c0e3af28f0723965c52c3372e6174db9869974d1148ec"
+    },
+    "badgeCounts": {
+      "bronze": 7,
+      "silver": 0,
+      "gold": 0
     }
   }
 }

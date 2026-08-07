@@ -340,6 +340,11 @@
         "wingspan_cm": 222.135147
       },
       "sourceRowSha256": "ced2a53e828dc40bc1fc59e36acc3aa175d8918df747d5b79f48e91f507a8a9f"
+    },
+    "badgeCounts": {
+      "bronze": 1,
+      "silver": 4,
+      "gold": 20
     }
   }
 }

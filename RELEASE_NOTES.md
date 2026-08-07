@@ -1,5 +1,12 @@
 # Release Notes
 
+## Height corrections and complete live-roster badge data - August 7, 2026
+
+- Corrected every Michael Jordan, Lamar Odom, Charles Barkley, Stephon Marbury, Marcus Camby, Xavier McDaniel, Alex English, and Dolph Schayes card to the requested height, including linked in-game appearance height during injection.
+- Restored the Badges tab for the recently captured Ray custom-card batch and preserved every scanned personality badge plus each gameplay badge's exact Bronze, Silver, or Gold tier.
+- Verified all 29 custom additions and all three replacement cards against their complete captured live-roster rows. New players without an earlier card retain the roster's jersey number, identity IDs, signatures, gear/accessories, vitals, attributes, tendencies, hot zones, play-initiator value, and badge data.
+- Badge rendering now derives tier totals safely when an imported card package does not explicitly contain precomputed badge counts.
+
 ## Promotion-logo theme and collection synchronization - August 7, 2026
 
 - Custom cards now carry their selected bottom-left promotion-logo ID into the Viewer package.

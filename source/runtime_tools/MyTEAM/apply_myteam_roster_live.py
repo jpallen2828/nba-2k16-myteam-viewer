@@ -460,6 +460,14 @@ PLAYER_TEMPLATE_ALIASES = {
 }
 
 SPECIAL_PLAYER_FIELD_OVERRIDES = {
+    "michaeljordan": {"height_inches": 78, "appearance_height_cm": 198.12},
+    "lamarodom": {"height_inches": 82, "appearance_height_cm": 208.28},
+    "charlesbarkley": {"height_inches": 78, "appearance_height_cm": 198.12},
+    "stephonmarbury": {"height_inches": 75, "appearance_height_cm": 190.5},
+    "marcuscamby": {"height_inches": 83, "appearance_height_cm": 210.82},
+    "xaviermcdaniel": {"height_inches": 79, "appearance_height_cm": 200.66},
+    "alexenglish": {"height_inches": 80, "appearance_height_cm": 203.2},
+    "dolphschayes": {"height_inches": 80, "appearance_height_cm": 203.2},
     "lucmbahamoute": {
         "first_name": "Luc",
         "last_name": "Mbah a Moute",
