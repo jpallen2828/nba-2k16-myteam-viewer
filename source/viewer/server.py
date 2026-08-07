@@ -911,6 +911,14 @@ def import_custom_card_package(raw: bytes, original_name: str = "") -> dict:
     card["name"] = roster_display_name(card.get("name"))
     if not card["name"]:
         raise ValueError("Custom card player name cannot be blank.")
+    custom_player_data = card.get("customPlayerData")
+    custom_player_data = dict(custom_player_data) if isinstance(custom_player_data, dict) else {}
+    # Card Studio does not expose reliable NBA 2K16 gear editing. Gear is
+    # resolved by player name from a clean/live roster source at injection time;
+    # a parent-card link is helpful but is not required for the name match.
+    custom_player_data.pop("gear", None)
+    custom_player_data["gearInheritance"] = "same-name-source"
+    card["customPlayerData"] = custom_player_data
     if card["id"] <= 0:
         card["id"] = positive_custom_card_id(card)
         card["slug"] = f"custom-{re.sub(r'[^a-z0-9]+', '-', card['name'].casefold()).strip('-')}-{card.get('year') or 2016}-{card['id']}"
@@ -2755,7 +2763,7 @@ def write_packed_bits(target: bytearray, offset: int, bit_start: int, bit_length
     target[offset:offset + byte_count] = current.to_bytes(byte_count, "little")
 
 
-def apply_custom_player_data(target: bytearray, card: dict, *, include_signatures: bool = True, include_gear: bool = True) -> dict:
+def apply_custom_player_data(target: bytearray, card: dict, *, include_signatures: bool = True, include_gear: bool = False) -> dict:
     custom = card.get("customPlayerData")
     if not card.get("custom") or not isinstance(custom, dict):
         return {}
@@ -3399,20 +3407,43 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             hidden_display_fields = apply_named_hidden_display_fields(edited, card, myteam)
             if hidden_display_fields:
                 stats["hidden_display_named_fields_written"] = hidden_display_fields
-            if clean_source and name_key not in myteam_exclusive_source_overrides:
+            gear_source_label = ""
+            # Resolve custom-card gear independently by the authored player's
+            # own name. Never borrow gear through a mismatched parent card.
+            gear_clean_source = clean_source_records.get(name_key) if card.get("custom") else clean_source
+            if gear_clean_source and (card.get("custom") or name_key not in myteam_exclusive_source_overrides):
                 clean_accessory_fields = copy_accessories_from_clean_source(
                     edited,
-                    clean_source["record"],
-                    f"Roster0010:{clean_source.get('roster_index')}",
+                    gear_clean_source["record"],
+                    f"Roster0010:{gear_clean_source.get('roster_index')}",
                 )
                 if clean_accessory_fields:
                     stats["clean_source_accessory_fields"] = clean_accessory_fields
+                    gear_source_label = f"same-name clean roster source {gear_clean_source.get('roster_index')}"
+            elif (
+                card.get("custom")
+                and norm_name(str(inheritance_card.get("name") or "")) == name_key
+                and uses_live_same_name
+                and len(source) == roster.PLAYER_STRIDE
+            ):
+                live_accessory_fields = copy_accessories_from_clean_source(
+                    edited,
+                    source,
+                    f"same-name live roster slot {template}",
+                )
+                if live_accessory_fields:
+                    stats["same_name_live_accessory_fields"] = live_accessory_fields
+                    gear_source_label = f"same-name live roster slot {template}"
             accessory_fields = apply_accessory_override(edited, card, accessory_overrides)
             if accessory_fields:
                 stats["accessory_overrides"] = accessory_fields
-            custom_gear_fields = apply_custom_player_data(edited, card, include_signatures=False, include_gear=True)
-            if custom_gear_fields:
-                stats["custom_card_gear"] = custom_gear_fields
+            if card.get("custom"):
+                # Card Studio cannot author trustworthy NBA 2K16 gear bytes.
+                # Always retain the identical player's clean/live source gear;
+                # never let the package's placeholder zero values overwrite it.
+                stats["custom_card_gear_source"] = gear_source_label or "same-name source unavailable; destination gear preserved"
+                if isinstance(custom_player_data.get("gear"), dict):
+                    stats["custom_card_package_gear_ignored"] = True
             portrait_resolution = portrait_resolution_log_entry(
                 card,
                 destination,

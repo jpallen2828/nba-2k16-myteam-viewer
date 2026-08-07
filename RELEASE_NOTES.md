@@ -1,5 +1,12 @@
 # Release Notes
 
+## Custom Wilt Chamberlain + same-name gear inheritance - August 7, 2026
+
+- Imported the new 1962 Wilt Chamberlain 99 OVR Pink Diamond custom card and its completed card art.
+- Custom-card gear now always inherits from an identical-named NBA 2K16 player source during injection. The clean roster source is preferred, with the same-name live roster slot as a fallback.
+- Card Studio package gear values are ignored and stripped during import so placeholder zero values cannot overwrite authentic player gear. If no same-name source is available, the destination slot's existing gear is preserved.
+- The rule also covers existing custom cards such as the 99 OVR Giannis Antetokounmpo and future imports with a matching player name, whether or not the package includes a parent-card link. Truly new player names keep destination gear until a verified in-game gear profile is captured for them.
+
 ## Card-art and card-metadata update - August 7, 2026
 
 - Added 24 exact card-art replacements for Dan Majerle, Cliff Robinson, Carlos Boozer, Allen Crabbe, Manu Ginobili, Jonas Valanciunas, Jalen Rose, Dwight Howard, Reggie Lewis, Otis Thorpe, Marcin Gortat, Jahlil Okafor, Eric Snow, Rolando Blackman, Tyreke Evans, Michael Finley, K.C. Jones, Chuck Person, Norman Powell, Mark Jackson, Josh Smith, Doug McDermott, Darius Miles, and Terry Cummings.
