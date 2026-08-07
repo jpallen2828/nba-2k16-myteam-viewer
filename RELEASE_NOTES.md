@@ -1,5 +1,13 @@
 # Release Notes
 
+## Promotion-logo theme and collection synchronization - August 7, 2026
+
+- Custom cards now carry their selected bottom-left promotion-logo ID into the Viewer package.
+- Import automatically assigns the matching official Viewer theme and collection, using the selected franchise for Current, Dynamic Ratings, Historic, and Throwback collections.
+- Valid specific subcollections remain intact, such as `Playoff Moments: Finals`; generic `Custom` / `Custom Cards` metadata is replaced by the visible sticker's taxonomy.
+- Existing local Giannis Antetokounmpo Playoffs cards and Wilt Chamberlain Historic card were migrated to their visible promotion categories.
+- Added an `Only show custom cards?` Yes/No gallery filter. It filters the gallery only while imported custom cards are enabled and is inert when the master custom-card switch is off.
+
 ## Custom Wilt Chamberlain + same-name gear inheritance - August 7, 2026
 
 - Imported the new 1962 Wilt Chamberlain 99 OVR Pink Diamond custom card and its completed card art.

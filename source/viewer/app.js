@@ -9,7 +9,7 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const elements = {
   search: $("#search"), tier: $("#tierFilter"), team: $("#teamFilter"), position: $("#positionFilter"),
-  theme: $("#themeFilter"), overall: $("#overallFilter"), sort: $("#sortFilter"), grid: $("#cardGrid"),
+  theme: $("#themeFilter"), overall: $("#overallFilter"), onlyCustom: $("#onlyCustomFilter"), sort: $("#sortFilter"), grid: $("#cardGrid"),
   resultTitle: $("#resultTitle"), loadMore: $("#loadMore"), activeFilters: $("#activeFilters"),
   modal: $("#detailModal"), tabContent: $("#tabContent"), filters: $("#filters"),
   lineupModal: $("#lineupModal"), lineupGrid: $("#lineupGrid"),
@@ -93,11 +93,13 @@ function applyFilters() {
   const query = elements.search.value.trim().toLowerCase();
   const tier = elements.tier.value, team = elements.team.value, position = elements.position.value;
   const theme = elements.theme.value, minimum = Number(elements.overall.value || 0);
+  const onlyCustom = state.customCardsEnabled && elements.onlyCustom.value === "yes";
   state.filtered = state.cards.filter(card => {
     const haystack = `${card.name} ${card.collection} ${card.theme} ${card.franchise} ${card.year || ""}`.toLowerCase();
     return (!query || haystack.includes(query)) && (!tier || card.tier === tier) && (!team || card.franchise === team)
       && (!position || card.position === position || card.secondaryPosition === position)
-      && (!theme || card.theme === theme) && card.overall >= minimum;
+      && (!theme || card.theme === theme) && card.overall >= minimum
+      && (!onlyCustom || card.custom);
   });
   const sorter = elements.sort.value;
   state.filtered.sort((a,b) => {
@@ -142,19 +144,22 @@ function renderCards() {
 function renderActiveFilters() {
   const filters = [
     ["tier", elements.tier, "Tier"], ["team", elements.team, "Team"], ["position", elements.position, "Position"],
-    ["theme", elements.theme, "Theme"], ["overall", elements.overall, "Overall"]
-  ].filter(([,element]) => element.value && !(element === elements.overall && element.value === "0"));
+    ["theme", elements.theme, "Theme"], ["overall", elements.overall, "Overall"],
+    ["onlyCustom", elements.onlyCustom, "Only custom"]
+  ].filter(([key,element]) => element.value
+    && !(element === elements.overall && element.value === "0")
+    && !(key === "onlyCustom" && (!state.customCardsEnabled || element.value !== "yes")));
   elements.activeFilters.innerHTML = filters.map(([key,element,label]) => `<button class="filter-pill" data-clear="${key}">${label}: ${escapeHtml(element.options[element.selectedIndex].text)} ×</button>`).join("");
 }
 
 function clearFilter(key) {
-  const map = { tier: elements.tier, team: elements.team, position: elements.position, theme: elements.theme, overall: elements.overall };
-  if (map[key]) map[key].value = key === "overall" ? "0" : "";
+  const map = { tier: elements.tier, team: elements.team, position: elements.position, theme: elements.theme, overall: elements.overall, onlyCustom: elements.onlyCustom };
+  if (map[key]) map[key].value = key === "overall" ? "0" : key === "onlyCustom" ? "no" : "";
   applyFilters();
 }
 function clearAllFilters() {
   elements.search.value = ""; elements.tier.value = ""; elements.team.value = ""; elements.position.value = "";
-  elements.theme.value = ""; elements.overall.value = "0"; elements.sort.value = "overall"; applyFilters();
+  elements.theme.value = ""; elements.overall.value = "0"; elements.onlyCustom.value = "no"; elements.sort.value = "overall"; applyFilters();
 }
 
 function openCard(card, preferredArtSrc = "") {
@@ -1604,7 +1609,7 @@ function openStartupMode() {
   else if (mode === "inject") showSaveToast("Create or load a lineup first, then choose Inject into roster.", true);
 }
 
-[elements.tier,elements.team,elements.position,elements.theme,elements.overall,elements.sort].forEach(element => element.addEventListener("change", applyFilters));
+[elements.tier,elements.team,elements.position,elements.theme,elements.overall,elements.onlyCustom,elements.sort].forEach(element => element.addEventListener("change", applyFilters));
 elements.search.addEventListener("input", debounce(applyFilters));
 elements.importCustomCard?.addEventListener("click", () => elements.customCardFile?.click());
 elements.customCardFile?.addEventListener("change", () => importCustomCardFile(elements.customCardFile.files?.[0]));

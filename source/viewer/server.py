@@ -52,6 +52,28 @@ CARDS = json.loads(DATA_PATH.read_text(encoding="utf-8"))
 CARD_MAP = {(str(card["id"]), card["slug"]): card for card in CARDS}
 CARD_ID_MAP = {str(card["id"]): card for card in CARDS}
 CUSTOM_CARD_FORMAT = "nba2k16.custom-card/v1"
+CUSTOM_PROMOTION_THEMES = {
+    "all_star": "All-Star", "current_player": "Current",
+    "dpoy": "Defensive Player of the Year", "dynamic_ratings": "Dynamic Ratings",
+    "historic_players": "Historic", "moments": "Moments",
+    "mvp": "Most Valuable Player", "playoffs": "Playoffs", "rewards": "Rewards",
+    "roty": "Rookie of the Year", "sixth_man": "Sixth Man",
+    "throwback": "Throwback Thursday",
+}
+CUSTOM_FRANCHISE_COLLECTION_NAMES = {
+    "Philadelphia 76ers": "76ers", "Milwaukee Bucks": "Bucks", "Chicago Bulls": "Bulls",
+    "Cleveland Cavaliers": "Cavaliers", "Boston Celtics": "Celtics",
+    "Los Angeles Clippers": "Clippers", "Memphis Grizzlies": "Grizzlies",
+    "Atlanta Hawks": "Hawks", "Miami Heat": "Heat", "Charlotte Hornets": "Hornets",
+    "Utah Jazz": "Jazz", "Sacramento Kings": "Kings", "New York Knicks": "Knicks",
+    "Los Angeles Lakers": "Lakers", "Orlando Magic": "Magic", "Dallas Mavericks": "Mavericks",
+    "Brooklyn Nets": "Nets", "Denver Nuggets": "Nuggets", "Indiana Pacers": "Pacers",
+    "New Orleans Pelicans": "Pelicans", "Detroit Pistons": "Pistons", "Toronto Raptors": "Raptors",
+    "Houston Rockets": "Rockets", "San Antonio Spurs": "Spurs", "Phoenix Suns": "Suns",
+    "Oklahoma City Thunder": "Thunder", "Minnesota Timberwolves": "Timberwolves",
+    "Portland Trail Blazers": "Trail Blazers", "Golden State Warriors": "Warriors",
+    "Washington Wizards": "Wizards",
+}
 ART_LOCK = threading.Lock()
 BACKGROUND_ART: set[str] = set()
 BACKGROUND_ART_LOCK = threading.Lock()
@@ -823,6 +845,41 @@ def positive_custom_card_id(card: dict) -> int:
     return 1_000_000_000 + int(hashlib.sha1(material.encode("utf-8")).hexdigest()[:7], 16)
 
 
+def custom_promotion_taxonomy(card: dict) -> tuple[str, str] | None:
+    """Resolve custom metadata from the promotion sticker authored into its art."""
+    promotion_id = str(card.get("promotionLogoId") or "")
+    theme = CUSTOM_PROMOTION_THEMES.get(promotion_id)
+    if not theme:
+        return None
+    team = CUSTOM_FRANCHISE_COLLECTION_NAMES.get(str(card.get("franchise") or ""), "NO SUBCOLLECTION")
+    current_theme = str(card.get("theme") or "")
+    current_collection = str(card.get("collection") or "")
+    if promotion_id in {"current_player", "dynamic_ratings"}:
+        matches = current_collection == team or current_collection.startswith("Free Agency ")
+        default = team
+    elif promotion_id == "historic_players":
+        matches = current_collection == "Clippers Franchise" if team == "Clippers" else current_collection.startswith(f"{team} Franchise")
+        default = "Clippers Franchise" if team == "Clippers" else f"{team} Franchise 1"
+    elif promotion_id == "throwback":
+        default = f"{team} Throwback Thursday"
+        matches = current_collection == default
+    else:
+        prefixes, default = {
+            "all_star": (("All-Star",), "All-Star"),
+            "dpoy": (("Defensive Player of the Year ",), "Defensive Player of the Year 1"),
+            "moments": (("Moments ",), "Moments 1"),
+            "mvp": (("MVP ",), "MVP 1"),
+            "playoffs": (("Playoff Moments",), "Playoff Moments"),
+            "rewards": (("Game Rewards", "Collector Level Rewards", "Finals Championship Rewards", "Road to the Finals"), "Game Rewards"),
+            "roty": (("Rookie of the Year ",), "Rookie of the Year 1"),
+            "sixth_man": (("Sixth Man ",), "Sixth Man 1"),
+        }[promotion_id]
+        matches = current_collection.startswith(prefixes)
+    if current_theme == theme and current_collection not in {"", "Custom Cards", "NO SUBCOLLECTION", "??"} and matches:
+        return theme, current_collection
+    return theme, default
+
+
 def official_parent_card(card: dict) -> dict | None:
     try:
         parent_id = int(card.get("parentCardId") or 0)
@@ -911,6 +968,9 @@ def import_custom_card_package(raw: bytes, original_name: str = "") -> dict:
     card["name"] = roster_display_name(card.get("name"))
     if not card["name"]:
         raise ValueError("Custom card player name cannot be blank.")
+    promotion_taxonomy = custom_promotion_taxonomy(card)
+    if promotion_taxonomy:
+        card["theme"], card["collection"] = promotion_taxonomy
     custom_player_data = card.get("customPlayerData")
     custom_player_data = dict(custom_player_data) if isinstance(custom_player_data, dict) else {}
     # Card Studio does not expose reliable NBA 2K16 gear editing. Gear is
