@@ -25,7 +25,7 @@ import webbrowser
 import zipfile
 
 import requests
-from PIL import ImageGrab
+from PIL import Image, ImageGrab
 
 
 ROOT = Path(__file__).resolve().parent
@@ -52,6 +52,7 @@ CARDS = json.loads(DATA_PATH.read_text(encoding="utf-8"))
 CARD_MAP = {(str(card["id"]), card["slug"]): card for card in CARDS}
 CARD_ID_MAP = {str(card["id"]): card for card in CARDS}
 CUSTOM_CARD_FORMAT = "nba2k16.custom-card/v1"
+CUSTOM_PROMOTION_LOGO_DIR = ROOT / "data" / "promotion-logos"
 CUSTOM_PROMOTION_THEMES = {
     "all_star": "All-Star", "current_player": "Current",
     "dpoy": "Defensive Player of the Year", "dynamic_ratings": "Dynamic Ratings",
@@ -59,6 +60,10 @@ CUSTOM_PROMOTION_THEMES = {
     "mvp": "Most Valuable Player", "playoffs": "Playoffs", "rewards": "Rewards",
     "roty": "Rookie of the Year", "sixth_man": "Sixth Man",
     "throwback": "Throwback Thursday",
+}
+CUSTOM_PROMOTION_LOGO_FILES = {
+    logo_id: CUSTOM_PROMOTION_LOGO_DIR / f"{logo_id}.png"
+    for logo_id in CUSTOM_PROMOTION_THEMES
 }
 CUSTOM_FRANCHISE_COLLECTION_NAMES = {
     "Philadelphia 76ers": "76ers", "Milwaukee Bucks": "Bucks", "Chicago Bulls": "Bulls",
@@ -845,6 +850,54 @@ def positive_custom_card_id(card: dict) -> int:
     return 1_000_000_000 + int(hashlib.sha1(material.encode("utf-8")).hexdigest()[:7], 16)
 
 
+def _logo_match_score(card: Image.Image, logo: Image.Image, left: int, top: int) -> float | None:
+    if left + logo.width > card.width or top + logo.height > card.height:
+        return None
+    crop = card.crop((left, top, left + logo.width, top + logo.height))
+    total = 0
+    count = 0
+    for logo_pixel, card_pixel in zip(logo.getdata(), crop.getdata()):
+        alpha = logo_pixel[3]
+        if alpha < 48:
+            continue
+        weight = alpha / 255
+        total += weight * (
+            (logo_pixel[0] - card_pixel[0]) ** 2
+            + (logo_pixel[1] - card_pixel[1]) ** 2
+            + (logo_pixel[2] - card_pixel[2]) ** 2
+        )
+        count += 3 * weight
+    return total / count if count else None
+
+
+def infer_custom_promotion_logo_id(art: bytes) -> str:
+    """Infer the authored promo badge from the embedded card PNG when metadata is absent."""
+    try:
+        card = Image.open(io.BytesIO(art)).convert("RGBA")
+    except (OSError, ValueError):
+        return ""
+    if card.width < 250 or card.height < 350:
+        return ""
+    best_id = ""
+    best_score = float("inf")
+    for logo_id, logo_path in CUSTOM_PROMOTION_LOGO_FILES.items():
+        if not logo_path.is_file():
+            continue
+        try:
+            logo = Image.open(logo_path).convert("RGBA")
+        except (OSError, ValueError):
+            continue
+        if logo.width > 130 or logo.height > 170:
+            continue
+        for top in range(int(card.height * 0.42), int(card.height * 0.76), 4):
+            for left in range(int(card.width * 0.10), int(card.width * 0.45), 4):
+                score = _logo_match_score(card, logo, left, top)
+                if score is not None and score < best_score:
+                    best_id = logo_id
+                    best_score = score
+    return best_id if best_score <= 7000 else ""
+
+
 def custom_promotion_taxonomy(card: dict) -> tuple[str, str] | None:
     """Resolve custom metadata from the promotion sticker authored into its art."""
     promotion_id = str(card.get("promotionLogoId") or "")
@@ -968,6 +1021,10 @@ def import_custom_card_package(raw: bytes, original_name: str = "") -> dict:
     card["name"] = roster_display_name(card.get("name"))
     if not card["name"]:
         raise ValueError("Custom card player name cannot be blank.")
+    if not card.get("promotionLogoId"):
+        inferred_promotion_id = infer_custom_promotion_logo_id(art)
+        if inferred_promotion_id:
+            card["promotionLogoId"] = inferred_promotion_id
     promotion_taxonomy = custom_promotion_taxonomy(card)
     if promotion_taxonomy:
         card["theme"], card["collection"] = promotion_taxonomy

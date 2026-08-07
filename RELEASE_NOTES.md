@@ -3,6 +3,7 @@
 ## Promotion-logo theme and collection synchronization - August 7, 2026
 
 - Custom cards now carry their selected bottom-left promotion-logo ID into the Viewer package.
+- Older custom-card packages that lack `promotionLogoId` now infer the promo from the embedded card PNG, so the visible sticker still controls the imported theme and collection.
 - Import automatically assigns the matching official Viewer theme and collection, using the selected franchise for Current, Dynamic Ratings, Historic, and Throwback collections.
 - Valid specific subcollections remain intact, such as `Playoff Moments: Finals`; generic `Custom` / `Custom Cards` metadata is replaced by the visible sticker's taxonomy.
 - Existing local Giannis Antetokounmpo Playoffs cards and Wilt Chamberlain Historic card were migrated to their visible promotion categories.
