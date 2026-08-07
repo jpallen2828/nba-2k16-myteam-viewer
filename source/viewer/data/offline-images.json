@@ -819,11 +819,6 @@
                               "kind":  "photo",
                               "contentType":  "image/png"
                           },
-    "10214-roy-hibbert":  {
-                              "path":  "data/card-images/10214-roy-hibbert.png",
-                              "kind":  "photo",
-                              "contentType":  "image/png"
-                          },
     "10216-rudy-gobert":  {
                               "path":  "data/card-images/10216-rudy-gobert.png",
                               "kind":  "official",
@@ -7174,11 +7169,6 @@
                             "kind":  "official",
                             "contentType":  "image/png"
                         },
-    "8873-roy-hibbert":  {
-                             "path":  "data/card-images/8873-roy-hibbert.png",
-                             "kind":  "photo",
-                             "contentType":  "image/png"
-                         },
     "8874-rodney-stuckey":  {
                                 "path":  "data/card-images/8874-rodney-stuckey.png",
                                 "kind":  "official",
