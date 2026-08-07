@@ -1,5 +1,12 @@
 # Release Notes
 
+## Custom-card inheritance and deterministic injection fix — August 6, 2026
+
+- Custom-card imports now migrate legacy negative IDs to stable positive IDs.
+- Card Studio parent-card selection preserves the authored custom name/year while importing the parent's jersey number and exact linked face/portrait identity IDs.
+- Custom injection now resolves its clean live template through the explicitly selected parent card.
+- Fixed canonical attribute-name handling for moving midrange, standing midrange, and help-defense IQ so those values no longer vary with the overwritten destination slot.
+
 ## Custom-card taxonomy and Pink Diamond draft update — August 6, 2026
 
 - Added a synchronized **Include custom cards** control directly to the Draft screen.

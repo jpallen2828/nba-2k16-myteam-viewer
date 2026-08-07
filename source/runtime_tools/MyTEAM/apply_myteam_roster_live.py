@@ -978,7 +978,7 @@ def apply_card_to_record(
     attrs = card.get("attributes") or {}
     written_attrs = 0
     for roster_field in ATTRIBUTE_OFFSETS:
-        source_field = ATTRIBUTE_ALIASES.get(roster_field, roster_field)
+        source_field = roster_field if roster_field in attrs else ATTRIBUTE_ALIASES.get(roster_field, roster_field)
         if source_field in attrs:
             set_rating(record, roster_field, attrs[source_field])
             written_attrs += 1

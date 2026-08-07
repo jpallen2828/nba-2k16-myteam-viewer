@@ -775,6 +775,22 @@ def normalize_custom_player_name(value: object) -> str:
     return match.group(1).strip() if match else text
 
 
+def positive_custom_card_id(card: dict) -> int:
+    material = "|".join(str(card.get(key) or "") for key in ("name", "year", "overall", "franchise", "position"))
+    return 1_000_000_000 + int(hashlib.sha1(material.encode("utf-8")).hexdigest()[:7], 16)
+
+
+def official_parent_card(card: dict) -> dict | None:
+    try:
+        parent_id = int(card.get("parentCardId") or 0)
+    except (TypeError, ValueError):
+        parent_id = 0
+    parent_slug = str(card.get("parentCardSlug") or "")
+    if parent_id:
+        return CARD_MAP.get((str(parent_id), parent_slug)) or CARD_ID_MAP.get(str(parent_id))
+    return None
+
+
 def load_custom_cards(include_disabled: bool = False) -> list[dict]:
     if not include_disabled and not custom_cards_enabled():
         return []
@@ -845,6 +861,9 @@ def import_custom_card_package(raw: bytes, original_name: str = "") -> dict:
     card["name"] = normalize_custom_player_name(card.get("name"))
     if not card["name"]:
         raise ValueError("Custom card player name cannot be blank.")
+    if card["id"] <= 0:
+        card["id"] = positive_custom_card_id(card)
+        card["slug"] = f"custom-{re.sub(r'[^a-z0-9]+', '-', card['name'].casefold()).strip('-')}-{card.get('year') or 2016}-{card['id']}"
     card["custom"] = True
     stem = _safe_custom_stem(card)
     art_name = f"{stem}.png"
@@ -3070,13 +3089,15 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                     card["badges"] = full_card.get("badges") or {}
                 item["card"] = card
             name_key = norm_name(str(card.get("name") or ""))
-            template_source = choose_template_source(card, players_by_name, template_bank, destination)
+            parent_card = official_parent_card(card) if card.get("custom") else None
+            inheritance_card = parent_card or card
+            template_source = choose_template_source(inheritance_card, players_by_name, template_bank, destination)
             template = template_source.get("slot")
             identity_slot = template_source.get("identity_slot")
             signature_slot = template_source.get("signature_slot")
             clean_source, clean_source_reason = resolve_card_clean_source(
-                card,
-                name_key,
+                inheritance_card,
+                norm_name(str(inheritance_card.get("name") or "")),
                 clean_source_records,
                 clean_sources_by_slot,
                 clean_sources_by_name,
@@ -3128,9 +3149,9 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             edited = bytearray(shell)
             stable_template_entry = None
             stable_template_source = ""
-            exact_template_entry = card_template_entry(card, template_bank)
+            exact_template_entry = card_template_entry(inheritance_card, template_bank)
             allow_stable_template = bool(template_source.get("allow_stable_template", True))
-            if allow_stable_template and exact_template_entry and template_entry_matches_card(card, exact_template_entry, roster.PLAYER_STRIDE):
+            if allow_stable_template and exact_template_entry and template_entry_matches_card(inheritance_card, exact_template_entry, roster.PLAYER_STRIDE):
                 stable_template_entry = exact_template_entry
                 stable_template_source = "exact-card"
             elif allow_stable_template and exact_template_entry:
@@ -3145,12 +3166,19 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             custom_player_data = card.get("customPlayerData") if isinstance(card.get("customPlayerData"), dict) else {}
             face_id_override = card_face_override(card, face_overrides)
             if card.get("custom") and custom_player_data:
+                inherited_ids = custom_player_data.get("inheritedIdentityIds")
                 try:
                     face_id = int(custom_player_data.get("faceId") or card.get("faceId") or 0)
                     portrait_id = int(custom_player_data.get("portraitId") or card.get("portraitId") or face_id)
                 except (TypeError, ValueError):
                     face_id = portrait_id = 0
-                if face_id or portrait_id:
+                if isinstance(inherited_ids, dict) and inherited_ids:
+                    face_id_override = {
+                        field: int(inherited_ids[field])
+                        for field in myteam.IDENTITY_ID_FIELDS
+                        if inherited_ids.get(field) not in (None, "")
+                    }
+                elif face_id or portrait_id:
                     face_id_override = {
                         "graphic_id": face_id or portrait_id,
                         "portrait_ref_a": portrait_id or face_id,
