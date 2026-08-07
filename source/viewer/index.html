@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NBA 2K16 MyTEAM Archive</title>
-  <link rel="stylesheet" href="styles.css?v=16">
+  <link rel="stylesheet" href="styles.css?v=17">
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -46,6 +46,7 @@
         <div class="collection-actions">
           <input id="customCardFile" type="file" accept=".2k16custom" hidden>
           <button id="importCustomCard" class="secondary-button">Import custom card</button>
+          <button id="manageCustomCards" class="secondary-button">Manage custom cards</button>
           <label class="custom-card-toggle"><input id="customCardsEnabled" type="checkbox" checked><span>Custom cards</span></label>
           <button id="customTeam" class="custom-team-button">Create your own team</button>
           <button id="draftTeam" class="draft-team-button">Draft a team</button>
@@ -189,6 +190,17 @@
 
   <div id="saveToast" class="save-toast" role="status" aria-live="polite"></div>
 
+  <div id="customCardManagerModal" class="custom-card-manager-modal" aria-hidden="true">
+    <div class="lineup-backdrop" data-close-custom-manager></div>
+    <section class="custom-card-manager-panel" role="dialog" aria-modal="true" aria-labelledby="customCardManagerTitle">
+      <button class="modal-close" data-close-custom-manager aria-label="Close custom card manager">Ã—</button>
+      <p class="eyebrow">CUSTOM CARD LIBRARY</p>
+      <h2 id="customCardManagerTitle">Manage Custom Cards</h2>
+      <p>Hide a card from the viewer, team builder, and draft pool. Nothing is deleted, and hidden cards can be restored here at any time.</p>
+      <div id="customCardManagerList" class="custom-card-manager-list"></div>
+    </section>
+  </div>
+
   <div id="savedLineupModal" class="saved-lineup-modal" aria-hidden="true">
     <div class="lineup-backdrop" data-close-saved-lineups></div>
     <section class="saved-lineup-panel" role="dialog" aria-modal="true" aria-labelledby="savedLineupTitle">
@@ -219,6 +231,6 @@
       <div class="card-copy"><div><h3></h3><p class="card-subtitle"></p></div><span class="card-overall"></span></div>
     </button>
   </template>
-  <script src="app.js?v=33" defer></script>
+  <script src="app.js?v=34" defer></script>
 </body>
 </html>

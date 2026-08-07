@@ -1,5 +1,12 @@
 # Release Notes
 
+## Reversible custom-card visibility and roster text fix - August 6, 2026
+
+- Added a **Manage custom cards** library where individual imported cards can be hidden and restored without deleting their package or artwork.
+- Custom player names are normalized to roster-safe mixed case during import and again at injection, including capitalization after hyphens and apostrophes.
+- Two-digit card-year prefixes such as `'21` are kept out of NBA 2K16's first/last-name memory fields.
+- Custom injection now writes NBA 2K16's normalized `CachedOverall` field explicitly, fixing invalid square glyphs in the roster-list OVR column while retaining the authored overall.
+
 ## Custom-card inheritance and deterministic injection fix — August 6, 2026
 
 - Custom-card imports now migrate legacy negative IDs to stable positive IDs.

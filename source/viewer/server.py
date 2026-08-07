@@ -759,6 +759,17 @@ def custom_cards_enabled() -> bool:
     return bool(load_settings().get("customCardsEnabled", True))
 
 
+def custom_card_key(card: dict) -> str:
+    return f"{card.get('id')}/{card.get('slug') or ''}"
+
+
+def hidden_custom_card_keys() -> set[str]:
+    values = load_settings().get("hiddenCustomCardKeys", [])
+    if not isinstance(values, list):
+        return set()
+    return {str(value) for value in values if str(value).strip()}
+
+
 def _safe_custom_stem(card: dict) -> str:
     raw = f"{card.get('id')}-{card.get('slug') or 'custom-card'}"
     return re.sub(r"[^A-Za-z0-9_.-]+", "-", raw).strip("-.") or "custom-card"
@@ -772,11 +783,43 @@ def normalize_custom_player_name(value: object) -> str:
         text,
         flags=re.IGNORECASE,
     )
-    return match.group(1).strip() if match else text
+    text = match.group(1).strip() if match else text
+    # The two-digit season prefix belongs on the card art/nameplate, not in the
+    # player-name fields in the NBA roster record.
+    return re.sub(r"^['\u2019](?:\d{2})\s+", "", text).strip()
+
+
+def roster_display_name(value: object) -> str:
+    """Return mixed-case roster text while retaining hyphen/apostrophe names."""
+    text = normalize_custom_player_name(value)
+
+    def capitalize_piece(piece: str) -> str:
+        if not piece:
+            return piece
+        if re.fullmatch(r"(?:[A-Za-z]\.)+", piece):
+            return piece.upper()
+        if piece.upper() in {"II", "III", "IV", "V"}:
+            return piece.upper()
+        return piece[:1].upper() + piece[1:].lower()
+
+    def capitalize_word(word: str) -> str:
+        hyphenated = []
+        for hyphen_piece in word.split("-"):
+            apostrophe_parts = re.split(r"(['\u2019])", hyphen_piece)
+            hyphenated.append("".join(
+                part if part in {"'", "\u2019"} else capitalize_piece(part)
+                for part in apostrophe_parts
+            ))
+        return "-".join(hyphenated)
+
+    return " ".join(capitalize_word(word) for word in text.split())
 
 
 def positive_custom_card_id(card: dict) -> int:
-    material = "|".join(str(card.get(key) or "") for key in ("name", "year", "overall", "franchise", "position"))
+    material = "|".join(
+        str(card.get(key) or "").strip().casefold()
+        for key in ("name", "year", "overall", "franchise", "position")
+    )
     return 1_000_000_000 + int(hashlib.sha1(material.encode("utf-8")).hexdigest()[:7], 16)
 
 
@@ -791,10 +834,11 @@ def official_parent_card(card: dict) -> dict | None:
     return None
 
 
-def load_custom_cards(include_disabled: bool = False) -> list[dict]:
+def load_custom_cards(include_disabled: bool = False, include_hidden: bool = False) -> list[dict]:
     if not include_disabled and not custom_cards_enabled():
         return []
     cards: list[dict] = []
+    hidden_keys = hidden_custom_card_keys()
     for manifest_path in sorted(custom_card_root().glob("*.json")):
         try:
             manifest = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
@@ -807,8 +851,12 @@ def load_custom_cards(include_disabled: bool = False) -> list[dict]:
             if not (custom_card_root() / art_name).is_file():
                 continue
             item = dict(card)
+            item["name"] = roster_display_name(item.get("name"))
             item["custom"] = True
+            item["hidden"] = custom_card_key(item) in hidden_keys
             item["customArtUrl"] = f"/custom-art/{item.get('id')}/{item.get('slug')}"
+            if item["hidden"] and not include_hidden:
+                continue
             cards.append(item)
         except (OSError, ValueError, json.JSONDecodeError):
             continue
@@ -821,7 +869,9 @@ def all_cards() -> list[dict]:
 
 
 def custom_card_maps() -> tuple[dict[tuple[str, str], dict], dict[str, dict]]:
-    cards = load_custom_cards()
+    # Hidden is a library/display preference only. Existing saved lineups that
+    # reference a hidden card remain injectable and its files remain untouched.
+    cards = load_custom_cards(include_hidden=True)
     return (
         {(str(card.get("id")), str(card.get("slug") or "")): card for card in cards},
         {str(card.get("id")): card for card in cards},
@@ -858,7 +908,7 @@ def import_custom_card_package(raw: bytes, original_name: str = "") -> dict:
         card["overall"] = max(25, min(99, int(card["overall"])))
     except (TypeError, ValueError) as exc:
         raise ValueError("Custom card ID and overall must be integers.") from exc
-    card["name"] = normalize_custom_player_name(card.get("name"))
+    card["name"] = roster_display_name(card.get("name"))
     if not card["name"]:
         raise ValueError("Custom card player name cannot be blank.")
     if card["id"] <= 0:
@@ -3079,6 +3129,11 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             )
             if full_card:
                 card = {**full_card, **card}
+                # Saved lineup payloads are deliberately lightweight and may
+                # retain an old all-caps custom name. The library manifest is
+                # authoritative for text written into live roster memory.
+                card["name"] = full_card.get("name") or card.get("name")
+                card["custom"] = bool(full_card.get("custom") or card.get("custom"))
                 if full_card.get("attributes"):
                     card["attributes"] = full_card.get("attributes") or {}
                 if full_card.get("tendencies"):
@@ -3704,7 +3759,7 @@ class ViewerHandler(SimpleHTTPRequestHandler):
             payload = {
                 "ok": True,
                 "enabled": custom_cards_enabled(),
-                "cards": load_custom_cards(include_disabled=True),
+                "cards": load_custom_cards(include_disabled=True, include_hidden=True),
                 "folder": str(custom_card_root()),
             }
             self.send_bytes(json.dumps(payload, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8", cache_control="no-store")
@@ -3755,7 +3810,7 @@ class ViewerHandler(SimpleHTTPRequestHandler):
         custom_art_match = re.fullmatch(r"/custom-art/(-?\d+)/([^/]+)", unquote(parsed.path))
         if custom_art_match:
             wanted = (custom_art_match.group(1), custom_art_match.group(2))
-            card = next((item for item in load_custom_cards(include_disabled=True) if (str(item.get("id")), str(item.get("slug"))) == wanted), None)
+            card = next((item for item in load_custom_cards(include_disabled=True, include_hidden=True) if (str(item.get("id")), str(item.get("slug"))) == wanted), None)
             if not card:
                 self.send_error(HTTPStatus.NOT_FOUND)
                 return
@@ -3844,6 +3899,9 @@ class ViewerHandler(SimpleHTTPRequestHandler):
             return
         if parsed.path == "/api/set-custom-cards-enabled":
             self.handle_set_custom_cards_enabled()
+            return
+        if parsed.path == "/api/set-custom-card-hidden":
+            self.handle_set_custom_card_hidden()
             return
         if parsed.path == "/api/prepare-injection":
             self.handle_prepare_injection()
@@ -3987,10 +4045,41 @@ class ViewerHandler(SimpleHTTPRequestHandler):
             settings = load_settings()
             settings["customCardsEnabled"] = enabled
             save_settings(settings)
-            response = {"ok": True, "enabled": enabled, "count": len(load_custom_cards(include_disabled=True))}
+            response = {"ok": True, "enabled": enabled, "count": len(load_custom_cards(include_disabled=True, include_hidden=True))}
             self.send_bytes(json.dumps(response).encode("utf-8"), "application/json; charset=utf-8", cache_control="no-store")
         except (ValueError, json.JSONDecodeError, OSError) as error:
             response = json.dumps({"ok": False, "error": str(error)}).encode("utf-8")
+            self.send_bytes(response, "application/json; charset=utf-8", status=400, cache_control="no-store")
+
+    def handle_set_custom_card_hidden(self) -> None:
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            if length <= 0 or length > 10_000:
+                raise ValueError("Invalid custom-card visibility payload")
+            payload = json.loads(self.rfile.read(length).decode("utf-8"))
+            wanted = f"{payload.get('id')}/{payload.get('slug') or ''}"
+            cards = load_custom_cards(include_disabled=True, include_hidden=True)
+            if not any(custom_card_key(card) == wanted for card in cards):
+                raise ValueError("Custom card was not found")
+            settings = load_settings()
+            hidden = {
+                str(value) for value in settings.get("hiddenCustomCardKeys", [])
+                if str(value).strip()
+            }
+            if bool(payload.get("hidden")):
+                hidden.add(wanted)
+            else:
+                hidden.discard(wanted)
+            settings["hiddenCustomCardKeys"] = sorted(hidden)
+            save_settings(settings)
+            response = {
+                "ok": True,
+                "hidden": wanted in hidden,
+                "cards": load_custom_cards(include_disabled=True, include_hidden=True),
+            }
+            self.send_bytes(json.dumps(response, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8", cache_control="no-store")
+        except (ValueError, json.JSONDecodeError, OSError) as error:
+            response = json.dumps({"ok": False, "error": str(error)}, ensure_ascii=False).encode("utf-8")
             self.send_bytes(response, "application/json; charset=utf-8", status=400, cache_control="no-store")
 
     def handle_delete_saved_lineup(self) -> None:

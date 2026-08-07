@@ -3,7 +3,7 @@ const state = {
   returnToDraft: false, returnToDraftChoices: false,
   randomLineup: [], draftSelections: {}, draftTarget: null, draftOptions: [], draftDiamondSelection: null, draftMode: "default",
   customSelections: [], customFiltered: [], imageManifest: {}, jerseyNumberOverrides: { cards: {}, playerTeamYears: {}, players: {} }, injectionState: null, injectionKind: null, injectionRosterPath: "", injectionTeam: "", injectionTeamMode: "nba", unlockedInjectionTeams: {}, pendingUnlockTeam: "", loadedRosterVerification: null, manualLoadedRosterConfirm: false,
-  savedLineups: [], savedLineupKind: "", myteamExclusiveNames: new Set(), customCardsEnabled: true
+  savedLineups: [], savedLineupKind: "", myteamExclusiveNames: new Set(), customCardsEnabled: true, customCardLibrary: []
 };
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -25,7 +25,8 @@ const elements = {
   unlockTeamModal: $("#unlockTeamModal"), confirmTeamUnlock: $("#confirmTeamUnlock"),
   savedLineupModal: $("#savedLineupModal"), savedLineupList: $("#savedLineupList"), savedLineupHint: $("#savedLineupHint"),
   viewLineupFromChoices: $("#viewLineupFromChoices"),
-  importCustomCard: $("#importCustomCard"), customCardFile: $("#customCardFile"), customCardsEnabled: $("#customCardsEnabled"), draftCustomCardsEnabled: $("#draftCustomCardsEnabled")
+  importCustomCard: $("#importCustomCard"), customCardFile: $("#customCardFile"), customCardsEnabled: $("#customCardsEnabled"), draftCustomCardsEnabled: $("#draftCustomCardsEnabled"),
+  manageCustomCards: $("#manageCustomCards"), customCardManagerModal: $("#customCardManagerModal"), customCardManagerList: $("#customCardManagerList")
 };
 const tierOrder = ["Pink Diamond", "Diamond", "Amethyst", "Gold", "Silver", "Bronze"];
 const tierClass = tier => `tier-${(tier || "unknown").toLowerCase().replace(/[^a-z]+/g, "-")}`;
@@ -1512,10 +1513,66 @@ async function setCustomCardsEnabled(enabled, reopenMode = "") {
   }
 }
 
+function renderCustomCardManager() {
+  if (!elements.customCardManagerList) return;
+  if (!state.customCardLibrary.length) {
+    elements.customCardManagerList.innerHTML = `<div class="empty-state"><p>No custom cards have been imported yet.</p></div>`;
+    return;
+  }
+  elements.customCardManagerList.innerHTML = state.customCardLibrary.map(card => `
+    <article class="custom-card-manager-item ${tierClass(card.tier)} ${card.hidden ? "hidden-card" : ""}">
+      <img class="custom-card-manager-art" src="${escapeHtml(card.customArtUrl || "")}" alt="${escapeHtml(card.name)} card art">
+      <div class="custom-card-manager-copy">
+        <strong>${escapeHtml(card.name)}</strong>
+        <span>${card.year || "Current"} · ${escapeHtml(card.franchise || "Unassigned")} · ${escapeHtml(card.tier || "Custom")} · ${card.overall} OVR</span>
+        <small class="custom-card-manager-status">${card.hidden ? "Hidden from the app" : "Visible in the app"}</small>
+      </div>
+      <button class="custom-card-visibility-button ${card.hidden ? "restore" : ""}" data-custom-card-visibility data-card-id="${card.id}" data-card-slug="${escapeHtml(card.slug || "")}" data-hidden="${card.hidden ? "false" : "true"}">${card.hidden ? "Restore" : "Hide"}</button>
+    </article>`).join("");
+}
+
+function openCustomCardManager() {
+  renderCustomCardManager();
+  elements.customCardManagerModal?.classList.add("open");
+  elements.customCardManagerModal?.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+}
+
+function closeCustomCardManager() {
+  elements.customCardManagerModal?.classList.remove("open");
+  elements.customCardManagerModal?.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+}
+
+async function setCustomCardHidden(button) {
+  const hidden = button.dataset.hidden === "true";
+  button.disabled = true;
+  try {
+    const response = await fetch("/api/set-custom-card-hidden", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({id: Number(button.dataset.cardId), slug: button.dataset.cardSlug || "", hidden}),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.error || "Could not change custom-card visibility.");
+    state.customCardLibrary = result.cards || [];
+    state.cards = await fetch("/api/cards", {cache: "no-store"}).then(reply => {
+      if (!reply.ok) throw new Error("Could not refresh the card database.");
+      return reply.json();
+    });
+    applyFilters();
+    renderCustomCardManager();
+    showSaveToast(hidden ? "Custom card hidden. You can restore it here at any time." : "Custom card restored.");
+  } catch (error) {
+    button.disabled = false;
+    showSaveToast(error.message || "Could not change custom-card visibility.", true);
+  }
+}
+
 async function start() {
   try {
     const customStatus = await fetch("/api/custom-cards", { cache: "no-store" }).then(response => response.ok ? response.json() : ({enabled: true}));
     state.customCardsEnabled = customStatus.enabled !== false;
+    state.customCardLibrary = customStatus.cards || [];
     if (elements.customCardsEnabled) elements.customCardsEnabled.checked = state.customCardsEnabled;
     if (elements.draftCustomCardsEnabled) elements.draftCustomCardsEnabled.checked = state.customCardsEnabled;
     state.cards = await fetch("/api/cards", { cache: "no-store" }).then(response => { if (!response.ok) throw new Error("Could not load card database"); return response.json(); });
@@ -1552,6 +1609,12 @@ elements.search.addEventListener("input", debounce(applyFilters));
 elements.importCustomCard?.addEventListener("click", () => elements.customCardFile?.click());
 elements.customCardFile?.addEventListener("change", () => importCustomCardFile(elements.customCardFile.files?.[0]));
 elements.customCardsEnabled?.addEventListener("change", () => setCustomCardsEnabled(elements.customCardsEnabled.checked));
+elements.manageCustomCards?.addEventListener("click", openCustomCardManager);
+elements.customCardManagerModal?.addEventListener("click", event => {
+  if (event.target.closest("[data-close-custom-manager]")) closeCustomCardManager();
+  const button = event.target.closest("[data-custom-card-visibility]");
+  if (button) setCustomCardHidden(button);
+});
 elements.draftCustomCardsEnabled?.addEventListener("change", () => setCustomCardsEnabled(elements.draftCustomCardsEnabled.checked, "draft"));
 elements.grid.addEventListener("click", event => { const tile = event.target.closest(".card-tile"); if (!tile) return; const [id,...slug] = tile.dataset.cardKey.split("/"); const card = state.cards.find(card => String(card.id) === id && card.slug === slug.join("/")); const image = tile.querySelector("img"); if (card) openCard(card, image?.currentSrc || image?.src || ""); });
 elements.loadMore.addEventListener("click", () => { state.visible += 48; renderCards(); });
@@ -1693,12 +1756,13 @@ $(".tabs").addEventListener("click", event => { const tab = event.target.closest
 document.addEventListener("keydown", event => {
   if (event.key === "Escape" && elements.draftChoiceModal.classList.contains("open")) return;
   else if (event.key === "Escape" && elements.unlockTeamModal.classList.contains("open")) closeTeamUnlock();
+  else if (event.key === "Escape" && elements.customCardManagerModal?.classList.contains("open")) closeCustomCardManager();
   else if (event.key === "Escape" && elements.savedLineupModal.classList.contains("open")) closeSavedLineups();
   else if (event.key === "Escape" && state.selected) closeModal();
   else if (event.key === "Escape" && elements.injectionModal.classList.contains("open")) closeInjection();
   else if (event.key === "Escape" && elements.customModal.classList.contains("open")) closeCustomTeam();
   else if (event.key === "Escape" && elements.lineupModal.classList.contains("open")) closeLineup();
   else if (event.key === "Escape" && elements.draftModal.classList.contains("open")) closeDraft();
-  if (event.key === "/" && !state.selected && !elements.lineupModal.classList.contains("open") && !elements.draftModal.classList.contains("open") && !elements.customModal.classList.contains("open") && document.activeElement !== elements.search) { event.preventDefault(); elements.search.focus(); }
+  if (event.key === "/" && !state.selected && !elements.lineupModal.classList.contains("open") && !elements.draftModal.classList.contains("open") && !elements.customModal.classList.contains("open") && !elements.customCardManagerModal?.classList.contains("open") && document.activeElement !== elements.search) { event.preventDefault(); elements.search.focus(); }
 });
 start();

@@ -588,6 +588,29 @@ def split_name(full_name: str) -> tuple[str, str]:
     return " ".join(parts[:-1]), parts[-1]
 
 
+def roster_display_name(value: str) -> str:
+    """Normalize custom-card text for the mixed-case in-game roster fields."""
+    text = re.sub(r"^['\u2019](?:\d{2})\s+", "", (value or "").strip())
+
+    def cap_piece(piece: str) -> str:
+        if not piece:
+            return piece
+        if re.fullmatch(r"(?:[A-Za-z]\.)+", piece):
+            return piece.upper()
+        if piece.upper() in {"II", "III", "IV", "V"}:
+            return piece.upper()
+        return piece[:1].upper() + piece[1:].lower()
+
+    def cap_word(word: str) -> str:
+        output = []
+        for hyphen_piece in word.split("-"):
+            pieces = re.split(r"(['\u2019])", hyphen_piece)
+            output.append("".join(part if part in {"'", "\u2019"} else cap_piece(part) for part in pieces))
+        return "-".join(output)
+
+    return " ".join(cap_word(word) for word in text.split())
+
+
 def clean_position(value: str | None) -> str:
     text = (value or "").strip().upper()
     if "/" in text:
@@ -907,7 +930,10 @@ def apply_card_to_record(
     face_id_override: int | dict | None = None,
     jersey_number_override: int | str | None = None,
 ) -> dict:
-    first, last = split_name(card.get("name") or "")
+    card_name = card.get("name") or ""
+    if card.get("custom"):
+        card_name = roster_display_name(card_name)
+    first, last = split_name(card_name)
     player_key = norm_player_name(card.get("name") or "")
     field_override = SPECIAL_PLAYER_FIELD_OVERRIDES.get(player_key, {})
     first = str(field_override.get("first_name", first))
@@ -982,6 +1008,16 @@ def apply_card_to_record(
         if source_field in attrs:
             set_rating(record, roster_field, attrs[source_field])
             written_attrs += 1
+    cached_overall = None
+    if card.get("custom"):
+        # NBA 2K16 renders the roster-list OVR from a normalized cached float,
+        # not directly from the rating bytes or the detail-screen calculation.
+        # Leaving the donor/cache value stale can display invalid square glyphs.
+        try:
+            cached_overall = max(25, min(99, int(card.get("overall") or 0)))
+            struct.pack_into("<f", record, 0x13C, cached_overall / 100.0)
+        except (TypeError, ValueError, struct.error):
+            cached_overall = None
     if "overall_durability" in attrs:
         for field in DURABILITY_FIELDS:
             set_rating(record, field, attrs["overall_durability"])
@@ -1020,6 +1056,7 @@ def apply_card_to_record(
         "primary_position": primary_position,
         "secondary_position": secondary_position,
         "jersey_number": jersey_number_written if jersey_number_written is not None else "",
+        "cached_overall": cached_overall if cached_overall is not None else "",
     }
 
 
