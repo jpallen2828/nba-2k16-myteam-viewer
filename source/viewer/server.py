@@ -785,6 +785,7 @@ def load_custom_cards(include_disabled: bool = False) -> list[dict]:
             cards.append(item)
         except (OSError, ValueError, json.JSONDecodeError):
             continue
+    cards.sort(key=lambda card: (-int(card.get("overall") or 0), str(card.get("name") or "").casefold(), int(card.get("id") or 0)))
     return cards
 
 

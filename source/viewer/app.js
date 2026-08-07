@@ -25,7 +25,7 @@ const elements = {
   unlockTeamModal: $("#unlockTeamModal"), confirmTeamUnlock: $("#confirmTeamUnlock"),
   savedLineupModal: $("#savedLineupModal"), savedLineupList: $("#savedLineupList"), savedLineupHint: $("#savedLineupHint"),
   viewLineupFromChoices: $("#viewLineupFromChoices"),
-  importCustomCard: $("#importCustomCard"), customCardFile: $("#customCardFile"), customCardsEnabled: $("#customCardsEnabled")
+  importCustomCard: $("#importCustomCard"), customCardFile: $("#customCardFile"), customCardsEnabled: $("#customCardsEnabled"), draftCustomCardsEnabled: $("#draftCustomCardsEnabled")
 };
 const tierOrder = ["Pink Diamond", "Diamond", "Amethyst", "Gold", "Silver", "Bronze"];
 const tierClass = tier => `tier-${(tier || "unknown").toLowerCase().replace(/[^a-z]+/g, "-")}`;
@@ -278,6 +278,10 @@ function draftChoiceItem(items) {
   if (!items.length) return null;
   return randomItem(items);
 }
+function draftTierMatches(card, rolledTier) {
+  if (rolledTier === "Diamond" && state.customCardsEnabled) return card.tier === "Diamond" || card.tier === "Pink Diamond";
+  return card.tier === rolledTier;
+}
 const positionDraftKeys = () => lineupPositions.flatMap(position => draftRoles.map(role => slotKey(role,position)));
 const benchDraftKeys = () => benchRoles.map((_, index) => benchSlotKey(index + 1));
 const allDraftKeys = () => [...positionDraftKeys(), ...benchDraftKeys()];
@@ -491,7 +495,7 @@ function openDraftChoices(key) {
   for (let option = 0; option < 5; option++) {
     const tier = rollDraftTier(role);
     const positionOk = card => role === "bench" ? lineupPositions.includes(card.position) : card.position === position;
-    let eligible = state.cards.filter(card => positionOk(card) && card.tier === tier && !unavailable.has(card.name) && !offered.has(card.name));
+    let eligible = state.cards.filter(card => positionOk(card) && draftTierMatches(card, tier) && !unavailable.has(card.name) && !offered.has(card.name));
     if (!eligible.length) eligible = state.cards.filter(card => positionOk(card) && !unavailable.has(card.name) && !offered.has(card.name));
     const card = draftChoiceItem(eligible);
     if (card) { choices.push(card); offered.add(card.name); }
@@ -522,9 +526,10 @@ function openDiamondRoundChoices() {
       roll -= chance;
       if (roll < 0) { tier = candidateTier; break; }
     }
-    let eligible = state.cards.filter(card => card.tier === tier && lineupPositions.includes(card.position) && !unavailable.has(card.name) && !offered.has(card.name));
+    let eligible = state.cards.filter(card => draftTierMatches(card, tier) && lineupPositions.includes(card.position) && !unavailable.has(card.name) && !offered.has(card.name));
     if (!eligible.length) {
       const allowedTiers = new Set(bonus.tiers.map(([candidateTier]) => candidateTier));
+      if (state.customCardsEnabled && allowedTiers.has("Diamond")) allowedTiers.add("Pink Diamond");
       eligible = state.cards.filter(card => allowedTiers.has(card.tier) && lineupPositions.includes(card.position) && !unavailable.has(card.name) && !offered.has(card.name));
     }
     const card = draftChoiceItem(eligible);
@@ -535,7 +540,7 @@ function openDiamondRoundChoices() {
   showDraftChoices(bonus.title, bonus.modalSubtitle, choices, () => "Add as 13th pick");
 }
 
-const exportTierColors = { Diamond:"#a9f4ff", Amethyst:"#b97cff", Gold:"#f2cf61", Silver:"#cbd5df", Bronze:"#c78964" };
+const exportTierColors = { "Pink Diamond":"#f2a7da", Diamond:"#a9f4ff", Amethyst:"#b97cff", Gold:"#f2cf61", Silver:"#cbd5df", Bronze:"#c78964" };
 function loadedCardImage(card) {
   const marker = `/art/${card.id}/`;
   return [...document.images].find(image => image.src.includes(marker) && image.complete && image.naturalWidth > 0);
@@ -1171,7 +1176,7 @@ let draftArtWarmupStarted = false;
 function warmDraftArtCache() {
   if (draftArtWarmupStarted || !state.cards.length) return;
   draftArtWarmupStarted = true;
-  const tierRank = { Diamond: 0, Amethyst: 1, Gold: 2, Silver: 3, Bronze: 4 };
+  const tierRank = { "Pink Diamond": 0, Diamond: 1, Amethyst: 2, Gold: 3, Silver: 4, Bronze: 5 };
   const draftPool = state.cards
     .filter(card => lineupPositions.includes(card.position))
     .sort((a,b) => (tierRank[a.tier] ?? 9) - (tierRank[b.tier] ?? 9) || b.overall - a.overall);
@@ -1490,7 +1495,7 @@ async function importCustomCardFile(file) {
   }
 }
 
-async function setCustomCardsEnabled(enabled) {
+async function setCustomCardsEnabled(enabled, reopenMode = "") {
   try {
     const response = await fetch("/api/set-custom-cards-enabled", {
       method: "POST", headers: {"Content-Type": "application/json"},
@@ -1498,9 +1503,11 @@ async function setCustomCardsEnabled(enabled) {
     });
     const result = await response.json();
     if (!response.ok || !result.ok) throw new Error(result.error || "Could not change custom-card setting.");
-    window.location.reload();
+    if (reopenMode) window.location.assign(`/?mode=${encodeURIComponent(reopenMode)}`);
+    else window.location.reload();
   } catch (error) {
     elements.customCardsEnabled.checked = !enabled;
+    if (elements.draftCustomCardsEnabled) elements.draftCustomCardsEnabled.checked = !enabled;
     showSaveToast(error.message || "Could not change custom-card setting.", true);
   }
 }
@@ -1510,17 +1517,20 @@ async function start() {
     const customStatus = await fetch("/api/custom-cards", { cache: "no-store" }).then(response => response.ok ? response.json() : ({enabled: true}));
     state.customCardsEnabled = customStatus.enabled !== false;
     if (elements.customCardsEnabled) elements.customCardsEnabled.checked = state.customCardsEnabled;
+    if (elements.draftCustomCardsEnabled) elements.draftCustomCardsEnabled.checked = state.customCardsEnabled;
     state.cards = await fetch("/api/cards", { cache: "no-store" }).then(response => { if (!response.ok) throw new Error("Could not load card database"); return response.json(); });
     state.imageManifest = await fetch("data/offline-images.json?v=2", { cache: "force-cache" }).then(response => response.ok ? response.json() : {});
     const jerseyData = await fetch("data/jersey_number_overrides.json?v=2", { cache: "force-cache" }).then(response => response.ok ? response.json() : {});
     state.jerseyNumberOverrides = jerseyData;
     const exclusiveData = await fetch("data/myteam_exclusive_source_overrides.json?v=2", { cache: "force-cache" }).then(response => response.ok ? response.json() : {});
     state.myteamExclusiveNames = new Set(Object.keys(exclusiveData.players || {}).map(hotZoneNameKey));
-    addOptions(elements.tier, new Set(state.cards.map(card => card.tier)), tierOrder);
+    const availableTiers = new Set(state.cards.map(card => card.tier));
+    if (state.customCardsEnabled) availableTiers.add("Pink Diamond");
+    addOptions(elements.tier, availableTiers, tierOrder);
     addOptions(elements.team, new Set(state.cards.filter(card => card.franchise !== "UNASSIGNED").map(card => card.franchise)));
     addOptions(elements.position, new Set(state.cards.flatMap(card => [card.position,card.secondaryPosition])), ["PG","SG","SF","PF","C"]);
     addOptions(elements.theme, new Set(state.cards.map(card => card.theme)));
-    addOptions(elements.customTier, new Set(state.cards.map(card => card.tier)), tierOrder);
+    addOptions(elements.customTier, availableTiers, tierOrder);
     addOptions(elements.customPosition, new Set(state.cards.flatMap(card => [card.position,card.secondaryPosition])), ["PG","SG","SF","PF","C"]);
     addOptions(elements.customTeam, new Set(state.cards.filter(card => card.franchise !== "UNASSIGNED").map(card => card.franchise)));
     applyFilters();
@@ -1542,6 +1552,7 @@ elements.search.addEventListener("input", debounce(applyFilters));
 elements.importCustomCard?.addEventListener("click", () => elements.customCardFile?.click());
 elements.customCardFile?.addEventListener("change", () => importCustomCardFile(elements.customCardFile.files?.[0]));
 elements.customCardsEnabled?.addEventListener("change", () => setCustomCardsEnabled(elements.customCardsEnabled.checked));
+elements.draftCustomCardsEnabled?.addEventListener("change", () => setCustomCardsEnabled(elements.draftCustomCardsEnabled.checked, "draft"));
 elements.grid.addEventListener("click", event => { const tile = event.target.closest(".card-tile"); if (!tile) return; const [id,...slug] = tile.dataset.cardKey.split("/"); const card = state.cards.find(card => String(card.id) === id && card.slug === slug.join("/")); const image = tile.querySelector("img"); if (card) openCard(card, image?.currentSrc || image?.src || ""); });
 elements.loadMore.addEventListener("click", () => { state.visible += 48; renderCards(); });
 elements.activeFilters.addEventListener("click", event => { const pill = event.target.closest("[data-clear]"); if (pill) clearFilter(pill.dataset.clear); });

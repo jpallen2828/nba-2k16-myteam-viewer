@@ -42,7 +42,9 @@ Click any screenshot to view it at full size.
 
 ### Importing Card Studio custom cards
 
-NBA 2K16 Card Studio 0.8.3 and newer can export a `.2k16custom` package containing both the rendered card PNG and its complete authored player data. In the Viewer, choose **Import custom card** and select that package. Imported cards appear in the normal database, filters, drafts, custom-team builder, and roster injector. The **Custom cards** switch hides or restores the whole imported collection without deleting it.
+NBA 2K16 Card Studio 0.8.3 and newer can export a `.2k16custom` package containing both the rendered card PNG and its complete authored player data. In the Viewer, choose **Import custom card** and select that package. Imported cards appear in their authored theme grouping throughout the normal database, filters, drafts, custom-team builder, and roster injector. The **Custom cards** switch hides or restores the whole imported collection without deleting it, and the Draft screen has its own synchronized **Include custom cards** control.
+
+When custom cards are enabled, **Pink Diamond** is available above Diamond in the tier selector. Pink Diamond cards always sort above Diamond cards in the main gallery regardless of OVR. Within a tier, cards sort from highest to lowest OVR. In drafts, Pink Diamond cards join the Diamond candidate pool whenever a Diamond result is rolled, including the final Diamond round.
 
 Custom packages preserve name, season, tier, franchise, positions, height, weight, jersey number (including `00`), handedness, Face ID, Portrait ID, loyalty, injury slots, Force Non-Starter, Play Initiator, play types, all mapped attributes and tendencies, badges, hot zones, all 45 grouped signature selectors, and player-gear IDs. Wingspan remains at NBA 2K16’s height-proportional default value of `50` and is never interpreted as 50 inches. Imported packages are stored in the current Windows user’s local application-data directory so they remain available after updating or replacing the portable Viewer folder.
 

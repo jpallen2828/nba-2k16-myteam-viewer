@@ -1,5 +1,14 @@
 # Release Notes
 
+## Custom-card taxonomy and Pink Diamond draft update — August 6, 2026
+
+- Added a synchronized **Include custom cards** control directly to the Draft screen.
+- Added Pink Diamond to the Viewer tier choices whenever custom cards are enabled and styled it as a distinct tier above Diamond.
+- Pink Diamond cards now sort above Diamond cards on the main gallery regardless of OVR.
+- Custom cards remain ordered highest-to-lowest by OVR and appear under their authored Viewer theme.
+- Pink Diamond custom cards now share the Diamond draft pool for normal Diamond rolls and the final Diamond round.
+- Card Studio 0.9.0 now supplies searchable official-player presets plus Viewer-matched Theme and Collection dropdowns.
+
 ## Card Studio Custom-Card Interchange
 
 - Added `.2k16custom` imports from NBA 2K16 Card Studio, including the rendered card image and complete authored player data.
