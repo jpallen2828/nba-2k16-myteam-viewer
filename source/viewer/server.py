@@ -7,6 +7,7 @@ import argparse
 import base64
 from datetime import datetime
 import hashlib
+import io
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -21,6 +22,7 @@ import threading
 import time
 from urllib.parse import parse_qs, unquote, urlparse
 import webbrowser
+import zipfile
 
 import requests
 from PIL import ImageGrab
@@ -49,6 +51,7 @@ PHOTO_CACHE.mkdir(parents=True, exist_ok=True)
 CARDS = json.loads(DATA_PATH.read_text(encoding="utf-8"))
 CARD_MAP = {(str(card["id"]), card["slug"]): card for card in CARDS}
 CARD_ID_MAP = {str(card["id"]): card for card in CARDS}
+CUSTOM_CARD_FORMAT = "nba2k16.custom-card/v1"
 ART_LOCK = threading.Lock()
 BACKGROUND_ART: set[str] = set()
 BACKGROUND_ART_LOCK = threading.Lock()
@@ -604,6 +607,8 @@ CARD_CLEAN_SOURCE_SLOT_OVERRIDES = {
 }
 
 CARD_JERSEY_NUMBER_OVERRIDES = {
+    "9695/elvin-hayes": 11,
+    "9579/elvin-hayes": 11,
     "4522/kobe-bryant": 8,
     "2255/kobe-bryant": 8,
     "10083/kobe-bryant": 8,
@@ -742,6 +747,106 @@ ACCESSORY_FIELD_RANGES = [
 
 def output_root() -> Path:
     return Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else ROOT
+
+
+def custom_card_root() -> Path:
+    root = Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "NBA2K16MyTEAMViewer" / "custom-cards"
+    root.mkdir(parents=True, exist_ok=True)
+    return root
+
+
+def custom_cards_enabled() -> bool:
+    return bool(load_settings().get("customCardsEnabled", True))
+
+
+def _safe_custom_stem(card: dict) -> str:
+    raw = f"{card.get('id')}-{card.get('slug') or 'custom-card'}"
+    return re.sub(r"[^A-Za-z0-9_.-]+", "-", raw).strip("-.") or "custom-card"
+
+
+def load_custom_cards(include_disabled: bool = False) -> list[dict]:
+    if not include_disabled and not custom_cards_enabled():
+        return []
+    cards: list[dict] = []
+    for manifest_path in sorted(custom_card_root().glob("*.json")):
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
+            if not isinstance(manifest, dict):
+                continue
+            card = manifest.get("card")
+            if manifest.get("format") != CUSTOM_CARD_FORMAT or not isinstance(card, dict):
+                continue
+            art_name = str(manifest.get("storedArt") or f"{manifest_path.stem}.png")
+            if not (custom_card_root() / art_name).is_file():
+                continue
+            item = dict(card)
+            item["custom"] = True
+            item["customArtUrl"] = f"/custom-art/{item.get('id')}/{item.get('slug')}"
+            cards.append(item)
+        except (OSError, ValueError, json.JSONDecodeError):
+            continue
+    return cards
+
+
+def all_cards() -> list[dict]:
+    return [*CARDS, *load_custom_cards()]
+
+
+def custom_card_maps() -> tuple[dict[tuple[str, str], dict], dict[str, dict]]:
+    cards = load_custom_cards()
+    return (
+        {(str(card.get("id")), str(card.get("slug") or "")): card for card in cards},
+        {str(card.get("id")): card for card in cards},
+    )
+
+
+def import_custom_card_package(raw: bytes, original_name: str = "") -> dict:
+    if len(raw) > 25_000_000:
+        raise ValueError("Custom card package is larger than 25 MB.")
+    try:
+        with zipfile.ZipFile(io.BytesIO(raw), "r") as archive:
+            names = set(archive.namelist())
+            if {"manifest.json", "card.png"} - names:
+                raise ValueError("Package must contain manifest.json and card.png.")
+            manifest = json.loads(archive.read("manifest.json").decode("utf-8"))
+            if (
+                not isinstance(manifest, dict)
+                or manifest.get("format") != CUSTOM_CARD_FORMAT
+                or not isinstance(manifest.get("card"), dict)
+            ):
+                raise ValueError("This is not a supported NBA 2K16 custom-card package.")
+            art = archive.read("card.png")
+    except (zipfile.BadZipFile, KeyError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"Could not read custom card package: {exc}") from exc
+    if not art.startswith(b"\x89PNG\r\n\x1a\n"):
+        raise ValueError("The custom card artwork is not a PNG.")
+    card = dict(manifest["card"])
+    required = ("id", "slug", "name", "overall", "position", "attributes", "tendencies", "badges")
+    missing = [field for field in required if field not in card]
+    if missing:
+        raise ValueError(f"Custom card is missing required fields: {', '.join(missing)}")
+    try:
+        card["id"] = int(card["id"])
+        card["overall"] = max(25, min(99, int(card["overall"])))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Custom card ID and overall must be integers.") from exc
+    card["custom"] = True
+    stem = _safe_custom_stem(card)
+    art_name = f"{stem}.png"
+    stored_manifest = {
+        "format": CUSTOM_CARD_FORMAT,
+        "version": 1,
+        "imported": datetime.now().astimezone().isoformat(),
+        "sourceName": original_name,
+        "storedArt": art_name,
+        "card": card,
+    }
+    (custom_card_root() / art_name).write_bytes(art)
+    (custom_card_root() / f"{stem}.json").write_text(
+        json.dumps(stored_manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    card["customArtUrl"] = f"/custom-art/{card['id']}/{card['slug']}"
+    return card
 
 
 def saved_lineup_roots() -> list[Path]:
@@ -2509,6 +2614,111 @@ def apply_card_gameplay_override(target: bytearray, card: dict, overrides: dict,
     return applied
 
 
+CUSTOM_SIGNATURE_BITS = {
+    "release_timing": (0x15F, 6, 2), "shooting_form": (0x15C, 0, 8),
+    "shot_base": (0x15D, 0, 8), "contested_shot": (0x15E, 3, 2),
+    "free_throw": (0x2D4, 0, 8), "dribble_pullup": (0x1E1, 3, 6),
+    "spin_jumper": (0x1E0, 6, 5), "hop_jumper": (0x2F0, 0, 6),
+    "layup_package": (0x1DF, 2, 5),
+    "dunk_package_1": (0x2E8, 0, 7), "dunk_package_2": (0x2E8, 7, 7),
+    "dunk_package_3": (0x2E9, 6, 7), "dunk_package_4": (0x2E5, 1, 7),
+    "dunk_package_5": (0x2B4, 0, 7), "dunk_package_6": (0x2B4, 7, 7),
+    "dunk_package_7": (0x2B5, 6, 7), "dunk_package_8": (0x2B6, 5, 7),
+    "dunk_package_9": (0x2B8, 0, 7), "dunk_package_10": (0x2B8, 7, 7),
+    "dunk_package_11": (0x2B9, 6, 7), "dunk_package_12": (0x2BA, 5, 7),
+    "dunk_package_13": (0x2D9, 0, 7), "dunk_package_14": (0x2D9, 7, 7),
+    "dunk_package_15": (0x2DA, 6, 7),
+    "post_fade": (0x1E2, 1, 4), "post_hook": (0x161, 1, 4),
+    "post_hop_shot": (0x163, 4, 4), "post_shimmy_shot": (0x160, 0, 2),
+    "post_protect_jumper": (0x1E0, 2, 2), "dribble_posture": (0x0FC, 5, 2),
+    "iso_crossover": (0x2EE, 3, 5), "iso_behind_back": (0x2E6, 0, 4),
+    "iso_spin": (0x0FC, 0, 5), "iso_hesitation": (0x2D5, 0, 4),
+    "iso_sizeup_forward": (0x2D8, 0, 8), "iso_sizeup_back": (0x2EC, 7, 6),
+    "iso_sizeup_right": (0x2EC, 0, 7), "iso_sizeup_left": (0x2EA, 5, 6),
+    "player_intro_1": (0x255, 6, 7), "player_intro_2": (0x256, 5, 7),
+    "jump_ball_stance": (0x2ED, 6, 5), "no_mad_dunk": (0x2BE, 3, 1),
+    "chew_gum": (0x2BE, 2, 1), "iso_sizeup_forward_bt": (0x2BC, 0, 8),
+    "jumpshot_celebration": (0x2BD, 0, 4),
+}
+
+CUSTOM_VITAL_BITS = {
+    "loyalty": (0x1DC, 5, 7), "injuryType1": (0x0C8, 0, 8),
+    "injuryDurationDays1": (0x2CC, 0, 20), "injuryType2": (0x2D6, 0, 8),
+    "injuryDurationDays2": (0x2D0, 0, 20), "forceNonStarter": (0x2D3, 1, 2),
+    "playType1": (0x138, 0, 4), "playType2": (0x138, 4, 4),
+    "playType3": (0x139, 0, 4), "playType4": (0x139, 4, 4),
+}
+
+CUSTOM_GEAR_OFFSETS = {
+    "sock_length_home": 0x0FD,
+    "shoe_packed_1": 0x110, "shoe_packed_2": 0x111, "shoe_packed_3": 0x112, "shoe_packed_4": 0x113,
+    "headband_hidden": 0x125,
+    "sock_length_away": 0x126,
+    **{f"gear_accessory_{index + 1}": 0x128 + index for index in range(16)},
+    "mouthpiece_hidden": 0x2F1,
+}
+
+
+def write_packed_bits(target: bytearray, offset: int, bit_start: int, bit_length: int, value: int) -> None:
+    """Write a Cheat Engine-style little-endian bit field without damaging neighbors."""
+    byte_count = (bit_start + bit_length + 7) // 8
+    if offset < 0 or offset + byte_count > len(target):
+        raise IndexError("packed field is outside the player record")
+    current = int.from_bytes(target[offset:offset + byte_count], "little")
+    value_mask = (1 << bit_length) - 1
+    mask = value_mask << bit_start
+    current = (current & ~mask) | ((max(0, min(value_mask, int(value))) << bit_start) & mask)
+    target[offset:offset + byte_count] = current.to_bytes(byte_count, "little")
+
+
+def apply_custom_player_data(target: bytearray, card: dict, *, include_signatures: bool = True, include_gear: bool = True) -> dict:
+    custom = card.get("customPlayerData")
+    if not card.get("custom") or not isinstance(custom, dict):
+        return {}
+    applied: dict[str, object] = {}
+    signatures = custom.get("signatures")
+    signature_fields: list[str] = []
+    if include_signatures and isinstance(signatures, dict):
+        for field, (offset, bit_start, bit_length) in CUSTOM_SIGNATURE_BITS.items():
+            if field not in signatures:
+                continue
+            try:
+                write_packed_bits(target, offset, bit_start, bit_length, int(signatures[field]))
+                signature_fields.append(f"{field}@0x{offset:X}:{bit_start}+{bit_length}")
+            except (TypeError, ValueError, IndexError):
+                continue
+    if signature_fields:
+        applied["signature_fields"] = signature_fields
+    vital_fields: list[str] = []
+    for field, (offset, bit_start, bit_length) in CUSTOM_VITAL_BITS.items():
+        if field not in custom:
+            continue
+        try:
+            value = int(custom[field])
+            if field.startswith("injuryDurationDays"):
+                value *= 1440
+            write_packed_bits(target, offset, bit_start, bit_length, value)
+            vital_fields.append(f"{field}@0x{offset:X}:{bit_start}+{bit_length}")
+        except (TypeError, ValueError, IndexError):
+            continue
+    if vital_fields:
+        applied["vital_fields"] = vital_fields
+    gear = custom.get("gear")
+    gear_fields: list[str] = []
+    if include_gear and isinstance(gear, dict):
+        for field, offset in CUSTOM_GEAR_OFFSETS.items():
+            if field not in gear or not (0 <= offset < len(target)):
+                continue
+            try:
+                target[offset] = max(0, min(255, int(gear[field])))
+                gear_fields.append(f"{field}@0x{offset:X}")
+            except (TypeError, ValueError):
+                continue
+    if gear_fields:
+        applied["gear_fields"] = gear_fields
+    return applied
+
+
 def myteam_exclusive_appearance_float_writes(card: dict, overrides: dict[str, dict], myteam=None) -> list[dict]:
     override = overrides.get(norm_name(str(card.get("name") or "")))
     if not override or override.get("height_inches") is None:
@@ -2813,6 +3023,7 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
         clean_source_records, clean_source_metadata = load_clean_roster_sources(roster.PLAYER_STRIDE)
         clean_sources_by_slot, clean_sources_by_name = load_clean_roster_sources_by_slot(roster.PLAYER_STRIDE)
         previous_shells = load_previous_injection_shells(previous_team_record, roster.PLAYER_STRIDE)
+        custom_card_map, custom_card_id_map = custom_card_maps()
 
         changes = []
         warnings = []
@@ -2826,7 +3037,12 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
         for offset, item in enumerate(players):
             destination = team_slots[offset]
             card = item["card"]
-            full_card = CARD_MAP.get((str(card.get("id")), str(card.get("slug") or ""))) or CARD_ID_MAP.get(str(card.get("id")))
+            full_card = (
+                CARD_MAP.get((str(card.get("id")), str(card.get("slug") or "")))
+                or CARD_ID_MAP.get(str(card.get("id")))
+                or custom_card_map.get((str(card.get("id")), str(card.get("slug") or "")))
+                or custom_card_id_map.get(str(card.get("id")))
+            )
             if full_card:
                 card = {**full_card, **card}
                 if full_card.get("attributes"):
@@ -2911,7 +3127,22 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             if stable_template_entry:
                 stable_template_ranges = apply_stable_template_fields(edited, stable_template_entry, roster.PLAYER_STRIDE)
             same_player_quality_fields = myteam.apply_same_player_quality_fields(edited, source, card)
+            custom_player_data = card.get("customPlayerData") if isinstance(card.get("customPlayerData"), dict) else {}
             face_id_override = card_face_override(card, face_overrides)
+            if card.get("custom") and custom_player_data:
+                try:
+                    face_id = int(custom_player_data.get("faceId") or card.get("faceId") or 0)
+                    portrait_id = int(custom_player_data.get("portraitId") or card.get("portraitId") or face_id)
+                except (TypeError, ValueError):
+                    face_id = portrait_id = 0
+                if face_id or portrait_id:
+                    face_id_override = {
+                        "graphic_id": face_id or portrait_id,
+                        "portrait_ref_a": portrait_id or face_id,
+                        "portrait_ref_b": portrait_id or face_id,
+                        "portrait_ref_c": portrait_id or face_id,
+                        "picture_id": portrait_id or face_id,
+                    }
             jersey_override, jersey_override_source = stable_card_jersey_number(
                 card,
                 jersey_overrides,
@@ -2920,6 +3151,13 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 roster.PLAYER_STRIDE,
                 myteam,
             )
+            if card.get("custom"):
+                raw_jersey = custom_player_data.get("jerseyNumber", card.get("jerseyNumber"))
+                try:
+                    jersey_override = normalize_jersey_number(raw_jersey)
+                    jersey_override_source = "custom_card_package"
+                except (TypeError, ValueError):
+                    pass
             stats = myteam.apply_card_to_record(edited, card, destination, face_id_override, jersey_override)
             if jersey_override_source:
                 stats["jersey_number_source"] = jersey_override_source
@@ -2944,6 +3182,11 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 )
             handedness_write = {}
             handedness_override = handedness_overrides.get(card_clean_source_key(card), "") or handedness_overrides.get(name_key, "")
+            if card.get("custom") and custom_player_data:
+                handedness_override = {
+                    "dominant_hand": str(custom_player_data.get("dominantHand") or "Right"),
+                    "dominant_dunk_hand": str(custom_player_data.get("dominantDunkHand") or "Right"),
+                }
             if handedness_override:
                 handedness_write = apply_handedness_override(edited, handedness_override)
             elif clean_source:
@@ -3024,6 +3267,8 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             if exclusive_source_fields:
                 stats["myteam_exclusive_source_overrides"] = exclusive_source_fields
             play_initiator_override = card_play_initiator_override(card, play_initiator_overrides)
+            if card.get("custom") and "playInitiator" in custom_player_data:
+                play_initiator_override = bool(custom_player_data.get("playInitiator"))
             if play_initiator_override is not None and hasattr(myteam, "set_play_initiator"):
                 myteam.set_play_initiator(edited, play_initiator_override)
                 stats["final_play_initiator"] = play_initiator_override
@@ -3046,6 +3291,13 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             )
             if card_gameplay_override_fields:
                 stats["card_gameplay_override"] = card_gameplay_override_fields
+            custom_signature_fields = apply_custom_player_data(edited, card, include_signatures=True, include_gear=False)
+            if custom_signature_fields:
+                stats["custom_card_signatures"] = custom_signature_fields
+                custom_hot_zone_fields, custom_hot_zone_unmatched = myteam.apply_hot_zones(edited, card)
+                stats["custom_card_hot_zones_reapplied"] = custom_hot_zone_fields
+                if custom_hot_zone_unmatched:
+                    stats["custom_card_hot_zones_unmatched"] = custom_hot_zone_unmatched
             hidden_display_fields = apply_named_hidden_display_fields(edited, card, myteam)
             if hidden_display_fields:
                 stats["hidden_display_named_fields_written"] = hidden_display_fields
@@ -3060,6 +3312,9 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             accessory_fields = apply_accessory_override(edited, card, accessory_overrides)
             if accessory_fields:
                 stats["accessory_overrides"] = accessory_fields
+            custom_gear_fields = apply_custom_player_data(edited, card, include_signatures=False, include_gear=True)
+            if custom_gear_fields:
+                stats["custom_card_gear"] = custom_gear_fields
             portrait_resolution = portrait_resolution_log_entry(
                 card,
                 destination,
@@ -3076,6 +3331,15 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             stats["portrait_resolution_log"] = portrait_resolution
             portrait_resolution_log.append(portrait_resolution)
             appearance_writes = myteam.appearance_float_writes(card)
+            if card.get("custom") and custom_player_data.get("wingspanInches") is not None:
+                try:
+                    appearance_writes.append({
+                        "name": "custom_card_wingspan_cm",
+                        "offset": myteam.APPEARANCE_WINGSPAN_CM_OFFSET,
+                        "value": round(float(custom_player_data["wingspanInches"]) * 2.54, 6),
+                    })
+                except (TypeError, ValueError):
+                    pass
             if clean_source and name_key not in myteam_exclusive_source_overrides:
                 appearance_writes.extend(clean_source_appearance_float_writes(clean_source, myteam))
             # Player-specific appearance fixes, like Dirk's normalized height/wingspan,
@@ -3397,7 +3661,16 @@ class ViewerHandler(SimpleHTTPRequestHandler):
             self.send_bytes(b'{"ok":true}', "application/json")
             return
         if parsed.path == "/api/cards":
-            self.send_bytes(DATA_PATH.read_bytes(), "application/json; charset=utf-8", cache_control="no-store")
+            self.send_bytes(json.dumps(all_cards(), ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8", cache_control="no-store")
+            return
+        if parsed.path == "/api/custom-cards":
+            payload = {
+                "ok": True,
+                "enabled": custom_cards_enabled(),
+                "cards": load_custom_cards(include_disabled=True),
+                "folder": str(custom_card_root()),
+            }
+            self.send_bytes(json.dumps(payload, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8", cache_control="no-store")
             return
         if parsed.path == "/api/official-art":
             self.send_bytes(json.dumps(official_art_keys()).encode("utf-8"), "application/json; charset=utf-8", cache_control="no-store")
@@ -3441,6 +3714,20 @@ class ViewerHandler(SimpleHTTPRequestHandler):
                     "message": f"{exc} If this exact roster is already open in NBA 2K16, confirm below to inject anyway.",
                 }
             self.send_bytes(json.dumps(payload, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8", cache_control="no-store")
+            return
+        custom_art_match = re.fullmatch(r"/custom-art/(-?\d+)/([^/]+)", unquote(parsed.path))
+        if custom_art_match:
+            wanted = (custom_art_match.group(1), custom_art_match.group(2))
+            card = next((item for item in load_custom_cards(include_disabled=True) if (str(item.get("id")), str(item.get("slug"))) == wanted), None)
+            if not card:
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            stem = _safe_custom_stem(card)
+            art_path = custom_card_root() / f"{stem}.png"
+            if not art_path.is_file():
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            self.send_bytes(art_path.read_bytes(), "image/png", cache_control="no-store")
             return
         art_match = re.fullmatch(r"/art/(\d+)/([^/]+)", unquote(parsed.path))
         if art_match:
@@ -3515,6 +3802,12 @@ class ViewerHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
+        if parsed.path == "/api/import-custom-card":
+            self.handle_import_custom_card()
+            return
+        if parsed.path == "/api/set-custom-cards-enabled":
+            self.handle_set_custom_cards_enabled()
+            return
         if parsed.path == "/api/prepare-injection":
             self.handle_prepare_injection()
             return
@@ -3624,6 +3917,42 @@ class ViewerHandler(SimpleHTTPRequestHandler):
             response = json.dumps({"ok": True, "path": str(target), "method": saved_method}, ensure_ascii=False).encode("utf-8")
             self.send_bytes(response, "application/json; charset=utf-8", cache_control="no-store")
         except (ValueError, json.JSONDecodeError, base64.binascii.Error, OSError) as error:
+            response = json.dumps({"ok": False, "error": str(error)}).encode("utf-8")
+            self.send_bytes(response, "application/json; charset=utf-8", status=400, cache_control="no-store")
+
+    def handle_import_custom_card(self) -> None:
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            if length <= 0 or length > 36_000_000:
+                raise ValueError("Invalid custom-card upload size")
+            payload = json.loads(self.rfile.read(length).decode("utf-8"))
+            encoded = str(payload.get("data") or "")
+            if "," in encoded:
+                encoded = encoded.split(",", 1)[1]
+            raw = base64.b64decode(encoded, validate=True)
+            card = import_custom_card_package(raw, str(payload.get("name") or ""))
+            settings = load_settings()
+            settings["customCardsEnabled"] = True
+            save_settings(settings)
+            response = {"ok": True, "card": card, "enabled": True, "count": len(load_custom_cards())}
+            self.send_bytes(json.dumps(response, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8", cache_control="no-store")
+        except (ValueError, json.JSONDecodeError, base64.binascii.Error, OSError) as error:
+            response = json.dumps({"ok": False, "error": str(error)}, ensure_ascii=False).encode("utf-8")
+            self.send_bytes(response, "application/json; charset=utf-8", status=400, cache_control="no-store")
+
+    def handle_set_custom_cards_enabled(self) -> None:
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            if length <= 0 or length > 10_000:
+                raise ValueError("Invalid custom-card setting payload")
+            payload = json.loads(self.rfile.read(length).decode("utf-8"))
+            enabled = bool(payload.get("enabled"))
+            settings = load_settings()
+            settings["customCardsEnabled"] = enabled
+            save_settings(settings)
+            response = {"ok": True, "enabled": enabled, "count": len(load_custom_cards(include_disabled=True))}
+            self.send_bytes(json.dumps(response).encode("utf-8"), "application/json; charset=utf-8", cache_control="no-store")
+        except (ValueError, json.JSONDecodeError, OSError) as error:
             response = json.dumps({"ok": False, "error": str(error)}).encode("utf-8")
             self.send_bytes(response, "application/json; charset=utf-8", status=400, cache_control="no-store")
 

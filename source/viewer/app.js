@@ -3,7 +3,7 @@ const state = {
   returnToDraft: false, returnToDraftChoices: false,
   randomLineup: [], draftSelections: {}, draftTarget: null, draftOptions: [], draftDiamondSelection: null, draftMode: "default",
   customSelections: [], customFiltered: [], imageManifest: {}, jerseyNumberOverrides: { cards: {}, playerTeamYears: {}, players: {} }, injectionState: null, injectionKind: null, injectionRosterPath: "", injectionTeam: "", injectionTeamMode: "nba", unlockedInjectionTeams: {}, pendingUnlockTeam: "", loadedRosterVerification: null, manualLoadedRosterConfirm: false,
-  savedLineups: [], savedLineupKind: "", myteamExclusiveNames: new Set()
+  savedLineups: [], savedLineupKind: "", myteamExclusiveNames: new Set(), customCardsEnabled: true
 };
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -24,11 +24,12 @@ const elements = {
   manualRosterDir: $("#manualRosterDir"), saveRosterDir: $("#saveRosterDir"), manualRosterDirStatus: $("#manualRosterDirStatus"),
   unlockTeamModal: $("#unlockTeamModal"), confirmTeamUnlock: $("#confirmTeamUnlock"),
   savedLineupModal: $("#savedLineupModal"), savedLineupList: $("#savedLineupList"), savedLineupHint: $("#savedLineupHint"),
-  viewLineupFromChoices: $("#viewLineupFromChoices")
+  viewLineupFromChoices: $("#viewLineupFromChoices"),
+  importCustomCard: $("#importCustomCard"), customCardFile: $("#customCardFile"), customCardsEnabled: $("#customCardsEnabled")
 };
-const tierOrder = ["Diamond", "Amethyst", "Gold", "Silver", "Bronze"];
+const tierOrder = ["Pink Diamond", "Diamond", "Amethyst", "Gold", "Silver", "Bronze"];
 const tierClass = tier => `tier-${(tier || "unknown").toLowerCase().replace(/[^a-z]+/g, "-")}`;
-const galleryTierRank = { Diamond: 0, Amethyst: 1, Gold: 2, Silver: 3, Bronze: 4 };
+const galleryTierRank = { "Pink Diamond": 0, Diamond: 1, Amethyst: 2, Gold: 3, Silver: 4, Bronze: 5 };
 const finalDiamondCardId = 10072; // 95 OVR Luis Scola closes the Diamond section.
 const hotZoneTemplateUrl = "assets/hot-zone-template.png";
 const hotZoneNeutral = [100, 100, 99];
@@ -41,6 +42,7 @@ const hotZoneSeedPoints = {
 const pretty = text => text.replaceAll("_", " ").replace(/\b\w/g, letter => letter.toUpperCase()).replace(" Iq", " IQ");
 const imageKey = card => `${card.id}-${(card.slug || "").toLowerCase().replace(/[^a-z0-9-]+/g, "-")}`;
 const artUrl = card => {
+  if (card.customArtUrl) return card.customArtUrl;
   const entry = state.imageManifest[imageKey(card)];
   if (typeof entry === "string") return entry;
   if (entry?.path) return entry.path;
@@ -784,7 +786,10 @@ function cardForInjection(card) {
     year: card.year, franchise: card.franchise, collection: card.collection, theme: card.theme,
     position: card.position, secondaryPosition: card.secondaryPosition, height: card.height, weight: card.weight,
     age: card.age, badges: card.badges || {}, badgeCounts: card.badgeCounts || {},
-    attributes: card.attributes || {}, tendencies: card.tendencies || {}
+    attributes: card.attributes || {}, tendencies: card.tendencies || {}, hotZones: card.hotZones || {},
+    custom: Boolean(card.custom), customPlayerData: card.customPlayerData || {},
+    faceId: card.faceId, portraitId: card.portraitId, jerseyNumber: card.jerseyNumber,
+    playInitiator: card.playInitiator, wingspanInches: card.wingspanInches
   };
 }
 function lineupPackage(kind) {
@@ -1343,6 +1348,7 @@ function renderBadges(card) {
   return `${estimateNote}<div class="badge-summary">${totals}</div><div class="badge-groups">${list}</div>`;
 }
 function jerseyNumberForCard(card) {
+  if (card.custom && card.jerseyNumber !== undefined && card.jerseyNumber !== null) return card.jerseyNumber;
   const normalize = value => {
     if (value === null || value === undefined || value === "") return null;
     if (String(value).trim() === "00") return "00";
@@ -1455,9 +1461,56 @@ function renderTab() {
   }
 }
 
+function fileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(reader.error || new Error("Could not read custom-card package."));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function importCustomCardFile(file) {
+  if (!file) return;
+  try {
+    showSaveToast(`Importing ${file.name}...`);
+    const data = await fileAsDataUrl(file);
+    const response = await fetch("/api/import-custom-card", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({name: file.name, data}),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.error || "Could not import custom card.");
+    showSaveToast(`Imported ${result.card.name}. Reloading card database...`);
+    window.setTimeout(() => window.location.reload(), 450);
+  } catch (error) {
+    showSaveToast(error.message || "Could not import custom card.", true);
+  } finally {
+    if (elements.customCardFile) elements.customCardFile.value = "";
+  }
+}
+
+async function setCustomCardsEnabled(enabled) {
+  try {
+    const response = await fetch("/api/set-custom-cards-enabled", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({enabled}),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.error || "Could not change custom-card setting.");
+    window.location.reload();
+  } catch (error) {
+    elements.customCardsEnabled.checked = !enabled;
+    showSaveToast(error.message || "Could not change custom-card setting.", true);
+  }
+}
+
 async function start() {
   try {
-    state.cards = await fetch("data/cards.json?v=2", { cache: "force-cache" }).then(response => { if (!response.ok) throw new Error("Could not load card database"); return response.json(); });
+    const customStatus = await fetch("/api/custom-cards", { cache: "no-store" }).then(response => response.ok ? response.json() : ({enabled: true}));
+    state.customCardsEnabled = customStatus.enabled !== false;
+    if (elements.customCardsEnabled) elements.customCardsEnabled.checked = state.customCardsEnabled;
+    state.cards = await fetch("/api/cards", { cache: "no-store" }).then(response => { if (!response.ok) throw new Error("Could not load card database"); return response.json(); });
     state.imageManifest = await fetch("data/offline-images.json?v=2", { cache: "force-cache" }).then(response => response.ok ? response.json() : {});
     const jerseyData = await fetch("data/jersey_number_overrides.json?v=2", { cache: "force-cache" }).then(response => response.ok ? response.json() : {});
     state.jerseyNumberOverrides = jerseyData;
@@ -1486,6 +1539,9 @@ function openStartupMode() {
 
 [elements.tier,elements.team,elements.position,elements.theme,elements.overall,elements.sort].forEach(element => element.addEventListener("change", applyFilters));
 elements.search.addEventListener("input", debounce(applyFilters));
+elements.importCustomCard?.addEventListener("click", () => elements.customCardFile?.click());
+elements.customCardFile?.addEventListener("change", () => importCustomCardFile(elements.customCardFile.files?.[0]));
+elements.customCardsEnabled?.addEventListener("change", () => setCustomCardsEnabled(elements.customCardsEnabled.checked));
 elements.grid.addEventListener("click", event => { const tile = event.target.closest(".card-tile"); if (!tile) return; const [id,...slug] = tile.dataset.cardKey.split("/"); const card = state.cards.find(card => String(card.id) === id && card.slug === slug.join("/")); const image = tile.querySelector("img"); if (card) openCard(card, image?.currentSrc || image?.src || ""); });
 elements.loadMore.addEventListener("click", () => { state.visible += 48; renderCards(); });
 elements.activeFilters.addEventListener("click", event => { const pill = event.target.closest("[data-clear]"); if (pill) clearFilter(pill.dataset.clear); });

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NBA 2K16 MyTEAM Archive</title>
-  <link rel="stylesheet" href="styles.css?v=15">
+  <link rel="stylesheet" href="styles.css?v=16">
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -44,6 +44,9 @@
       <div class="collection-bar">
         <div><p class="eyebrow">CARD DATABASE</p><h2 id="resultTitle">Loading collection…</h2></div>
         <div class="collection-actions">
+          <input id="customCardFile" type="file" accept=".2k16custom" hidden>
+          <button id="importCustomCard" class="secondary-button">Import custom card</button>
+          <label class="custom-card-toggle"><input id="customCardsEnabled" type="checkbox" checked><span>Custom cards</span></label>
           <button id="customTeam" class="custom-team-button">Create your own team</button>
           <button id="draftTeam" class="draft-team-button">Draft a team</button>
           <button id="randomTeam" class="random-team-button">Create a random team</button>
@@ -216,6 +219,6 @@
       <div class="card-copy"><div><h3></h3><p class="card-subtitle"></p></div><span class="card-overall"></span></div>
     </button>
   </template>
-  <script src="app.js?v=32" defer></script>
+  <script src="app.js?v=33" defer></script>
 </body>
 </html>

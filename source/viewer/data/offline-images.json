@@ -1,9 +1,4 @@
 {
-    "10002-dan-majerle":  {
-                              "path":  "data/card-images/10002-dan-majerle.png",
-                              "kind":  "official",
-                              "contentType":  "image/png"
-                          },
     "10003-cedric-ceballos":  {
                                   "path":  "data/card-images/10003-cedric-ceballos.png",
                                   "kind":  "official",
@@ -14,21 +9,11 @@
                                 "kind":  "official",
                                 "contentType":  "image/png"
                             },
-    "10006-john-stockton":  {
-                                "path":  "data/card-images/10006-john-stockton.png",
-                                "kind":  "official",
-                                "contentType":  "image/png"
-                            },
     "10007-tom-chambers":  {
                                "path":  "data/card-images/10007-tom-chambers.png",
                                "kind":  "official",
                                "contentType":  "image/png"
                            },
-    "10008-patrick-ewing":  {
-                                "path":  "data/card-images/10008-patrick-ewing.png",
-                                "kind":  "official",
-                                "contentType":  "image/png"
-                            },
     "10009-john-starks":  {
                               "path":  "data/card-images/10009-john-starks.png",
                               "kind":  "official",
@@ -49,26 +34,11 @@
                              "kind":  "official",
                              "contentType":  "image/png"
                          },
-    "10021-dennis-johnson":  {
-                                 "path":  "data/card-images/10021-dennis-johnson.png",
-                                 "kind":  "official",
-                                 "contentType":  "image/png"
-                             },
     "10023-jack-sikma":  {
                              "path":  "data/card-images/10023-jack-sikma.png",
                              "kind":  "official",
                              "contentType":  "image/png"
                          },
-    "10024-sidney-moncrief":  {
-                                  "path":  "data/card-images/10024-sidney-moncrief.png",
-                                  "kind":  "official",
-                                  "contentType":  "image/png"
-                              },
-    "10026-terry-cummings":  {
-                                 "path":  "data/card-images/10026-terry-cummings.png",
-                                 "kind":  "official",
-                                 "contentType":  "image/png"
-                             },
     "10027-paul-mokeski":  {
                                "path":  "data/card-images/10027-paul-mokeski.png",
                                "kind":  "photo",
@@ -89,21 +59,11 @@
                                "kind":  "photo",
                                "contentType":  "image/png"
                            },
-    "10038-james-worthy":  {
-                               "path":  "data/card-images/10038-james-worthy.png",
-                               "kind":  "official",
-                               "contentType":  "image/png"
-                           },
     "10042-mychal-thompson":  {
                                   "path":  "data/card-images/10042-mychal-thompson.png",
                                   "kind":  "photo",
                                   "contentType":  "image/png"
                               },
-    "10043-michael-cooper":  {
-                                 "path":  "data/card-images/10043-michael-cooper.png",
-                                 "kind":  "official",
-                                 "contentType":  "image/png"
-                             },
     "10044-willie-reed":  {
                               "path":  "data/card-images/10044-willie-reed.png",
                               "kind":  "official",
@@ -454,11 +414,6 @@
                                  "kind":  "missing",
                                  "contentType":  "image/svg+xml"
                              },
-    "10114-james-worthy":  {
-                               "path":  "data/card-images/10114-james-worthy.png",
-                               "kind":  "official",
-                               "contentType":  "image/png"
-                           },
     "10121-antoine-carr":  {
                                "path":  "assets/photo-missing.svg",
                                "kind":  "missing",
@@ -469,11 +424,6 @@
                                 "kind":  "missing",
                                 "contentType":  "image/svg+xml"
                             },
-    "10123-terry-cummings":  {
-                                 "path":  "data/card-images/10123-terry-cummings.png",
-                                 "kind":  "official",
-                                 "contentType":  "image/png"
-                             },
     "10127-sam-perkins":  {
                               "path":  "assets/photo-missing.svg",
                               "kind":  "missing",
@@ -490,9 +440,9 @@
                                  "contentType":  "image/png"
                              },
     "10133-vlade-divac":  {
-                              "path":  "assets/photo-missing.svg",
-                              "kind":  "missing",
-                              "contentType":  "image/svg+xml"
+                              "path":  "data/card-images/10133-vlade-divac.png",
+                              "kind":  "official",
+                              "contentType":  "image/png"
                           },
     "10134-mark-price":  {
                              "path":  "data/card-images/10134-mark-price.png",
@@ -516,7 +466,7 @@
                                 },
     "10140-matt-barnes":  {
                               "path":  "data/card-images/10140-matt-barnes.png",
-                              "kind":  "photo",
+                              "kind":  "official",
                               "contentType":  "image/png"
                           },
     "10141-giannis-antetokounmpo":  {
@@ -530,14 +480,14 @@
                                 "contentType":  "image/png"
                             },
     "10143-bojan-bogdanovic":  {
-                                   "path":  "assets/photo-missing.svg",
-                                   "kind":  "missing",
-                                   "contentType":  "image/svg+xml"
+                                   "path":  "data/card-images/10143-bojan-bogdanovic.png",
+                                   "kind":  "official",
+                                   "contentType":  "image/png"
                                },
     "10144-austin-rivers":  {
-                                "path":  "assets/photo-missing.svg",
-                                "kind":  "missing",
-                                "contentType":  "image/svg+xml"
+                                "path":  "data/card-images/10144-austin-rivers.png",
+                                "kind":  "official",
+                                "contentType":  "image/png"
                             },
     "10145-deron-williams":  {
                                  "path":  "data/card-images/10145-deron-williams.png",
@@ -645,9 +595,9 @@
                               "contentType":  "image/png"
                           },
     "10164-ian-mahinmi":  {
-                              "path":  "assets/photo-missing.svg",
-                              "kind":  "missing",
-                              "contentType":  "image/svg+xml"
+                              "path":  "data/card-images/10164-ian-mahinmi.png",
+                              "kind":  "official",
+                              "contentType":  "image/png"
                           },
     "10165-mike-conley":  {
                               "path":  "data/card-images/10165-mike-conley.png",
@@ -670,9 +620,9 @@
                              "contentType":  "image/png"
                          },
     "10169-marcus-smart":  {
-                               "path":  "assets/photo-missing.svg",
-                               "kind":  "missing",
-                               "contentType":  "image/svg+xml"
+                               "path":  "data/card-images/10169-marcus-smart.png",
+                               "kind":  "official",
+                               "contentType":  "image/png"
                            },
     "1017-dwyane-wade":  {
                              "path":  "data/card-images/1017-dwyane-wade.png",
@@ -695,9 +645,9 @@
                                 "contentType":  "image/svg+xml"
                             },
     "10173-austin-rivers":  {
-                                "path":  "assets/photo-missing.svg",
-                                "kind":  "missing",
-                                "contentType":  "image/svg+xml"
+                                "path":  "data/card-images/10173-austin-rivers.png",
+                                "kind":  "official",
+                                "contentType":  "image/png"
                             },
     "10174-goran-dragic":  {
                                "path":  "data/card-images/10174-goran-dragic.png",
@@ -780,9 +730,9 @@
                                "contentType":  "image/svg+xml"
                            },
     "10189-bismack-biyombo":  {
-                                  "path":  "assets/photo-missing.svg",
-                                  "kind":  "missing",
-                                  "contentType":  "image/svg+xml"
+                                  "path":  "data/card-images/10189-bismack-biyombo.png",
+                                  "kind":  "official",
+                                  "contentType":  "image/png"
                               },
     "1019-kirk-hinrich":  {
                               "path":  "data/card-images/1019-kirk-hinrich.png",
@@ -800,9 +750,9 @@
                                   "contentType":  "image/png"
                               },
     "10192-cory-joseph":  {
-                              "path":  "assets/photo-missing.svg",
-                              "kind":  "missing",
-                              "contentType":  "image/svg+xml"
+                              "path":  "data/card-images/10192-cory-joseph.png",
+                              "kind":  "official",
+                              "contentType":  "image/png"
                           },
     "10193-andre-roberson":  {
                                  "path":  "data/card-images/10193-andre-roberson.png",
@@ -5814,11 +5764,6 @@
                               "kind":  "official",
                               "contentType":  "image/png"
                           },
-    "8-russell-westbrook":  {
-                                "path":  "assets/photo-missing.svg",
-                                "kind":  "missing",
-                                "contentType":  "image/svg+xml"
-                            },
     "801-tyson-chandler":  {
                                "path":  "data/card-images/801-tyson-chandler.png",
                                "kind":  "official",
@@ -6030,9 +5975,9 @@
                               "contentType":  "image/png"
                           },
     "8631-jimmy-butler":  {
-                              "path":  "assets/photo-missing.svg",
-                              "kind":  "missing",
-                              "contentType":  "image/svg+xml"
+                              "path":  "data/card-images/8631-jimmy-butler.png",
+                              "kind":  "official",
+                              "contentType":  "image/png"
                           },
     "8632-mike-dunleavy":  {
                                "path":  "data/card-images/8632-mike-dunleavy.png",
@@ -8385,9 +8330,9 @@
                             "contentType":  "image/png"
                         },
     "9357-steve-smith":  {
-                             "path":  "data/card-images/9357-steve-smith.jpg",
-                             "kind":  "photo",
-                             "contentType":  "image/jpeg"
+                             "path":  "data/card-images/9357-steve-smith.png",
+                             "kind":  "official",
+                             "contentType":  "image/png"
                          },
     "9358-lenny-wilkens":  {
                                "path":  "data/card-images/9358-lenny-wilkens.png",
@@ -8445,9 +8390,9 @@
                               "contentType":  "image/png"
                           },
     "9370-steve-smith":  {
-                             "path":  "assets/photo-missing.svg",
-                             "kind":  "missing",
-                             "contentType":  "image/svg+xml"
+                             "path":  "data/card-images/9370-steve-smith.png",
+                             "kind":  "official",
+                             "contentType":  "image/png"
                          },
     "9371-tim-hardaway":  {
                               "path":  "data/card-images/9371-tim-hardaway.png",
@@ -8570,9 +8515,9 @@
                                  "contentType":  "image/png"
                              },
     "9396-scott-wedman":  {
-                              "path":  "assets/photo-missing.svg",
-                              "kind":  "missing",
-                              "contentType":  "image/svg+xml"
+                              "path":  "data/card-images/9396-scott-wedman.png",
+                              "kind":  "official",
+                              "contentType":  "image/png"
                           },
     "9397-larry-drew":  {
                             "path":  "data/card-images/9397-larry-drew.png",
@@ -9081,7 +9026,7 @@
                            },
     "9510-jalen-rose":  {
                             "path":  "data/card-images/9510-jalen-rose.png",
-                            "kind":  "photo",
+                            "kind":  "official",
                             "contentType":  "image/png"
                         },
     "9511-chris-bosh":  {
@@ -9219,11 +9164,6 @@
                             "kind":  "official",
                             "contentType":  "image/png"
                         },
-    "9540-larry-nance":  {
-                             "path":  "assets/photo-missing.svg",
-                             "kind":  "missing",
-                             "contentType":  "image/svg+xml"
-                         },
     "9541-dennis-johnson":  {
                                 "path":  "data/card-images/9541-dennis-johnson.png",
                                 "kind":  "official",
@@ -9400,9 +9340,9 @@
                            "contentType":  "image/png"
                        },
     "9579-elvin-hayes":  {
-                             "path":  "assets/photo-missing.svg",
-                             "kind":  "missing",
-                             "contentType":  "image/svg+xml"
+                             "path":  "data/card-images/9579-elvin-hayes.png",
+                             "kind":  "official",
+                             "contentType":  "image/png"
                          },
     "9580-bernard-king":  {
                               "path":  "data/card-images/9580-bernard-king.png",
@@ -9840,9 +9780,9 @@
                             "contentType":  "image/png"
                         },
     "9671-robert-parish":  {
-                               "path":  "assets/photo-missing.svg",
-                               "kind":  "missing",
-                               "contentType":  "image/svg+xml"
+                               "path":  "data/card-images/9671-robert-parish.png",
+                               "kind":  "official",
+                               "contentType":  "image/png"
                            },
     "9672-eddie-jones":  {
                              "path":  "data/card-images/9672-eddie-jones.png",
@@ -9984,11 +9924,6 @@
                               "kind":  "official",
                               "contentType":  "image/png"
                           },
-    "9700-kawhi-leonard":  {
-                               "path":  "data/card-images/9700-kawhi-leonard.png",
-                               "kind":  "official",
-                               "contentType":  "image/png"
-                           },
     "9701-tiago-splitter":  {
                                 "path":  "data/card-images/9701-tiago-splitter.png",
                                 "kind":  "official",
@@ -10714,11 +10649,6 @@
                                "kind":  "official",
                                "contentType":  "image/png"
                            },
-    "9912-brandon-jennings":  {
-                                  "path":  "data/card-images/9912-brandon-jennings.png",
-                                  "kind":  "official",
-                                  "contentType":  "image/png"
-                              },
     "9915-larry-sanders":  {
                                "path":  "assets/photo-missing.svg",
                                "kind":  "missing",
@@ -10729,11 +10659,6 @@
                            "kind":  "missing",
                            "contentType":  "image/svg+xml"
                        },
-    "9922-jimmy-butler":  {
-                              "path":  "assets/photo-missing.svg",
-                              "kind":  "missing",
-                              "contentType":  "image/svg+xml"
-                          },
     "9924-carlos-boozer":  {
                                "path":  "data/card-images/9924-carlos-boozer.png",
                                "kind":  "photo",
@@ -10754,21 +10679,11 @@
                              "kind":  "missing",
                              "contentType":  "image/svg+xml"
                          },
-    "9933-paul-george":  {
-                             "path":  "data/card-images/9933-paul-george.png",
-                             "kind":  "official",
-                             "contentType":  "image/png"
-                         },
     "9935-george-hill":  {
                              "path":  "assets/photo-missing.svg",
                              "kind":  "missing",
                              "contentType":  "image/svg+xml"
                          },
-    "9944-kawhi-leonard":  {
-                               "path":  "data/card-images/9944-kawhi-leonard.png",
-                               "kind":  "official",
-                               "contentType":  "image/png"
-                           },
     "9946-manu-ginobili":  {
                                "path":  "assets/photo-missing.svg",
                                "kind":  "missing",
@@ -10789,21 +10704,6 @@
                                "kind":  "photo",
                                "contentType":  "image/png"
                            },
-    "9959-james-harden":  {
-                              "path":  "data/card-images/9959-james-harden.png",
-                              "kind":  "official",
-                              "contentType":  "image/png"
-                          },
-    "9962-deron-williams":  {
-                                "path":  "data/card-images/9962-deron-williams.png",
-                                "kind":  "official",
-                                "contentType":  "image/png"
-                            },
-    "9964-carlos-boozer":  {
-                               "path":  "data/card-images/9964-carlos-boozer.png",
-                               "kind":  "official",
-                               "contentType":  "image/png"
-                           },
     "9967-kyle-korver":  {
                              "path":  "assets/photo-missing.svg",
                              "kind":  "missing",
@@ -10814,11 +10714,6 @@
                             "kind":  "official",
                             "contentType":  "image/png"
                         },
-    "9974-jason-richardson":  {
-                                  "path":  "data/card-images/9974-jason-richardson.png",
-                                  "kind":  "official",
-                                  "contentType":  "image/png"
-                              },
     "9975-grant-hill":  {
                             "path":  "data/card-images/9975-grant-hill.png",
                             "kind":  "official",
@@ -10834,21 +10729,11 @@
                               "kind":  "official",
                               "contentType":  "image/png"
                           },
-    "9982-paul-pierce":  {
-                             "path":  "data/card-images/9982-paul-pierce.png",
-                             "kind":  "official",
-                             "contentType":  "image/png"
-                         },
     "9984-tony-allen":  {
                             "path":  "assets/photo-missing.svg",
                             "kind":  "missing",
                             "contentType":  "image/svg+xml"
                         },
-    "9985-rajon-rondo":  {
-                             "path":  "data/card-images/9985-rajon-rondo.png",
-                             "kind":  "official",
-                             "contentType":  "image/png"
-                         },
     "9988-nate-robinson":  {
                                "path":  "data/card-images/9988-nate-robinson.png",
                                "kind":  "official",

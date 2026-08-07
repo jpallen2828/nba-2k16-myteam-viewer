@@ -40,6 +40,12 @@ Click any screenshot to view it at full size.
 7. On the first injection for a newly detected NBA 2K16 executable build, the viewer may take a short moment to create a local compatibility profile. Later injections with that same build use the saved profile and should be much faster.
 8. In NBA 2K16, rebuild the rotations for the team you overwrote, then save the roster. This is recommended for the best in-game experience.
 
+### Importing Card Studio custom cards
+
+NBA 2K16 Card Studio 0.8.1 and newer can export a `.2k16custom` package containing both the rendered card PNG and its complete authored player data. In the Viewer, choose **Import custom card** and select that package. Imported cards appear in the normal database, filters, drafts, custom-team builder, and roster injector. The **Custom cards** switch hides or restores the whole imported collection without deleting it.
+
+Custom packages preserve name, season, tier, franchise, positions, height, wingspan, weight, jersey number, handedness, Face ID, Portrait ID, loyalty, injury slots, Force Non-Starter, Play Initiator, play types, all mapped attributes and tendencies, badges, hot zones, all 45 grouped signature selectors, and player-gear IDs. Imported packages are stored in the current Windows user’s local application-data directory so they remain available after updating or replacing the portable Viewer folder.
+
 College-team injection is available only for the compatible expanded hidden-team roster. The app does not unlock college teams. It verifies the loaded roster's stable TEAMDATA layout before every college write, and prior app injections do not invalidate that check.
 
 ### Installing the College-Team Compatibility Roster
