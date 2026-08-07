@@ -789,7 +789,7 @@ function cardForInjection(card) {
     attributes: card.attributes || {}, tendencies: card.tendencies || {}, hotZones: card.hotZones || {},
     custom: Boolean(card.custom), customPlayerData: card.customPlayerData || {},
     faceId: card.faceId, portraitId: card.portraitId, jerseyNumber: card.jerseyNumber,
-    playInitiator: card.playInitiator, wingspanInches: card.wingspanInches
+    playInitiator: card.playInitiator, wingspanValue: card.wingspanValue
   };
 }
 function lineupPackage(kind) {

@@ -3331,15 +3331,9 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             stats["portrait_resolution_log"] = portrait_resolution
             portrait_resolution_log.append(portrait_resolution)
             appearance_writes = myteam.appearance_float_writes(card)
-            if card.get("custom") and custom_player_data.get("wingspanInches") is not None:
-                try:
-                    appearance_writes.append({
-                        "name": "custom_card_wingspan_cm",
-                        "offset": myteam.APPEARANCE_WINGSPAN_CM_OFFSET,
-                        "value": round(float(custom_player_data["wingspanInches"]) * 2.54, 6),
-                    })
-                except (TypeError, ValueError):
-                    pass
+            # Card Studio stores the NBA 2K16 default wingspan slider value (50)
+            # as metadata only.  It is intentionally not interpreted as inches;
+            # the game keeps its height-proportional default appearance.
             if clean_source and name_key not in myteam_exclusive_source_overrides:
                 appearance_writes.extend(clean_source_appearance_float_writes(clean_source, myteam))
             # Player-specific appearance fixes, like Dirk's normalized height/wingspan,

@@ -8,6 +8,7 @@
 - Custom injection now applies authored attributes, all mapped tendencies, personality/gameplay badges, hot zones, positions, height, wingspan, weight, jersey number, handedness, loyalty, injuries, Force Non-Starter, Play Initiator, all four play types, Face ID, Portrait ID, all 45 signature selectors, and player-gear IDs.
 - Signature animations use the human-readable choices preserved in the original NBA 2K16 Edit Player table and are written through their exact packed bit ranges without overwriting neighboring fields.
 - Custom hot zones are re-applied after packed signature values so overlapping NBA 2K16 bitfields remain intact.
+- Card Studio custom cards now keep NBA 2K16's height-proportional wingspan default (`50`) instead of treating that value as inches, and jersey number `00` remains distinct from `0` through export and injection.
 - Corrected the 1989 Kenny Smith card to the Sacramento Kings franchise.
 - Converted the 2013 84 OVR Roy Hibbert card to Indiana Pacers Throwback Thursday and removed the 2015 Career Connections and current Dynamic Ratings duplicates shown beside it.
 
