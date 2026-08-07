@@ -468,6 +468,7 @@ SPECIAL_PLAYER_FIELD_OVERRIDES = {
     "xaviermcdaniel": {"height_inches": 79, "appearance_height_cm": 200.66},
     "alexenglish": {"height_inches": 80, "appearance_height_cm": 203.2},
     "dolphschayes": {"height_inches": 80, "appearance_height_cm": 203.2},
+    "tomchambers": {"height_inches": 82, "appearance_height_cm": 208.28},
     "lucmbahamoute": {
         "first_name": "Luc",
         "last_name": "Mbah a Moute",

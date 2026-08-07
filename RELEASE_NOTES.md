@@ -1,5 +1,13 @@
 # Release Notes
 
+## Tom Chambers height and separate Pink Diamond draft odds - August 7, 2026
+
+- Corrected every Tom Chambers card to 6'10", including the permanent live-injection and linked-appearance height override.
+- Fixed the main Custom cards checkbox so changing it no longer reopens the draft modal from a stale startup URL.
+- Pink Diamond is now a separately rolled draft tier instead of sharing the regular Diamond pool.
+- Added the requested mode- and round-specific Pink Diamond odds for Baller, Default, and Budget drafts while keeping every probability table at exactly 100%.
+- Diamond bonus rounds now roll 20% Pink Diamond in Baller drafts and 8% in Default drafts. The Budget Amethyst round now rolls 0.5% Pink Diamond.
+
 ## Height corrections and complete live-roster badge data - August 7, 2026
 
 - Corrected every Michael Jordan, Lamar Odom, Charles Barkley, Stephon Marbury, Marcus Camby, Xavier McDaniel, Alex English, and Dolph Schayes card to the requested height, including linked in-game appearance height during injection.

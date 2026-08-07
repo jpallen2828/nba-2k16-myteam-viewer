@@ -263,19 +263,19 @@ const draftRoles = ["starter", "backup"];
 const benchRoles = ["bench1", "bench2"];
 const draftOddsByMode = {
   baller: {
-    starter: [["Diamond",.20],["Amethyst",.40],["Gold",.20],["Silver",.099],["Bronze",.001]],
-    backup: [["Diamond",.05],["Amethyst",.20],["Gold",.60],["Silver",.10],["Bronze",.05]],
-    bench: [["Diamond",.01],["Amethyst",.09],["Gold",.40],["Silver",.40],["Bronze",.10]]
+    starter: [["Pink Diamond",.10],["Diamond",.20],["Amethyst",.30],["Gold",.20],["Silver",.199],["Bronze",.001]],
+    backup: [["Pink Diamond",.05],["Diamond",.05],["Amethyst",.15],["Gold",.60],["Silver",.10],["Bronze",.05]],
+    bench: [["Pink Diamond",.005],["Diamond",.01],["Amethyst",.085],["Gold",.40],["Silver",.40],["Bronze",.10]]
   },
   default: {
-    starter: [["Diamond",.05],["Amethyst",.20],["Gold",.40],["Silver",.30],["Bronze",.05]],
-    backup: [["Diamond",.0025],["Amethyst",.0375],["Gold",.26],["Silver",.50],["Bronze",.20]],
-    bench: [["Diamond",.0001],["Amethyst",.001],["Gold",.01],["Silver",.40],["Bronze",.5889]]
+    starter: [["Pink Diamond",.025],["Diamond",.05],["Amethyst",.175],["Gold",.40],["Silver",.30],["Bronze",.05]],
+    backup: [["Pink Diamond",.001],["Diamond",.0025],["Amethyst",.0365],["Gold",.26],["Silver",.50],["Bronze",.20]],
+    bench: [["Pink Diamond",.00005],["Diamond",.0001],["Amethyst",.00095],["Gold",.01],["Silver",.40],["Bronze",.5889]]
   },
   budget: {
-    starter: [["Diamond",.002],["Amethyst",.098],["Gold",.40],["Silver",.40],["Bronze",.10]],
-    backup: [["Diamond",.001],["Amethyst",.019],["Gold",.15],["Silver",.60],["Bronze",.23]],
-    bench: [["Diamond",.00001],["Amethyst",.0001],["Gold",.001],["Silver",.15],["Bronze",.84889]]
+    starter: [["Pink Diamond",.001],["Diamond",.002],["Amethyst",.097],["Gold",.40],["Silver",.40],["Bronze",.10]],
+    backup: [["Pink Diamond",.0005],["Diamond",.001],["Amethyst",.0185],["Gold",.15],["Silver",.60],["Bronze",.23]],
+    bench: [["Pink Diamond",.000005],["Diamond",.00001],["Amethyst",.000095],["Gold",.001],["Silver",.15],["Bronze",.84889]]
   }
 };
 const draftModeLabels = { baller: "Baller Draft", default: "Default Draft", budget: "Budget Draft" };
@@ -288,7 +288,6 @@ function draftChoiceItem(items) {
   return randomItem(items);
 }
 function draftTierMatches(card, rolledTier) {
-  if (rolledTier === "Diamond" && state.customCardsEnabled) return card.tier === "Diamond" || card.tier === "Pink Diamond";
   return card.tier === rolledTier;
 }
 const positionDraftKeys = () => lineupPositions.flatMap(position => draftRoles.map(role => slotKey(role,position)));
@@ -310,7 +309,10 @@ function rollDraftTier(role) {
   const odds = draftOdds();
   const table = role === "bench" ? odds.bench : odds[role];
   let roll = Math.random();
-  for (const [tier,chance] of table) { roll -= chance; if (roll < 0) return tier; }
+  for (const [tier,chance] of table) {
+    roll -= chance;
+    if (roll < 0) return tier === "Pink Diamond" && !state.customCardsEnabled ? "Amethyst" : tier;
+  }
   return table[table.length - 1][0];
 }
 function formatDraftChance(chance) {
@@ -347,23 +349,23 @@ function draftBonusRoundConfig() {
       pendingTitle: "Amethyst round unlocks after the draft",
       pendingCopy: "Fill all 12 slots, then choose 1 of 5 mostly-amethyst bonus cards as your 13th roster player.",
       unlockedTitle: "Amethyst round unlocked",
-      unlockedCopy: "Pick 1 of 5 bonus cards as your 13th player. Each option has a 1% Diamond / 99% Amethyst roll.",
+      unlockedCopy: "Pick 1 of 5 bonus cards as your 13th player. Each option has a 0.5% Pink Diamond / 1% Diamond / 98.5% Amethyst roll.",
       returnTitle: "Return to amethyst picks",
       returnCopy: "Your five Amethyst Round choices are still waiting.",
-      modalSubtitle: "Choose one bonus card as your 13th roster player. Each choice rolls 1% Diamond and 99% Amethyst.",
-      tiers: [["Diamond", .01], ["Amethyst", .99]]
+      modalSubtitle: "Choose one bonus card as your 13th roster player. Each choice rolls 0.5% Pink Diamond, 1% Diamond, and 98.5% Amethyst.",
+      tiers: [["Pink Diamond", .005], ["Diamond", .01], ["Amethyst", .985]]
     };
   }
   return {
     title: "Diamond Round",
     pendingTitle: "Diamond round unlocks after the draft",
-    pendingCopy: "Fill all 12 slots, then choose 1 of 5 guaranteed diamonds as your 13th roster player.",
+    pendingCopy: "Fill all 12 slots, then choose 1 of 5 Diamond Round cards as your 13th roster player.",
     unlockedTitle: "Diamond round unlocked",
-    unlockedCopy: "Pick 1 of 5 guaranteed diamonds as your 13th player. Positions can repeat; players cannot.",
+    unlockedCopy: `Pick 1 of 5 Diamond Round cards as your 13th player. Pink Diamond chance: ${state.draftMode === "baller" ? "20%" : "8%"}.`,
     returnTitle: "Return to diamond picks",
     returnCopy: "Your five guaranteed diamond choices are still waiting.",
-    modalSubtitle: "Choose one guaranteed diamond as your 13th roster player. Your drafted 12 stay locked.",
-    tiers: [["Diamond", 1]]
+    modalSubtitle: `Choose one Diamond Round card as your 13th roster player. Each choice has a ${state.draftMode === "baller" ? "20%" : "8%"} Pink Diamond chance.`,
+    tiers: state.draftMode === "baller" ? [["Pink Diamond", .20], ["Diamond", .80]] : [["Pink Diamond", .08], ["Diamond", .92]]
   };
 }
 function cardInitials(card) { return card.name.split(/\s+/).slice(0,2).map(part => part[0]).join(""); }
@@ -538,7 +540,6 @@ function openDiamondRoundChoices() {
     let eligible = state.cards.filter(card => draftTierMatches(card, tier) && lineupPositions.includes(card.position) && !unavailable.has(card.name) && !offered.has(card.name));
     if (!eligible.length) {
       const allowedTiers = new Set(bonus.tiers.map(([candidateTier]) => candidateTier));
-      if (state.customCardsEnabled && allowedTiers.has("Diamond")) allowedTiers.add("Pink Diamond");
       eligible = state.cards.filter(card => allowedTiers.has(card.tier) && lineupPositions.includes(card.position) && !unavailable.has(card.name) && !offered.has(card.name));
     }
     const card = draftChoiceItem(eligible);
@@ -1514,7 +1515,7 @@ async function setCustomCardsEnabled(enabled, reopenMode = "") {
     const result = await response.json();
     if (!response.ok || !result.ok) throw new Error(result.error || "Could not change custom-card setting.");
     if (reopenMode) window.location.assign(`/?mode=${encodeURIComponent(reopenMode)}`);
-    else window.location.reload();
+    else window.location.assign(window.location.pathname);
   } catch (error) {
     elements.customCardsEnabled.checked = !enabled;
     if (elements.draftCustomCardsEnabled) elements.draftCustomCardsEnabled.checked = !enabled;
