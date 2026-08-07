@@ -88,6 +88,14 @@ function addOptions(select, values, preferred = []) {
 }
 function escapeHtml(value = "") { const span = document.createElement("span"); span.textContent = String(value); return span.innerHTML; }
 function debounce(fn, wait = 130) { let timer; return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), wait); }; }
+function compareGalleryCards(a, b) {
+  const tierDifference = (galleryTierRank[a.tier] ?? 9) - (galleryTierRank[b.tier] ?? 9);
+  if (tierDifference) return tierDifference;
+  const aIsFinalDiamond = a.tier === "Diamond" && a.id === finalDiamondCardId;
+  const bIsFinalDiamond = b.tier === "Diamond" && b.id === finalDiamondCardId;
+  if (aIsFinalDiamond !== bIsFinalDiamond) return aIsFinalDiamond ? 1 : -1;
+  return b.overall - a.overall || a.name.localeCompare(b.name) || b.id - a.id;
+}
 
 function applyFilters() {
   const query = elements.search.value.trim().toLowerCase();
@@ -107,12 +115,7 @@ function applyFilters() {
     if (sorter === "year-desc") return (b.year || 0) - (a.year || 0) || b.overall - a.overall;
     if (sorter === "year-asc") return (a.year || 9999) - (b.year || 9999) || b.overall - a.overall;
     if (sorter === "id-desc") return b.id - a.id;
-    const tierDifference = (galleryTierRank[a.tier] ?? 9) - (galleryTierRank[b.tier] ?? 9);
-    if (tierDifference) return tierDifference;
-    const aIsFinalDiamond = a.tier === "Diamond" && a.id === finalDiamondCardId;
-    const bIsFinalDiamond = b.tier === "Diamond" && b.id === finalDiamondCardId;
-    if (aIsFinalDiamond !== bIsFinalDiamond) return aIsFinalDiamond ? 1 : -1;
-    return b.overall - a.overall || a.name.localeCompare(b.name) || b.id - a.id;
+    return compareGalleryCards(a, b);
   });
   state.visible = 48;
   renderCards(); renderActiveFilters();
@@ -440,7 +443,7 @@ function applyCustomFilters() {
   state.customFiltered = state.cards.filter(card => {
     const haystack = `${card.name} ${card.collection} ${card.theme} ${card.franchise} ${card.year || ""}`.toLowerCase();
     return (!query || haystack.includes(query)) && (!tier || card.tier === tier) && (!position || card.position === position || card.secondaryPosition === position) && (!team || card.franchise === team);
-  }).sort((a,b) => b.overall - a.overall || a.name.localeCompare(b.name)).slice(0, 80);
+  }).sort(compareGalleryCards).slice(0, 80);
   elements.customPickerGrid.innerHTML = state.customFiltered.map((card,index) => `<article class="custom-picker-item ${tierClass(card.tier)}"><span class="lineup-art" data-initials="${escapeHtml(cardInitials(card))}">${cardImageHtml(card)}</span><div><strong>${escapeHtml(card.name)}</strong><small>${card.year || "Current"} · ${escapeHtml(card.franchise)} · ${escapeHtml(card.tier)} · ${card.overall} OVR</small></div><button class="choice-draft-button" data-add-custom="${index}" ${state.customSelections.length >= 13 ? "disabled" : ""}>Add card</button></article>`).join("");
   preloadArt(state.customFiltered.slice(0,24), true, 700);
 }
