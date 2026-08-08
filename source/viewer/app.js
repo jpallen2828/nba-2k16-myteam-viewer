@@ -218,27 +218,21 @@ function closeModal() {
 }
 
 const lineupPositions = ["PG", "SG", "SF", "PF", "C"];
-const lineupTierWeights = { bronze: .85, silver: .85, gold: 1, amethyst: 1.10, diamond: 1.10 };
-function weightedRandomChoice(items) {
-  const weights = items.map(card => lineupTierWeights[(card.tier || "").toLowerCase()] ?? 1);
-  let roll = Math.random() * weights.reduce((sum, weight) => sum + weight, 0);
-  for (let index = 0; index < items.length; index++) {
-    roll -= weights[index];
-    if (roll <= 0) return items[index];
-  }
-  return items[items.length - 1];
+function equalTierRandomChoice(items) {
+  const tierPools = tierOrder
+    .map(tier => items.filter(card => card.tier === tier))
+    .filter(pool => pool.length);
+  if (!tierPools.length) return null;
+  const selectedTierPool = tierPools[Math.floor(Math.random() * tierPools.length)];
+  return selectedTierPool[Math.floor(Math.random() * selectedTierPool.length)];
 }
 function createRandomLineup() {
   state.returnToLineup = false;
   const usedPlayers = new Set();
-  let bronzeUsed = false;
-  const guaranteedPremiumIndex = Math.floor(Math.random() * lineupPositions.length);
-  const lineup = lineupPositions.map((position,index) => {
-    let eligible = state.cards.filter(card => card.position === position && !usedPlayers.has(card.name));
-    if (index === guaranteedPremiumIndex) eligible = eligible.filter(card => card.tier === "Diamond" || card.tier === "Amethyst");
-    else if (bronzeUsed) eligible = eligible.filter(card => card.tier !== "Bronze");
-    const card = weightedRandomChoice(eligible);
-    if (card) { usedPlayers.add(card.name); if (card.tier === "Bronze") bronzeUsed = true; }
+  const lineup = lineupPositions.map(position => {
+    const eligible = state.cards.filter(card => card.position === position && !usedPlayers.has(card.name));
+    const card = equalTierRandomChoice(eligible);
+    if (card) usedPlayers.add(card.name);
     return { position, card };
   });
   state.randomLineup = lineup;
