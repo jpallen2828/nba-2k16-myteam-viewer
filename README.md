@@ -2,6 +2,19 @@
 
 An unofficial, non-commercial companion app for browsing archived NBA 2K16 MyTEAM cards and injecting selected cards into a roster loaded in a local copy of NBA 2K16.
 
+The v1.1 release is a two-app toolkit. **MyTEAM Viewer** is the browser, lineup builder, draft simulator, and live roster injector. **NBA 2K16 Card Studio 0.9.2** is the companion creator for designing card artwork and authoring complete custom-player data that imports directly into the Viewer.
+
+## Downloads
+
+Download both apps from the [latest GitHub release](https://github.com/jpallen2828/nba-2k16-myteam-viewer/releases/latest). They are separate portable ZIPs so users can install either app independently.
+
+| Download | Use it for |
+| --- | --- |
+| `NBA.2K16.MyTEAM.Viewer.zip` | Browse cards, build or draft lineups, import custom cards, and inject teams into a locally loaded NBA 2K16 roster. |
+| `NBA.2K16.Card.Studio.zip` | Create authentic-style card PNGs, remove image backgrounds locally, author player data, save editable projects, and export Viewer-ready `.2k16custom` packages. |
+
+Extract the ZIP before running either app. Card Studio must remain beside its included `models` folder; do not move only its EXE out of the extracted folder. See the [Card Studio guide](CARD_STUDIO.md) for the complete workflow.
+
 ## Screenshots
 
 Click any screenshot to view it at full size.
@@ -31,7 +44,7 @@ Click any screenshot to view it at full size.
 
 ## Using the App
 
-1. Download the application package [here](https://github.com/jpallen2828/nba-2k16-myteam-viewer/releases) and extract the ZIP to local storage.
+1. Download `NBA.2K16.MyTEAM.Viewer.zip` from the [latest release](https://github.com/jpallen2828/nba-2k16-myteam-viewer/releases/latest) and extract it to local storage.
 2. Start NBA 2K16 and load the roster you want to edit.
 3. Start `NBA 2K16 MyTEAM Viewer.exe`.
 4. Browse, draft, or create a lineup in the viewer.
@@ -39,6 +52,14 @@ Click any screenshot to view it at full size.
 6. If the app cannot automatically verify the loaded roster, only use the manual confirmation button when that exact roster is already open in NBA 2K16.
 7. On the first injection for a newly detected NBA 2K16 executable build, the viewer may take a short moment to create a local compatibility profile. Later injections with that same build use the saved profile and should be much faster.
 8. In NBA 2K16, rebuild the rotations for the team you overwrote, then save the roster. This is recommended for the best in-game experience.
+
+## Card Studio companion app
+
+Card Studio is a separate Windows application included as its own download on the release page. It recreates the six MyTEAM card tiers at their native 325 × 455 size, layers team and promotion artwork, renders game-derived card text, and can use a fully local background-removal model to create transparent player cutouts. Its player-data editor covers vitals, attributes, tendencies, signatures, badges, hot zones, identities, play types, and other supported injection data.
+
+A normal workflow is: import a player image, remove or refine the background if needed, choose the tier/team/background/promotion art, position the player, enter card text, edit the player data, then choose **Export Card + Data**. This creates a `.2k16custom` file for the Viewer. Card Studio also supports PNG-only exports and editable `.2k16card` projects.
+
+Read [CARD_STUDIO.md](CARD_STUDIO.md) for installation, file-format, editing, export, and Viewer-import instructions.
 
 ### Importing Card Studio custom cards
 
@@ -82,7 +103,9 @@ py -3.13 -m pip install -r requirements.txt
 py -3.13 source\build_public_release.py
 ```
 
-The source repository may exclude large generated caches or release-only assets. Build outputs are created under `build/`, `dist/`, and `release/`.
+The source repository excludes generated caches and release binaries. The release builder validates bundled custom cards, builds the Viewer and diagnostic executables, packages the current repository documentation, verifies the companion Card Studio ZIP, and writes SHA-256 checksums for both public archives.
+
+Developers adding an exact Create-A-Player face should follow [CUSTOM_SCULPT_CAPTURE_WORKFLOW.md](CUSTOM_SCULPT_CAPTURE_WORKFLOW.md). The injector persists verified sculpt and appearance bytes while retaining destination-owned live pointers.
 
 ## Disclaimer
 

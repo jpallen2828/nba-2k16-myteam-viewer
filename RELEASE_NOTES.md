@@ -1,5 +1,50 @@
 # Release Notes
 
+## v1.1.0 — Card Studio, complete custom cards, and exact custom sculpts — August 8, 2026
+
+This is the largest public update since v1.0.7. The release page now provides two separate portable downloads: **NBA 2K16 MyTEAM Viewer v1.1.0** and the companion **NBA 2K16 Card Studio v0.9.2**.
+
+### Card Studio 0.9.2
+
+- Added the complete Card Studio application as a companion release download with a dedicated installation and usage guide.
+- Creates native-size Bronze, Silver, Gold, Amethyst, Diamond, and Pink Diamond card artwork with recovered team logos, MyTEAM backgrounds, promotion stickers, and game-derived bitmap text.
+- Includes local, non-generative player background removal with manual mask refinement. The original image pixels remain intact and no cloud image service is used.
+- Adds complete custom-player authoring for vitals, ratings, tendencies, signatures, personality/gameplay badges, hot zones, identity fields, injuries, play types, and related injection data.
+- Supports editable `.2k16card` projects, PNG-only artwork exports, and Viewer-ready `.2k16custom` packages.
+- Synchronizes exported Viewer themes and collections with the selected promotion logo while preserving valid specific collections such as Playoff Moments: Finals.
+
+### Viewer custom-card system
+
+- Added secure `.2k16custom` import with package-member validation, persistent per-user storage, duplicate replacement, hide/restore controls, a master custom-card switch, and a gallery custom-only filter.
+- Imported cards participate in the normal card database, filters, details, drafts, custom-team builder, saved lineups, and live roster injection.
+- Added Pink Diamond as a first-class tier above Diamond. It sorts independently and uses separately rolled, mode-specific draft odds.
+- Bundled 55 complete custom cards with their JSON player data and exact PNG artwork. This includes the verified Ray roster captures and the latest Dirk Nowitzki, Andrei Kirilenko, Kawhi Leonard, Stephen Curry, LeBron James, Joel Embiid, and other custom additions.
+- Updated the 2023 Joel Embiid MVP card to the scanned 96 OVR Minnesota-roster ratings and its new finished card artwork, placing it with the Diamond 96 OVR cards.
+- Added build-time protection for the newest manually imported Dirk Nowitzki, Andrei Kirilenko, and Kawhi Leonard cards so future public packages cannot silently omit their data or artwork.
+
+### Exact custom-sculpt injection
+
+- Added the first verified exact Create-A-Player sculpt workflow, implemented for the bundled Pink Diamond Luka Doncic card.
+- The injector now validates and writes a captured 52-byte facial sculpt DNA block plus the complete 132-byte CAP appearance/body block through the destination player's own live pointers.
+- Source-process pointer values are never copied. Malformed data, incorrect byte lengths, and missing destination pointers fail closed.
+- Post-write verification checks the linked appearance and sculpt bytes, and the new workflow is covered by deterministic unit tests and developer documentation.
+
+### Injection and data corrections
+
+- Preserved complete custom-card attributes, tendencies, badges, hot zones, signatures, identity fields, body data, and supported appearance overrides through import and injection.
+- Added safer parent-template selection, same-name gear inheritance, deterministic roster-name normalization, and explicit cached-overall writes.
+- Corrected all Jerry West cards to 6'2".
+- Removed six unwanted database entries: 2000 Arvydas Sabonis, 2006 Antoine Walker, 2015 Derrick Williams, 1995 Derek Harper, 2013 Tracy McGrady, and 2015 Dewayne Dedmon.
+- Added the college-team compatibility roster and verified repeat injection for supported hidden college destinations.
+
+### Interface, storage, and release packaging
+
+- Fixed stale draft-modal reopening when changing the main custom-card control and synchronized the Draft screen's custom-card option.
+- Moved generated settings, saved lineups, and roster-injection workspaces into the hidden project area so the public app folder stays clean.
+- Hardened ZIP import paths against unsafe members and added regression coverage for valid imports, malformed packages, duplicates, persistence, storage routing, and exact sculpt data.
+- The release builder now packages the repository's current documentation, validates required bundled cards, verifies the Card Studio archive and model files, and writes SHA-256 checksums for both public ZIPs.
+- The public release page and README now explain both applications, their separate installation requirements, and the complete Card Studio-to-Viewer workflow.
+
 ## Tom Chambers height and separate Pink Diamond draft odds - August 7, 2026
 
 - Corrected every Tom Chambers card to 6'10", including the permanent live-injection and linked-appearance height override.
