@@ -424,6 +424,9 @@ APPEARANCE_POINTER_OFFSET = 0x80
 APPEARANCE_POINTER_BASE_OFFSET = 0x00
 APPEARANCE_HEIGHT_CM_OFFSET = 0x00
 APPEARANCE_WINGSPAN_CM_OFFSET = 0x04
+APPEARANCE_BLOCK_SIZE = 0x84
+SCULPT_POINTER_OFFSET = 0x78
+SCULPT_DNA_SIZE = 0x34
 SELECTED_PLAYER_POINTER_RVA = 0x024CDD88
 PLAY_INITIATOR_OFFSET = 0x13A
 PLAY_INITIATOR_MASK = 0x04
@@ -520,6 +523,8 @@ SPECIAL_PLAYER_FIELD_OVERRIDES = {
         "appearance_wingspan_cm": 222.429993,
     },
 }
+
+TRACY_MCGRADY_NAME_OVERRIDE_CARD_ID = 1066814751
 
 kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
 kernel32.OpenProcess.restype = wintypes.HANDLE
@@ -722,6 +727,90 @@ def appearance_byte_writes(card: dict, jersey_number: int | None = None) -> list
     return []
 
 
+def sculpt_dna_bytes(card: dict) -> bytes | None:
+    custom = card.get("customPlayerData")
+    if not isinstance(custom, dict) or custom.get("sculptDnaHex") in (None, ""):
+        return None
+    raw_hex = str(custom.get("sculptDnaHex") or "").strip()
+    try:
+        data = bytes.fromhex(raw_hex)
+    except ValueError as exc:
+        raise ValueError("customPlayerData.sculptDnaHex must be hexadecimal") from exc
+    if len(data) != SCULPT_DNA_SIZE:
+        raise ValueError(
+            f"customPlayerData.sculptDnaHex must contain exactly {SCULPT_DNA_SIZE} bytes; got {len(data)}"
+        )
+    return data
+
+
+def appearance_block_bytes(card: dict) -> bytes | None:
+    custom = card.get("customPlayerData")
+    if not isinstance(custom, dict) or custom.get("appearanceBlockHex") in (None, ""):
+        return None
+    raw_hex = str(custom.get("appearanceBlockHex") or "").strip()
+    try:
+        data = bytes.fromhex(raw_hex)
+    except ValueError as exc:
+        raise ValueError("customPlayerData.appearanceBlockHex must be hexadecimal") from exc
+    if len(data) != APPEARANCE_BLOCK_SIZE:
+        raise ValueError(
+            f"customPlayerData.appearanceBlockHex must contain exactly {APPEARANCE_BLOCK_SIZE} bytes; got {len(data)}"
+        )
+    return data
+
+
+def apply_linked_appearance_block_write(
+    handle: int,
+    player_record: bytes,
+    change: dict,
+    applied: list[tuple[int, bytes]],
+    label: str,
+) -> None:
+    raw_hex = str(change.get("appearance_block_hex") or "").strip()
+    if not raw_hex:
+        return
+    try:
+        appearance_block = bytes.fromhex(raw_hex)
+    except ValueError as exc:
+        raise RuntimeError(f"Appearance block was not valid hexadecimal for {label}") from exc
+    if len(appearance_block) != APPEARANCE_BLOCK_SIZE:
+        raise RuntimeError(f"Appearance block was not {APPEARANCE_BLOCK_SIZE} bytes for {label}")
+    appearance_ptr = int.from_bytes(
+        player_record[APPEARANCE_POINTER_OFFSET:APPEARANCE_POINTER_OFFSET + 8],
+        "little",
+    )
+    if not appearance_ptr:
+        raise RuntimeError(f"Appearance pointer was empty for {label}")
+    before = roster.read_memory(handle, appearance_ptr, APPEARANCE_BLOCK_SIZE)
+    _write_verified(handle, appearance_ptr, before, appearance_block, applied, f"{label} full appearance block")
+
+
+def apply_linked_sculpt_write(
+    handle: int,
+    player_record: bytes,
+    change: dict,
+    applied: list[tuple[int, bytes]],
+    label: str,
+) -> None:
+    raw_hex = str(change.get("sculpt_dna_hex") or "").strip()
+    if not raw_hex:
+        return
+    try:
+        sculpt_dna = bytes.fromhex(raw_hex)
+    except ValueError as exc:
+        raise RuntimeError(f"Sculpt DNA was not valid hexadecimal for {label}") from exc
+    if len(sculpt_dna) != SCULPT_DNA_SIZE:
+        raise RuntimeError(f"Sculpt DNA was not {SCULPT_DNA_SIZE} bytes for {label}")
+    sculpt_ptr = int.from_bytes(
+        player_record[SCULPT_POINTER_OFFSET:SCULPT_POINTER_OFFSET + 8],
+        "little",
+    )
+    if not sculpt_ptr:
+        raise RuntimeError(f"Sculpt pointer was empty for {label}")
+    before = roster.read_memory(handle, sculpt_ptr, SCULPT_DNA_SIZE)
+    _write_verified(handle, sculpt_ptr, before, sculpt_dna, applied, f"{label} sculpt DNA")
+
+
 def apply_linked_appearance_writes(
     handle: int,
     player_record: bytes,
@@ -753,6 +842,20 @@ def apply_linked_appearance_writes(
         before = roster.read_memory(handle, target, 1)
         after = bytes([value])
         _write_verified(handle, target, before, after, applied, label)
+
+
+def apply_linked_player_writes(
+    handle: int,
+    player_record: bytes,
+    change: dict,
+    applied: list[tuple[int, bytes]],
+    label: str,
+) -> None:
+    apply_linked_appearance_writes(handle, player_record, change, applied, label)
+    # A verified full CAP appearance capture is authoritative over generic
+    # height/eye defaults and is written last into the destination-owned block.
+    apply_linked_appearance_block_write(handle, player_record, change, applied, label)
+    apply_linked_sculpt_write(handle, player_record, change, applied, label)
 
 
 def encode_rating(value: int | float) -> int:
@@ -946,6 +1049,9 @@ def apply_card_to_record(
         card_name = roster_display_name(card_name)
     first, last = split_name(card_name)
     player_key = norm_player_name(card.get("name") or "")
+    card_id = int(card.get("id") or 0)
+    if card_id == TRACY_MCGRADY_NAME_OVERRIDE_CARD_ID:
+        first, last = "Tracy", "McGrady"
     field_override = SPECIAL_PLAYER_FIELD_OVERRIDES.get(player_key, {})
     first = str(field_override.get("first_name", first))
     last = str(field_override.get("last_name", last))
@@ -1110,6 +1216,16 @@ def build_records(plan: list[dict], cards: dict[str, dict], live_data: bytes) ->
             stats["hidden_display_named_fields_written"] = hidden_display_fields
         appearance_writes = appearance_float_writes(card)
         appearance_byte_updates = appearance_byte_writes(card, get_jersey_number(edited))
+        sculpt_dna = sculpt_dna_bytes(card)
+        appearance_block = appearance_block_bytes(card)
+        if sculpt_dna is not None:
+            stats["sculpt_dna_written"] = (
+                f"{len(sculpt_dna)} bytes via destination-owned pointer@+0x{SCULPT_POINTER_OFFSET:X}"
+            )
+        if appearance_block is not None:
+            stats["appearance_block_written"] = (
+                f"{len(appearance_block)} bytes via destination-owned pointer@+0x{APPEARANCE_POINTER_OFFSET:X}"
+            )
         if appearance_byte_updates:
             stats["appearance_named_fields_written"] = stats.get("appearance_named_fields_written", []) + [
                 f"{item['name']}@appearance+0x{int(item['offset']):X}={int(item['value'])}"
@@ -1127,6 +1243,8 @@ def build_records(plan: list[dict], cards: dict[str, dict], live_data: bytes) ->
             "new_hex": bytes(edited).hex().upper(),
             "appearance_writes": appearance_writes,
             "appearance_byte_writes": appearance_byte_updates,
+            "sculpt_dna_hex": sculpt_dna.hex().upper() if sculpt_dna is not None else "",
+            "appearance_block_hex": appearance_block.hex().upper() if appearance_block is not None else "",
             "card_key": row["card_key"],
             "name": card.get("name"),
             "destination": row.get("destination"),
@@ -1291,7 +1409,7 @@ def repair_live_player_cache_rows(handle: int, array_base: int, changes: list[di
                         write_counts[slot] = write_counts.get(slot, 0) + 1
 
                         refreshed = roster.read_memory(handle, address, roster.PLAYER_STRIDE)
-                        apply_linked_appearance_writes(
+                        apply_linked_player_writes(
                             handle,
                             refreshed,
                             change,
@@ -1345,7 +1463,7 @@ def repair_selected_player_buffer(handle: int, array_base: int, changes: list[di
     if written:
         _write_verified(handle, address, current, new, applied, f"selected player buffer slot {change['roster_index']}")
         refreshed = roster.read_memory(handle, address, roster.PLAYER_STRIDE)
-        apply_linked_appearance_writes(
+        apply_linked_player_writes(
             handle,
             refreshed,
             change,
@@ -1376,7 +1494,7 @@ def apply_changes(handle: int, array_base: int, changes: list[dict]) -> None:
             if verify != new:
                 raise RuntimeError(f"Post-write verification failed at slot {change['roster_index']}")
             row_after = roster.read_memory(handle, address, len(new))
-            apply_linked_appearance_writes(
+            apply_linked_player_writes(
                 handle,
                 row_after,
                 change,

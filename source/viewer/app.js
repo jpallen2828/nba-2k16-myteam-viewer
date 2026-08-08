@@ -29,6 +29,11 @@ const elements = {
   manageCustomCards: $("#manageCustomCards"), customCardManagerModal: $("#customCardManagerModal"), customCardManagerList: $("#customCardManagerList")
 };
 const tierOrder = ["Pink Diamond", "Diamond", "Amethyst", "Gold", "Silver", "Bronze"];
+const themeOrder = [
+  "All-Star", "Current", "Defensive Player of the Year", "Dynamic Ratings", "Historic",
+  "Moments", "Most Valuable Player", "Playoffs", "Rewards", "Rookie of the Year",
+  "Sixth Man", "Throwback Thursday", "USA Olympics",
+];
 const tierClass = tier => `tier-${(tier || "unknown").toLowerCase().replace(/[^a-z]+/g, "-")}`;
 const galleryTierRank = { "Pink Diamond": 0, Diamond: 1, Amethyst: 2, Gold: 3, Silver: 4, Bronze: 5 };
 const finalDiamondCardId = 10072; // 95 OVR Luis Scola closes the Diamond section.
@@ -261,6 +266,7 @@ function closeLineup() {
 
 const draftRoles = ["starter", "backup"];
 const benchRoles = ["bench1", "bench2"];
+const draftPinkDiamondCardOverrides = new Set(["1124791849", "1227118467"]);
 const draftOddsByMode = {
   baller: {
     starter: [["Pink Diamond",.10],["Diamond",.20],["Amethyst",.30],["Gold",.20],["Silver",.199],["Bronze",.001]],
@@ -268,9 +274,9 @@ const draftOddsByMode = {
     bench: [["Pink Diamond",.005],["Diamond",.01],["Amethyst",.085],["Gold",.40],["Silver",.40],["Bronze",.10]]
   },
   default: {
-    starter: [["Pink Diamond",.025],["Diamond",.05],["Amethyst",.175],["Gold",.40],["Silver",.30],["Bronze",.05]],
+    starter: [["Pink Diamond",.01675],["Diamond",.05],["Amethyst",.18325],["Gold",.40],["Silver",.30],["Bronze",.05]],
     backup: [["Pink Diamond",.001],["Diamond",.0025],["Amethyst",.0365],["Gold",.26],["Silver",.50],["Bronze",.20]],
-    bench: [["Pink Diamond",.00005],["Diamond",.0001],["Amethyst",.00095],["Gold",.01],["Silver",.40],["Bronze",.5889]]
+    bench: [["Pink Diamond",.0000335],["Diamond",.0001],["Amethyst",.0009665],["Gold",.01],["Silver",.40],["Bronze",.5889]]
   },
   budget: {
     starter: [["Pink Diamond",.001],["Diamond",.002],["Amethyst",.097],["Gold",.40],["Silver",.40],["Bronze",.10]],
@@ -287,8 +293,12 @@ function draftChoiceItem(items) {
   if (!items.length) return null;
   return randomItem(items);
 }
+function resolveDraftTier(card) {
+  if (card && draftPinkDiamondCardOverrides.has(String(card.id))) return "Pink Diamond";
+  return card?.tier;
+}
 function draftTierMatches(card, rolledTier) {
-  return card.tier === rolledTier;
+  return resolveDraftTier(card) === rolledTier;
 }
 const positionDraftKeys = () => lineupPositions.flatMap(position => draftRoles.map(role => slotKey(role,position)));
 const benchDraftKeys = () => benchRoles.map((_, index) => benchSlotKey(index + 1));
@@ -361,11 +371,16 @@ function draftBonusRoundConfig() {
     pendingTitle: "Diamond round unlocks after the draft",
     pendingCopy: "Fill all 12 slots, then choose 1 of 5 Diamond Round cards as your 13th roster player.",
     unlockedTitle: "Diamond round unlocked",
-    unlockedCopy: `Pick 1 of 5 Diamond Round cards as your 13th player. Pink Diamond chance: ${state.draftMode === "baller" ? "20%" : "8%"}.`,
+    unlockedCopy: `Pick 1 of 5 Diamond Round cards as your 13th player. ${
+      state.draftMode === "baller" ? "50%" : "8%"
+    } chance this round includes a Pink Diamond.`,
     returnTitle: "Return to diamond picks",
     returnCopy: "Your five guaranteed diamond choices are still waiting.",
-    modalSubtitle: `Choose one Diamond Round card as your 13th roster player. Each choice has a ${state.draftMode === "baller" ? "20%" : "8%"} Pink Diamond chance.`,
-    tiers: state.draftMode === "baller" ? [["Pink Diamond", .20], ["Diamond", .80]] : [["Pink Diamond", .08], ["Diamond", .92]]
+    modalSubtitle: `Choose one Diamond Round card as your 13th roster player. ${
+      state.draftMode === "baller" ? "50%" : "8%"
+    } chance this round includes a Pink Diamond.`,
+    tiers: [["Diamond", 1]],
+    roundPinkDiamondChance: state.draftMode === "baller" ? .50 : .08
   };
 }
 function cardInitials(card) { return card.name.split(/\s+/).slice(0,2).map(part => part[0]).join(""); }
@@ -530,12 +545,16 @@ function openDiamondRoundChoices() {
   const unavailable = new Set([...Object.values(state.draftSelections), state.draftDiamondSelection].filter(Boolean).map(card => card.name));
   const offered = new Set();
   const choices = [];
+  const includePinkDiamond = bonus.roundPinkDiamondChance && Math.random() < bonus.roundPinkDiamondChance;
+  const pinkIndex = state.customCardsEnabled && includePinkDiamond ? Math.floor(Math.random() * 5) : -1;
   for (let option = 0; option < 5; option++) {
     let roll = Math.random();
-    let tier = bonus.tiers[bonus.tiers.length - 1][0];
-    for (const [candidateTier, chance] of bonus.tiers) {
-      roll -= chance;
-      if (roll < 0) { tier = candidateTier; break; }
+    let tier = option === pinkIndex ? "Pink Diamond" : bonus.tiers[0][0];
+    if (option !== pinkIndex) {
+      for (const [candidateTier, chance] of bonus.tiers) {
+        roll -= chance;
+        if (roll < 0) { tier = candidateTier; break; }
+      }
     }
     let eligible = state.cards.filter(card => draftTierMatches(card, tier) && lineupPositions.includes(card.position) && !unavailable.has(card.name) && !offered.has(card.name));
     if (!eligible.length) {
@@ -1497,7 +1516,36 @@ async function importCustomCardFile(file) {
     });
     const result = await response.json();
     if (!response.ok || !result.ok) throw new Error(result.error || "Could not import custom card.");
-    showSaveToast(`Imported ${result.card.name}. Reloading card database...`);
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function importCustomCardFiles(files) {
+  const list = [...(files || [])];
+  if (!list.length) {
+    if (elements.customCardFile) elements.customCardFile.value = "";
+    return;
+  }
+  try {
+    showSaveToast(`Importing ${list.length} custom card file${list.length === 1 ? "" : "s"}...`);
+    const failed = [];
+    for (const file of list) {
+      try {
+        await importCustomCardFile(file);
+      } catch (error) {
+        failed.push(`${file.name}: ${error.message || "Could not import custom card."}`);
+      }
+    }
+    if (!failed.length) {
+      showSaveToast(`Imported ${list.length} custom card file${list.length === 1 ? "" : "s"}. Reloading card database...`);
+    } else if (failed.length < list.length) {
+      showSaveToast(`Imported ${list.length - failed.length} file${list.length - failed.length === 1 ? "" : "s"}, ${failed.length} failed. Reloading card database...`);
+    } else {
+      showSaveToast(`Could not import ${failed.join(" | ")}.`, true);
+      return;
+    }
     window.setTimeout(() => window.location.reload(), 450);
   } catch (error) {
     showSaveToast(error.message || "Could not import custom card.", true);
@@ -1596,7 +1644,11 @@ async function start() {
     addOptions(elements.tier, availableTiers, tierOrder);
     addOptions(elements.team, new Set(state.cards.filter(card => card.franchise !== "UNASSIGNED").map(card => card.franchise)));
     addOptions(elements.position, new Set(state.cards.flatMap(card => [card.position,card.secondaryPosition])), ["PG","SG","SF","PF","C"]);
-    addOptions(elements.theme, new Set(state.cards.map(card => card.theme)));
+    const themeOptions = new Set(state.cards.map(card => card.theme));
+    for (const value of themeOrder) {
+      themeOptions.add(value);
+    }
+    addOptions(elements.theme, themeOptions, themeOrder);
     addOptions(elements.customTier, availableTiers, tierOrder);
     addOptions(elements.customPosition, new Set(state.cards.flatMap(card => [card.position,card.secondaryPosition])), ["PG","SG","SF","PF","C"]);
     addOptions(elements.customTeam, new Set(state.cards.filter(card => card.franchise !== "UNASSIGNED").map(card => card.franchise)));
@@ -1617,7 +1669,7 @@ function openStartupMode() {
 [elements.tier,elements.team,elements.position,elements.theme,elements.overall,elements.onlyCustom,elements.sort].forEach(element => element.addEventListener("change", applyFilters));
 elements.search.addEventListener("input", debounce(applyFilters));
 elements.importCustomCard?.addEventListener("click", () => elements.customCardFile?.click());
-elements.customCardFile?.addEventListener("change", () => importCustomCardFile(elements.customCardFile.files?.[0]));
+elements.customCardFile?.addEventListener("change", () => importCustomCardFiles(elements.customCardFile.files));
 elements.customCardsEnabled?.addEventListener("change", () => setCustomCardsEnabled(elements.customCardsEnabled.checked));
 elements.manageCustomCards?.addEventListener("click", openCustomCardManager);
 elements.customCardManagerModal?.addEventListener("click", event => {

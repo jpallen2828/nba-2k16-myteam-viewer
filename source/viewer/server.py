@@ -52,6 +52,10 @@ CARDS = json.loads(DATA_PATH.read_text(encoding="utf-8"))
 CARD_MAP = {(str(card["id"]), card["slug"]): card for card in CARDS}
 CARD_ID_MAP = {str(card["id"]): card for card in CARDS}
 CUSTOM_CARD_FORMAT = "nba2k16.custom-card/v1"
+CUSTOM_CARD_NAME_OVERRIDES = {
+    1066814751: "Tracy McGrady",
+    1010276239: "LeBron James",
+}
 CUSTOM_PROMOTION_LOGO_DIR = ROOT / "data" / "promotion-logos"
 CUSTOM_PROMOTION_THEMES = {
     "all_star": "All-Star", "current_player": "Current",
@@ -650,6 +654,11 @@ CARD_JERSEY_NUMBER_OVERRIDES = {
     "1721/reggie-williams": 5,
 }
 
+CARD_APPEARANCE_OVERRIDES = {
+    # Victor Wembanyama - Pink Diamond custom variant in 2026 requires corrected wingspan.
+    1211485535: {"wingspan_cm": 245.0},
+}
+
 SPECIAL_PLAYER_FIELD_OVERRIDES = {
     "gheorghemuresan": {
         "height_inches": 91,
@@ -776,6 +785,16 @@ def output_root() -> Path:
     return Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else ROOT
 
 
+def private_runtime_root() -> Path:
+    """Keep generated Viewer state in this workspace's hidden project folder."""
+    root = output_root()
+    if getattr(sys, "frozen", False):
+        for candidate in (root / "_Project", root.parent / "_Project"):
+            if candidate.is_dir():
+                return candidate
+    return root
+
+
 def custom_card_root() -> Path:
     root = Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "NBA2K16MyTEAMViewer" / "custom-cards"
     root.mkdir(parents=True, exist_ok=True)
@@ -816,6 +835,48 @@ def _safe_custom_stem(card: dict) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]+", "-", raw).strip("-.") or "custom-card"
 
 
+def _safe_zip_member(name: str) -> str:
+    if "\x00" in name:
+        raise ValueError("ZIP entries with null bytes are not allowed.")
+    normalized = name.replace("\\", "/").strip()
+    if not normalized:
+        raise ValueError("ZIP entry name is empty.")
+    if normalized.endswith("/"):
+        raise ValueError(f"Unsafe ZIP entry name: {name!r}")
+    if normalized.startswith("/"):
+        raise ValueError(f"Unsafe ZIP entry name: {name!r}")
+    parts = [part for part in normalized.split("/") if part not in ("", ".")]
+    if (
+        not parts
+        or ".." in parts
+        or any(part.startswith("..") for part in parts)
+        or any(":" in part for part in parts)
+    ):
+        raise ValueError(f"Unsafe ZIP entry name: {name!r}")
+    return "/".join(parts)
+
+
+def _find_custom_card_package_members(archive: zipfile.ZipFile) -> tuple[str, str]:
+    manifest_name = None
+    art_name = None
+    for info in archive.infolist():
+        if info.is_dir():
+            continue
+        safe_name = _safe_zip_member(info.filename)
+        base = Path(safe_name).name.lower()
+        if base == "manifest.json":
+            if manifest_name is not None:
+                raise ValueError("Package contains multiple manifest.json files.")
+            manifest_name = safe_name
+        elif base == "card.png":
+            if art_name is not None:
+                raise ValueError("Package contains multiple card.png files.")
+            art_name = safe_name
+    if manifest_name is None or art_name is None:
+        raise ValueError("Package must contain manifest.json and card.png.")
+    return manifest_name, art_name
+
+
 def normalize_custom_player_name(value: object) -> str:
     """Strip a Card Studio search-result suffix if it was saved as the name."""
     text = str(value or "").strip()
@@ -830,8 +891,13 @@ def normalize_custom_player_name(value: object) -> str:
     return re.sub(r"^['\u2019](?:\d{2})\s+", "", text).strip()
 
 
-def roster_display_name(value: object) -> str:
+def roster_display_name(value: object, card_id: object = None) -> str:
     """Return mixed-case roster text while retaining hyphen/apostrophe names."""
+    try:
+        if int(card_id) in CUSTOM_CARD_NAME_OVERRIDES:
+            return CUSTOM_CARD_NAME_OVERRIDES[int(card_id)]
+    except (TypeError, ValueError):
+        pass
     text = normalize_custom_player_name(value)
 
     def capitalize_piece(piece: str) -> str:
@@ -981,7 +1047,7 @@ def load_custom_cards(include_disabled: bool = False, include_hidden: bool = Fal
                 if not (search_root / art_name).is_file():
                     continue
                 item = dict(card)
-                item["name"] = roster_display_name(item.get("name"))
+                item["name"] = roster_display_name(item.get("name"), card_id=item.get("id"))
                 item["custom"] = True
                 item["hidden"] = custom_card_key(item) in hidden_keys
                 item["customArtUrl"] = f"/custom-art/{item.get('id')}/{item.get('slug')}"
@@ -1014,63 +1080,54 @@ def import_custom_card_package(raw: bytes, original_name: str = "") -> dict:
         raise ValueError("Custom card package is larger than 25 MB.")
     try:
         with zipfile.ZipFile(io.BytesIO(raw), "r") as archive:
-            names = set(archive.namelist())
-            if {"manifest.json", "card.png"} - names:
-                raise ValueError("Package must contain manifest.json and card.png.")
-            manifest = json.loads(archive.read("manifest.json").decode("utf-8"))
+            manifest_name, art_member = _find_custom_card_package_members(archive)
+            manifest = json.loads(archive.read(manifest_name).decode("utf-8-sig"))
             if (
                 not isinstance(manifest, dict)
                 or manifest.get("format") != CUSTOM_CARD_FORMAT
                 or not isinstance(manifest.get("card"), dict)
             ):
                 raise ValueError("This is not a supported NBA 2K16 custom-card package.")
-            art = archive.read("card.png")
-    except (zipfile.BadZipFile, KeyError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+            art = archive.read(art_member)
+    except (zipfile.BadZipFile, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
         raise ValueError(f"Could not read custom card package: {exc}") from exc
     if not art.startswith(b"\x89PNG\r\n\x1a\n"):
         raise ValueError("The custom card artwork is not a PNG.")
     card = dict(manifest["card"])
-    required = ("id", "slug", "name", "overall", "position", "attributes", "tendencies", "badges")
+    required = ("id", "slug", "name", "overall", "position", "attributes", "tendencies", "badges", "tier")
     missing = [field for field in required if field not in card]
     if missing:
         raise ValueError(f"Custom card is missing required fields: {', '.join(missing)}")
     try:
         card["id"] = int(card["id"])
+        card["slug"] = str(card["slug"]).strip()
         card["overall"] = max(25, min(99, int(card["overall"])))
     except (TypeError, ValueError) as exc:
         raise ValueError("Custom card ID and overall must be integers.") from exc
-    card["name"] = roster_display_name(card.get("name"))
+    if not card["slug"]:
+        raise ValueError("Custom card slug must be a non-empty string.")
+    if card["id"] <= 0:
+        raise ValueError("Custom card ID must be positive.")
+    card["name"] = roster_display_name(card.get("name"), card_id=card.get("id"))
     if not card["name"]:
         raise ValueError("Custom card player name cannot be blank.")
     if not card.get("promotionLogoId"):
         inferred_promotion_id = infer_custom_promotion_logo_id(art)
         if inferred_promotion_id:
             card["promotionLogoId"] = inferred_promotion_id
-    promotion_taxonomy = custom_promotion_taxonomy(card)
-    if promotion_taxonomy:
-        card["theme"], card["collection"] = promotion_taxonomy
-    custom_player_data = card.get("customPlayerData")
-    custom_player_data = dict(custom_player_data) if isinstance(custom_player_data, dict) else {}
-    # Card Studio does not expose reliable NBA 2K16 gear editing. Gear is
-    # resolved by player name from a clean/live roster source at injection time;
-    # a parent-card link is helpful but is not required for the name match.
-    custom_player_data.pop("gear", None)
-    custom_player_data["gearInheritance"] = "same-name-source"
-    card["customPlayerData"] = custom_player_data
-    if card["id"] <= 0:
-        card["id"] = positive_custom_card_id(card)
-        card["slug"] = f"custom-{re.sub(r'[^a-z0-9]+', '-', card['name'].casefold()).strip('-')}-{card.get('year') or 2016}-{card['id']}"
+    if not card.get("theme") and not card.get("collection"):
+        promotion_taxonomy = custom_promotion_taxonomy(card)
+        if promotion_taxonomy:
+            card["theme"], card["collection"] = promotion_taxonomy
     card["custom"] = True
     stem = _safe_custom_stem(card)
     art_name = f"{stem}.png"
-    stored_manifest = {
-        "format": CUSTOM_CARD_FORMAT,
-        "version": 1,
-        "imported": datetime.now().astimezone().isoformat(),
-        "sourceName": original_name,
-        "storedArt": art_name,
-        "card": card,
-    }
+    stored_manifest = dict(manifest)
+    stored_manifest["format"] = CUSTOM_CARD_FORMAT
+    stored_manifest["imported"] = datetime.now().astimezone().isoformat()
+    stored_manifest["sourceName"] = original_name
+    stored_manifest["storedArt"] = art_name
+    stored_manifest["card"] = card
     (custom_card_root() / art_name).write_bytes(art)
     (custom_card_root() / f"{stem}.json").write_text(
         json.dumps(stored_manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
@@ -1081,8 +1138,8 @@ def import_custom_card_package(raw: bytes, original_name: str = "") -> dict:
 
 def saved_lineup_roots() -> list[Path]:
     roots = [
-        output_root(),
-        Path.home() / "Downloads" / "Codex Projects" / "2k16 myteam",
+        private_runtime_root(),
+        ROOT.parents[2],
         Path.home() / "Downloads" / "2k16 myteam",
         Path(r"D:\Old games\NBA 2K16 menu integration sandbox") / "MyTEAM Viewer Portable",
     ]
@@ -1094,7 +1151,7 @@ def saved_lineup_dirs() -> list[Path]:
 
 
 def settings_path() -> Path:
-    return output_root() / "myteam_viewer_settings.json"
+    return private_runtime_root() / "myteam_viewer_settings.json"
 
 
 def load_settings() -> dict:
@@ -1186,7 +1243,7 @@ def find_rosters() -> list[dict]:
 
 
 def injection_workspace() -> Path:
-    path = output_root() / "Roster Injection Packages"
+    path = private_runtime_root() / "Roster Injection Packages"
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -1855,6 +1912,19 @@ def card_template_entry(card: dict, template_bank: dict) -> dict | None:
     return None
 
 
+def template_bank_source_slot(card: dict, template_bank: dict) -> int | None:
+    entry = card_template_entry(card, template_bank) or name_template_entry(card, template_bank)
+    if not isinstance(entry, dict):
+        return None
+    source_slot = entry.get("source_template_roster_index")
+    if source_slot is None:
+        return None
+    try:
+        return int(source_slot)
+    except (TypeError, ValueError):
+        return None
+
+
 def name_template_entry(card: dict, template_bank: dict) -> dict | None:
     players_by_name = template_bank.get("players_by_name") if isinstance(template_bank, dict) else {}
     if isinstance(players_by_name, dict):
@@ -2469,6 +2539,20 @@ def choose_template_source(card: dict, players_by_name: dict[str, list[int]], te
     # full row captured from a previous NBA2K16.exe session can crash the game.
     # Only rows read from the currently running game process are safe as sources.
     name_key = norm_name(card.get("name") or "")
+    bank_slot = template_bank_source_slot(card, template_bank)
+    if bank_slot is not None:
+        return {
+            "kind": "live-slot",
+            "slot": bank_slot,
+            "identity_slot": bank_slot,
+            "signature_slot": bank_slot,
+            "copy_signature_position": False,
+            "copy_signature_body": False,
+            "copy_signature_jersey": False,
+            "allow_stable_template": False,
+            "reason": f"player template bank source roster index override {bank_slot}",
+        }
+
     signature_rule = SIGNATURE_ONLY_TEMPLATE_TEAMS.get(name_key)
     signature_slot = None
     if signature_rule:
@@ -2546,6 +2630,30 @@ def verify_written_team_names(handle: int, array_base: int, team: str, players: 
         appearance_failures: list[str] = []
         change = changes_by_slot.get(slot, {})
         linked_writes = list(change.get("appearance_writes") or []) + list(change.get("appearance_byte_writes") or [])
+        appearance_block_hex = str(change.get("appearance_block_hex") or "").strip()
+        if appearance_block_hex:
+            try:
+                expected_appearance_block = bytes.fromhex(appearance_block_hex)
+            except ValueError:
+                expected_appearance_block = b""
+                appearance_failures.append(f"slot {slot}: expected appearance block was not valid hexadecimal")
+            appearance_ptr = int.from_bytes(
+                record[myteam.APPEARANCE_POINTER_OFFSET:myteam.APPEARANCE_POINTER_OFFSET + 8],
+                "little",
+            )
+            if not appearance_ptr:
+                appearance_failures.append(f"slot {slot}: missing linked appearance pointer")
+            elif expected_appearance_block:
+                actual_appearance_block = roster.read_memory(handle, appearance_ptr, len(expected_appearance_block))
+                if actual_appearance_block != expected_appearance_block:
+                    appearance_failures.append(
+                        f"slot {slot}: full appearance block verification failed "
+                        f"(expected {expected_appearance_block.hex().upper()}, "
+                        f"got {actual_appearance_block.hex().upper()})"
+                    )
+            # The verified full CAP block is authoritative over generic linked
+            # height/eye defaults, so validate its exact bytes instead.
+            linked_writes = []
         if linked_writes:
             appearance_ptr = int.from_bytes(
                 record[myteam.APPEARANCE_POINTER_OFFSET:myteam.APPEARANCE_POINTER_OFFSET + 8],
@@ -2571,6 +2679,24 @@ def verify_written_team_names(handle: int, array_base: int, team: str, players: 
                         matches_expected = actual_value == expected_value
                     if not matches_expected:
                         appearance_failures.append(f"slot {slot}: {name} expected {expected_value}, got {actual_value}")
+        sculpt_hex = str(change.get("sculpt_dna_hex") or "").strip()
+        if sculpt_hex:
+            try:
+                expected_sculpt = bytes.fromhex(sculpt_hex)
+            except ValueError:
+                expected_sculpt = b""
+                appearance_failures.append(f"slot {slot}: expected sculpt DNA was not valid hexadecimal")
+            sculpt_pointer_offset = int(getattr(myteam, "SCULPT_POINTER_OFFSET", 0x78))
+            sculpt_ptr = int.from_bytes(record[sculpt_pointer_offset:sculpt_pointer_offset + 8], "little")
+            if not sculpt_ptr:
+                appearance_failures.append(f"slot {slot}: missing linked sculpt pointer")
+            elif expected_sculpt:
+                actual_sculpt = roster.read_memory(handle, sculpt_ptr, len(expected_sculpt))
+                if actual_sculpt != expected_sculpt:
+                    appearance_failures.append(
+                        f"slot {slot}: sculpt DNA verification failed "
+                        f"(expected {expected_sculpt.hex().upper()}, got {actual_sculpt.hex().upper()})"
+                    )
         field_failures.extend(appearance_failures)
         details.append({
             "slot": slot,
@@ -3009,6 +3135,17 @@ def myteam_exclusive_appearance_byte_writes(card: dict, overrides: dict[str, dic
         except (TypeError, ValueError):
             pass
     return writes
+
+
+def card_appearance_overrides(card: dict) -> dict[str, float]:
+    """Return card-ID specific appearance overrides."""
+    try:
+        card_id = int(card.get("id")) if isinstance(card.get("id"), (str, int)) else None
+    except (TypeError, ValueError):
+        card_id = None
+    if card_id is None:
+        return {}
+    return {k: float(v) for k, v in CARD_APPEARANCE_OVERRIDES.get(card_id, {}).items() if isinstance(v, (int, float))}
 
 
 def default_eye_color_appearance_byte_write(card: dict, overrides: dict[str, dict]) -> list[dict]:
@@ -3656,6 +3793,13 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             # Explicit player-wide corrections are authoritative over an older
             # captured linked height while retaining that capture's wingspan.
             appearance_writes.extend(myteam.appearance_float_writes(card))
+            card_appearance_override = card_appearance_overrides(card)
+            if card_appearance_override.get("wingspan_cm") is not None and myteam is not None and hasattr(myteam, "APPEARANCE_WINGSPAN_CM_OFFSET"):
+                appearance_writes.append({
+                    "name": "card_appearance_override_wingspan_cm",
+                    "offset": myteam.APPEARANCE_WINGSPAN_CM_OFFSET,
+                    "value": float(card_appearance_override["wingspan_cm"]),
+                })
             appearance_byte_writes = []
             if hasattr(myteam, "appearance_byte_writes"):
                 jersey_value = myteam.get_jersey_number(edited) if hasattr(myteam, "get_jersey_number") else None
@@ -3671,6 +3815,20 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 stats["appearance_named_fields_written"].extend(
                     f"{item['name']}@appearance+0x{int(item['offset']):X}={int(item['value'])}"
                     for item in appearance_byte_writes
+                )
+            sculpt_dna = myteam.sculpt_dna_bytes(card) if hasattr(myteam, "sculpt_dna_bytes") else None
+            appearance_block = (
+                myteam.appearance_block_bytes(card) if hasattr(myteam, "appearance_block_bytes") else None
+            )
+            if sculpt_dna is not None:
+                stats["sculpt_dna_written"] = (
+                    f"{len(sculpt_dna)} bytes via destination-owned pointer"
+                    f"@+0x{int(getattr(myteam, 'SCULPT_POINTER_OFFSET', 0x78)):X}"
+                )
+            if appearance_block is not None:
+                stats["appearance_block_written"] = (
+                    f"{len(appearance_block)} bytes via destination-owned pointer"
+                    f"@+0x{int(getattr(myteam, 'APPEARANCE_POINTER_OFFSET', 0x80)):X}"
                 )
             copied_ranges = []
             copied_ranges.extend(stable_template_ranges)
@@ -3707,6 +3865,8 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 "new_hex": bytes(edited).hex().upper(),
                 "appearance_writes": appearance_writes,
                 "appearance_byte_writes": appearance_byte_writes,
+                "sculpt_dna_hex": sculpt_dna.hex().upper() if sculpt_dna is not None else "",
+                "appearance_block_hex": appearance_block.hex().upper() if appearance_block is not None else "",
                 "card_key": f"{card.get('id')}/{card.get('slug')}",
                 "name": card.get("name"),
                 "destination": team,
@@ -4144,8 +4304,7 @@ class ViewerHandler(SimpleHTTPRequestHandler):
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
             kind_key = str(payload.get("kind") or "random")
             kind = "Draft" if kind_key == "draft" else "Custom Team" if kind_key == "custom" else "Random Lineup"
-            output_root = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else ROOT
-            save_dir = output_root / "Saved Lineups"
+            save_dir = private_runtime_root() / "Saved Lineups"
             save_dir.mkdir(parents=True, exist_ok=True)
             timestamp = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
             target = save_dir / f"{kind} {timestamp}.png"

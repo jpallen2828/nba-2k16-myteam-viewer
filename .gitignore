@@ -4,6 +4,8 @@ release/
 *.zip
 __pycache__/
 *.pyc
+*.log
 nba2k16-myteam-compatibility-report.json
+diagnostics/
 source/viewer/data/card-images/
 source/viewer/data/live_source_captures/
