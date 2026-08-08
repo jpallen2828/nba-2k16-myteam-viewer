@@ -17,6 +17,7 @@ from PIL import Image
 PUBLIC_ROOT = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = PUBLIC_ROOT.parent
 PUBLIC_OUTPUT_ROOT = PROJECT_ROOT.parent if PROJECT_ROOT.name == "_Project" else PROJECT_ROOT
+PUBLIC_EXTRACTED_ROOT = PUBLIC_OUTPUT_ROOT / "NBA 2K16 MyTEAM Viewer"
 VIEWER = PUBLIC_ROOT / "source" / "viewer"
 RUNTIME_TOOLS = PUBLIC_ROOT / "source" / "runtime_tools"
 BUILD = PUBLIC_ROOT / "build"
@@ -24,7 +25,7 @@ DIST = PUBLIC_ROOT / "dist"
 RELEASES_ROOT = PROJECT_ROOT / "Releases"
 RELEASE_CURRENT = RELEASES_ROOT / "Current"
 APP_NAME = "NBA 2K16 MyTEAM Viewer"
-RELEASE_VERSION = "1.1.0"
+RELEASE_VERSION = "1.1.1"
 COMPATIBILITY_ROSTER_NAME = "Myteam Compatibility roster"
 VIEWER_RELEASE_ARCHIVE_NAME = "NBA.2K16.MyTEAM.Viewer.zip"
 CARD_STUDIO_PUBLIC_ARCHIVE_NAME = "NBA 2K16 Card Studio.zip"
@@ -176,6 +177,11 @@ def main() -> int:
     public_archive = PUBLIC_OUTPUT_ROOT / f"{APP_NAME}.zip"
     shutil.copy2(RELEASE_CURRENT / f"{APP_NAME}.exe", public_executable)
     shutil.copy2(archive, public_archive)
+    if PUBLIC_EXTRACTED_ROOT.exists():
+        shutil.rmtree(PUBLIC_EXTRACTED_ROOT)
+    PUBLIC_EXTRACTED_ROOT.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(public_archive) as public_bundle:
+        public_bundle.extractall(PUBLIC_EXTRACTED_ROOT)
     release_card_studio_archive = RELEASE_CURRENT / CARD_STUDIO_RELEASE_ARCHIVE_NAME
     shutil.copy2(card_studio_archive, release_card_studio_archive)
 
@@ -188,6 +194,7 @@ def main() -> int:
     print(archive)
     print(public_executable)
     print(public_archive)
+    print(PUBLIC_EXTRACTED_ROOT)
     print(release_card_studio_archive)
     print(checksums)
     return 0

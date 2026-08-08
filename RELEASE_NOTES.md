@@ -1,5 +1,13 @@
 # Release Notes
 
+## v1.1.1 — Equal-tier random teams — August 8, 2026
+
+- Updated **Create a random team** to include enabled custom cards and Pink Diamonds.
+- Each lineup position now rolls uniformly among the available Pink Diamond, Diamond, Amethyst, Gold, Silver, and Bronze tiers before selecting a random eligible card from that tier.
+- Removed the previous per-card weighting, guaranteed Amethyst/Diamond slot, and one-Bronze limit so every tier has the same chance of appearing.
+- The generator continues to require one primary-position player at PG, SG, SF, PF, and C and prevents the same player name from appearing twice.
+- Added regression coverage proving that every position has candidates in all six release tiers and that tier odds are independent of the number of cards in each tier.
+
 ## v1.1.0 — Card Studio, complete custom cards, and exact custom sculpts — August 8, 2026
 
 This is the largest public update since v1.0.7. The release page now provides two separate portable downloads: **NBA 2K16 MyTEAM Viewer v1.1.0** and the companion **NBA 2K16 Card Studio v0.9.2**.
