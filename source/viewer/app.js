@@ -2,7 +2,7 @@ const state = {
   cards: [], filtered: [], visible: 48, selected: null, tab: "attributes", returnToLineup: false,
   returnToDraft: false, returnToDraftChoices: false,
   randomLineup: [], draftSelections: {}, draftTarget: null, draftOptions: [], draftDiamondSelection: null, draftMode: "default",
-  customSelections: [], customFiltered: [], imageManifest: {}, jerseyNumberOverrides: { cards: {}, playerTeamYears: {}, players: {} }, injectionState: null, injectionKind: null, injectionRosterPath: "", injectionTeam: "", injectionTeamMode: "nba", unlockedInjectionTeams: {}, pendingUnlockTeam: "", loadedRosterVerification: null, manualLoadedRosterConfirm: false,
+  customSelections: [], customFiltered: [], imageManifest: {}, jerseyNumberOverrides: { cards: {}, playerTeamYears: {}, players: {} }, injectionState: null, injectionKind: null, injectionRosterPath: "", injectionTeam: "", injectionTeamMode: "nba", injectionGameVersion: "", unlockedInjectionTeams: {}, pendingUnlockTeam: "", loadedRosterVerification: null, manualLoadedRosterConfirm: false,
   savedLineups: [], savedLineupKind: "", myteamExclusiveNames: new Set(), customCardsEnabled: true, customCardLibrary: []
 };
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -19,7 +19,7 @@ const elements = {
   customModal: $("#customModal"), customSelectedGrid: $("#customSelectedGrid"), customPickerGrid: $("#customPickerGrid"),
   customCount: $("#customCount"), customSearch: $("#customSearch"), customTier: $("#customTierFilter"), customPosition: $("#customPositionFilter"), customTeam: $("#customTeamFilter"),
   injectionModal: $("#injectionModal"), rosterSelect: $("#rosterSelect"), rosterHint: $("#rosterHint"),
-  injectionTeamGrid: $("#injectionTeamGrid"), injectionTeamHeading: $("#injectionTeamHeading"), toggleHistoricTeams: $("#toggleHistoricTeams"), toggleCollegeTeams: $("#toggleCollegeTeams"), injectionSummary: $("#injectionSummary"), confirmInjection: $("#confirmInjection"),
+  injectionTeamGrid: $("#injectionTeamGrid"), injectionTeamHeading: $("#injectionTeamHeading"), toggleHistoricTeams: $("#toggleHistoricTeams"), toggleCollegeTeams: $("#toggleCollegeTeams"), injectionVersionChoices: $("#injectionVersionChoices"), injectionSummary: $("#injectionSummary"), confirmInjection: $("#confirmInjection"),
   verifyLoadedRoster: $("#verifyLoadedRoster"), resetRosterTracking: $("#resetRosterTracking"), confirmLoadedRoster: $("#confirmLoadedRoster"), loadedRosterStatus: $("#loadedRosterStatus"),
   manualRosterDir: $("#manualRosterDir"), saveRosterDir: $("#saveRosterDir"), manualRosterDirStatus: $("#manualRosterDirStatus"),
   unlockTeamModal: $("#unlockTeamModal"), confirmTeamUnlock: $("#confirmTeamUnlock"),
@@ -1051,10 +1051,10 @@ function renderInjectionTeams() {
   if (state.injectionTeam && !teams.includes(state.injectionTeam)) state.injectionTeam = "";
   if (elements.injectionTeamHeading) {
     elements.injectionTeamHeading.textContent = mode === "historic"
-      ? "2. Choose an NBA Classic team"
+      ? "3. Choose an NBA Classic team"
       : mode === "college"
-        ? "2. Choose a compatible college team"
-        : "2. Choose an NBA team";
+        ? "3. Choose a compatible college team"
+        : "3. Choose an NBA team";
   }
   const alternatives = mode === "nba"
     ? [["historic", "Historic teams"], ["college", "College teams"]]
@@ -1074,10 +1074,19 @@ function renderInjectionTeams() {
 function renderInjectionSummary() {
   const roster = selectedRosterRecord();
   const players = lineupPackage(state.injectionKind);
-  const canSubmit = Boolean(roster && state.injectionTeam && players?.length);
+  const patch0CollegeOverCapacity = Boolean(
+    state.injectionGameVersion === "patch0"
+    && state.injectionTeamMode === "college"
+    && players?.length > 12
+  );
+  const canSubmit = Boolean(state.injectionGameVersion && roster && state.injectionTeam && players?.length && !patch0CollegeOverCapacity);
   elements.confirmInjection.disabled = !canSubmit;
   if (!players) {
     elements.injectionSummary.textContent = state.injectionKind === "draft" ? "Finish all 12 draft picks plus the diamond round before injecting." : state.injectionKind === "custom" ? "Pick exactly 13 cards before injecting." : "Generate a random lineup before injecting.";
+    return;
+  }
+  if (!state.injectionGameVersion) {
+    elements.injectionSummary.textContent = "Choose Patch 10 or Patch 0 first.";
     return;
   }
   if (!roster) {
@@ -1093,7 +1102,12 @@ function renderInjectionSummary() {
     elements.injectionSummary.innerHTML = `<strong>${escapeHtml(roster.name)}</strong> selected. Choose ${destinationLabel}.`;
     return;
   }
-  elements.injectionSummary.innerHTML = `Ready to inject <strong>${players.length} players</strong> into <strong>${escapeHtml(state.injectionTeam)}</strong> on <strong>${escapeHtml(roster.name)}</strong>. Keep NBA 2K16 open with that roster loaded, then save in-game after it succeeds.`;
+  if (patch0CollegeOverCapacity) {
+    elements.injectionSummary.textContent = "Clean Patch 0 college teams have 12 live roster members, so a 13-player lineup cannot be injected into that destination. Choose an NBA or classic team, or inject a five-player random lineup.";
+    return;
+  }
+  const versionLabel = state.injectionGameVersion === "patch10" ? "Patch 10" : "Patch 0";
+  elements.injectionSummary.innerHTML = `Ready to inject <strong>${players.length} players</strong> into <strong>${escapeHtml(state.injectionTeam)}</strong> on <strong>${escapeHtml(roster.name)}</strong> using <strong>${versionLabel}</strong>. Keep NBA 2K16 open with that roster loaded, then save in-game after it succeeds.`;
 }
 function markTeamInjected(rosterPath, team, players, optimistic = false) {
   if (!state.injectionState) state.injectionState = {};
@@ -1128,6 +1142,11 @@ async function openInjection(kind) {
   }
   state.injectionKind = kind;
   state.injectionTeam = "";
+  state.injectionGameVersion = "";
+  $$("[data-game-version]", elements.injectionVersionChoices).forEach(button => {
+    button.classList.remove("selected");
+    button.setAttribute("aria-checked", "false");
+  });
   elements.injectionModal.classList.add("open");
   elements.injectionModal.setAttribute("aria-hidden", "false");
   elements.injectionSummary.textContent = "Detecting roster files…";
@@ -1143,7 +1162,7 @@ async function openInjection(kind) {
 function prepareInjection() {
   const roster = selectedRosterRecord();
   const players = lineupPackage(state.injectionKind);
-  if (!roster || !state.injectionTeam || !players) { renderInjectionSummary(); return; }
+  if (!state.injectionGameVersion || !roster || !state.injectionTeam || !players) { renderInjectionSummary(); return; }
   const injectedTeam = state.injectionTeam;
   const rosterPath = roster.path;
   elements.confirmInjection.disabled = true;
@@ -1164,6 +1183,7 @@ function prepareInjection() {
         kind: state.injectionKind,
         rosterPath: roster.path,
         team: injectedTeam,
+        gameVersion: state.injectionGameVersion,
         players,
         manualLoadedRosterConfirm: state.manualLoadedRosterConfirm,
         overwriteUnlockedTeam
@@ -1716,6 +1736,18 @@ $("#refreshRosters").addEventListener("click", async () => {
 elements.saveRosterDir.addEventListener("click", saveManualRosterDirectory);
 elements.manualRosterDir.addEventListener("keydown", event => {
   if (event.key === "Enter") saveManualRosterDirectory();
+});
+elements.injectionVersionChoices.addEventListener("click", event => {
+  const choice = event.target.closest("[data-game-version]");
+  if (!choice) return;
+  state.injectionGameVersion = choice.dataset.gameVersion;
+  $$("[data-game-version]", elements.injectionVersionChoices).forEach(button => {
+    const selected = button === choice;
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-checked", selected ? "true" : "false");
+  });
+  setLoadedRosterStatus(null);
+  renderInjectionSummary();
 });
 elements.rosterSelect.addEventListener("change", () => { state.injectionRosterPath = elements.rosterSelect.value; state.injectionTeam = ""; setLoadedRosterStatus(null); renderInjectionTeams(); renderInjectionSummary(); });
 elements.verifyLoadedRoster.addEventListener("click", verifyLoadedRoster);

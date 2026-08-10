@@ -25,7 +25,7 @@ DIST = PUBLIC_ROOT / "dist"
 RELEASES_ROOT = PROJECT_ROOT / "Releases"
 RELEASE_CURRENT = RELEASES_ROOT / "Current"
 APP_NAME = "NBA 2K16 MyTEAM Viewer"
-RELEASE_VERSION = "1.1.1"
+RELEASE_VERSION = "1.1.2"
 COMPATIBILITY_ROSTER_NAME = "Myteam Compatibility roster"
 VIEWER_RELEASE_ARCHIVE_NAME = "NBA.2K16.MyTEAM.Viewer.zip"
 CARD_STUDIO_PUBLIC_ARCHIVE_NAME = "NBA 2K16 Card Studio.zip"
@@ -45,6 +45,20 @@ REQUIRED_MANUAL_CUSTOM_CARD_STEMS = (
     "1143591139-custom-dirk-nowitzki-2007-1143591139",
     "1167732103-custom-andrei-kirilenko-2010-1167732103",
     "1160029513-custom-kawhi-leonard-2019-1160029513",
+    "1227213394-custom-brandon-roy-2009-1227213394",
+    "1226779737-custom-brandon-roy-2007-1226779737",
+    "1157781085-custom-john-stockton-1992-1157781085",
+    "1120096259-custom-michael-jordan-1992-1120096259",
+    "1206304800-custom-chris-mullin-1992-1206304800",
+    "1033984617-custom-charles-barkley-1992-1033984617",
+    "1182456726-custom-david-robinson-1992-1182456726",
+    "1149802511-custom-clyde-drexler-1992-1149802511",
+    "1049968942-custom-magic-johnson-1992-1049968942",
+    "1116713305-custom-larry-bird-1992-1116713305",
+    "1158851335-custom-patrick-ewing-1992-1158851335",
+    "1265548637-custom-karl-malone-1992-1265548637",
+    "1027570055-custom-scottie-pippen-1992-1027570055",
+    "1166830361-custom-christian-laettner-1992-1166830361",
 )
 
 
@@ -175,7 +189,13 @@ def main() -> int:
                 bundle.write(path, path.relative_to(RELEASE_CURRENT))
     public_executable = PUBLIC_OUTPUT_ROOT / f"{APP_NAME}.exe"
     public_archive = PUBLIC_OUTPUT_ROOT / f"{APP_NAME}.zip"
-    shutil.copy2(RELEASE_CURRENT / f"{APP_NAME}.exe", public_executable)
+    try:
+        shutil.copy2(RELEASE_CURRENT / f"{APP_NAME}.exe", public_executable)
+    except PermissionError:
+        # Windows locks the public executable while the desktop app is open.
+        # The release ZIP still contains the newly built executable, so do not
+        # prevent ZIP publication or the Card Studio release from completing.
+        print(f"WARNING: {public_executable} is running and could not be replaced; close it before copying the new EXE from the ZIP.")
     shutil.copy2(archive, public_archive)
     if PUBLIC_EXTRACTED_ROOT.exists():
         shutil.rmtree(PUBLIC_EXTRACTED_ROOT)

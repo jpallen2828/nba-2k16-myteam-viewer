@@ -23,7 +23,7 @@
     "weight": 218,
     "age": 35,
     "from": "South Carolina",
-    "jerseyNumber": 3,
+    "jerseyNumber": 2,
     "faceId": 2880,
     "portraitId": 4485,
     "playInitiator": false,
@@ -228,7 +228,7 @@
       "birthMonth": 2,
       "birthDay": 19,
       "playInitiator": false,
-      "jerseyNumber": 3,
+      "jerseyNumber": 2,
       "faceId": 2880,
       "portraitId": 4485,
       "inheritedIdentityIds": {

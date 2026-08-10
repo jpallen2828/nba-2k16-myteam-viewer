@@ -155,7 +155,15 @@
       </header>
       <div class="injection-body">
         <section class="injection-card">
-          <h3>1. Pick the roster file</h3>
+          <h3>1. Choose the NBA 2K16 version</h3>
+          <p>Select the version that is currently running. Injection is blocked if the loaded game's TEAMDATA layout does not match.</p>
+          <div id="injectionVersionChoices" class="injection-version-choices" role="radiogroup" aria-label="NBA 2K16 version">
+            <button class="injection-version-choice" type="button" role="radio" aria-checked="false" data-game-version="patch10">Patch 10</button>
+            <button class="injection-version-choice" type="button" role="radio" aria-checked="false" data-game-version="patch0">Patch 0</button>
+          </div>
+        </section>
+        <section class="injection-card">
+          <h3>2. Pick the roster file</h3>
           <p id="rosterHint">If you just created a roster in game, click Detect rosters and choose the newest one.</p>
           <div class="manual-roster-folder">
             <label for="manualRosterDir">Manual roster folder override</label>
@@ -173,7 +181,7 @@
         </section>
         <section class="injection-card">
           <div class="injection-card-heading">
-            <h3 id="injectionTeamHeading">2. Choose an NBA team</h3>
+            <h3 id="injectionTeamHeading">3. Choose an NBA team</h3>
             <div class="injection-team-mode-actions">
               <button id="toggleHistoricTeams" class="secondary-button" type="button">Historic teams</button>
               <button id="toggleCollegeTeams" class="secondary-button" type="button">College teams</button>
@@ -183,7 +191,7 @@
           <div id="injectionTeamGrid" class="injection-team-grid"></div>
         </section>
         <section class="injection-card injection-summary-card">
-          <h3>3. Confirm</h3>
+          <h3>4. Confirm</h3>
           <div id="injectionSummary" class="injection-summary">Choose a roster and team to continue.</div>
           <button id="confirmInjection" class="inject-lineup-button" disabled>Inject lineup</button>
         </section>

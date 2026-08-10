@@ -11,6 +11,7 @@ import argparse
 import ctypes
 from ctypes import wintypes
 from datetime import datetime
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -460,6 +461,8 @@ VERIFIED_SIGNATURE_FIELD_RANGES = [
 
 PLAYER_TEMPLATE_ALIASES = {
     "ronartest": "mettaworldpeace",
+    "yaoming": "mingyao",
+    "sulu": "lusu",
 }
 
 SPECIAL_PLAYER_FIELD_OVERRIDES = {
@@ -479,6 +482,25 @@ SPECIAL_PLAYER_FIELD_OVERRIDES = {
     "nene": {
         "first_name": "",
         "last_name": "Nenê",
+    },
+    # NBA 2K16 stores Yao as first=Ming, last=Yao and flips presentation to
+    # family-name-first. The official card data calls him "Ming Yao", while
+    # imported custom cards may use the culturally correct "Yao Ming".
+    "mingyao": {
+        "first_name": "Ming",
+        "last_name": "Yao",
+    },
+    "yaoming": {
+        "first_name": "Ming",
+        "last_name": "Yao",
+    },
+    "lusu": {
+        "first_name": "Lu",
+        "last_name": "Su",
+    },
+    "sulu": {
+        "first_name": "Lu",
+        "last_name": "Su",
     },
     "gheorghemuresan": {
         "height_inches": 91,
@@ -727,9 +749,23 @@ def appearance_byte_writes(card: dict, jersey_number: int | None = None) -> list
     return []
 
 
+def linked_model_payload(card: dict, field: str) -> dict | None:
+    for container_name in ("customPlayerData", "linkedModelData"):
+        payload = card.get(container_name)
+        if isinstance(payload, dict) and payload.get(field) not in (None, ""):
+            return payload
+    return None
+
+
+def validate_linked_model_hash(data: bytes, payload: dict, hash_field: str, label: str) -> None:
+    expected = str(payload.get(hash_field) or "").strip().casefold()
+    if expected and hashlib.sha256(data).hexdigest() != expected:
+        raise ValueError(f"{label} did not match its saved SHA-256")
+
+
 def sculpt_dna_bytes(card: dict) -> bytes | None:
-    custom = card.get("customPlayerData")
-    if not isinstance(custom, dict) or custom.get("sculptDnaHex") in (None, ""):
+    custom = linked_model_payload(card, "sculptDnaHex")
+    if custom is None:
         return None
     raw_hex = str(custom.get("sculptDnaHex") or "").strip()
     try:
@@ -740,12 +776,13 @@ def sculpt_dna_bytes(card: dict) -> bytes | None:
         raise ValueError(
             f"customPlayerData.sculptDnaHex must contain exactly {SCULPT_DNA_SIZE} bytes; got {len(data)}"
         )
+    validate_linked_model_hash(data, custom, "sculptDnaSha256", "Saved sculpt DNA")
     return data
 
 
 def appearance_block_bytes(card: dict) -> bytes | None:
-    custom = card.get("customPlayerData")
-    if not isinstance(custom, dict) or custom.get("appearanceBlockHex") in (None, ""):
+    custom = linked_model_payload(card, "appearanceBlockHex")
+    if custom is None:
         return None
     raw_hex = str(custom.get("appearanceBlockHex") or "").strip()
     try:
@@ -756,6 +793,7 @@ def appearance_block_bytes(card: dict) -> bytes | None:
         raise ValueError(
             f"customPlayerData.appearanceBlockHex must contain exactly {APPEARANCE_BLOCK_SIZE} bytes; got {len(data)}"
         )
+    validate_linked_model_hash(data, custom, "appearanceBlockSha256", "Saved appearance block")
     return data
 
 
@@ -1019,6 +1057,20 @@ IDENTITY_ID_FIELDS = {
     "picture_id": 0x2C0,
 }
 
+FLIP_FIRST_LAST_NAMES_OFFSET = 0x148
+FLIP_FIRST_LAST_NAMES_MASK = 0x80
+EASTERN_NAME_ORDER_PLAYER_KEYS = {"mingyao", "yaoming", "lusu", "sulu"}
+
+
+def set_flip_first_last_names(record: bytearray, enabled: bool) -> None:
+    """Set only NBA 2K16's name-order bit and preserve neighboring flags."""
+    if len(record) <= FLIP_FIRST_LAST_NAMES_OFFSET:
+        return
+    if enabled:
+        record[FLIP_FIRST_LAST_NAMES_OFFSET] |= FLIP_FIRST_LAST_NAMES_MASK
+    else:
+        record[FLIP_FIRST_LAST_NAMES_OFFSET] &= ~FLIP_FIRST_LAST_NAMES_MASK
+
 
 def identity_sensitive_changes(changes: list[dict]) -> list[dict]:
     sensitive: list[dict] = []
@@ -1057,6 +1109,10 @@ def apply_card_to_record(
     last = str(field_override.get("last_name", last))
     record[0x00:0x24] = encode_text(last, 36)
     record[0x24:0x48] = encode_text(first, 36)
+    eastern_name_order = player_key in EASTERN_NAME_ORDER_PLAYER_KEYS
+    # The incoming player owns this flag. Clear Yao's donor setting for every
+    # other player, and enable it when Yao is placed over a normal shell.
+    set_flip_first_last_names(record, eastern_name_order)
     record[0x1F0:0x1F2] = int(destination_index).to_bytes(2, "little")
 
     if card.get("weight"):
@@ -1174,11 +1230,27 @@ def apply_card_to_record(
         "secondary_position": secondary_position,
         "jersey_number": jersey_number_written if jersey_number_written is not None else "",
         "cached_overall": cached_overall if cached_overall is not None else "",
+        "flip_first_last_names": eastern_name_order,
     }
+
+
+def attach_official_model_profiles(cards: list[dict], profiles_path: Path) -> list[dict]:
+    if not profiles_path.exists():
+        return cards
+    payload = json.loads(profiles_path.read_text(encoding="utf-8"))
+    profiles = payload.get("profiles") if isinstance(payload, dict) else None
+    if not isinstance(profiles, dict):
+        raise ValueError(f"Invalid official model profile database: {profiles_path}")
+    for card in cards:
+        profile = profiles.get(norm_player_name(str(card.get("name") or "")))
+        if isinstance(profile, dict):
+            card["linkedModelData"] = profile
+    return cards
 
 
 def load_cards(path: Path) -> dict[str, dict]:
     cards = json.loads(path.read_text(encoding="utf-8"))
+    attach_official_model_profiles(cards, path.with_name("official_model_profiles.json"))
     return {f"{card['id']}/{card['slug']}": card for card in cards}
 
 

@@ -1,4 +1,4 @@
-# NBA 2K16 Card Studio 0.9.2
+# NBA 2K16 Card Studio 0.11.3
 
 NBA 2K16 Card Studio is the companion creator for the MyTEAM Viewer. It makes finished card artwork and can package that artwork with complete authored player data for browsing, drafting, lineup building, and roster injection in the Viewer.
 
