@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Permanent evidence for version-gated live injection destination topology. Runtime injection must use the ordered TEAMDATA member pointers and use these records only to identify and validate the selected game-version layout.",
+  "patch10": {
+    "verifiedDate": "2026-08-10",
+    "verifiedScope": "All 30 current NBA teams and all 46 classic teams resolved from live TEAMDATA without missing or ambiguous destinations.",
+    "currentTeamCorrections": {
+      "Orlando Magic": { "start": 210, "count": 14 },
+      "Dallas Mavericks": { "start": 224, "count": 15 },
+      "Brooklyn Nets": { "start": 239, "count": 15 }
+    },
+    "goldenStateWarriors": {
+      "teamdataIndex": 28,
+      "slotFamily": { "start": 417, "count": 15 },
+      "verifiedOrderedLiveMembers": [417, 418, 419, 420, 421, 429, 426, 427, 424, 423, 430, 422, 428, 425, 431],
+      "note": "The set is exactly slots 417 through 431, but the live order is nonconsecutive. A 13-player injection must follow this order instead of writing rows 417 through 429."
+    }
+  },
+  "patch0": {
+    "verifiedDate": "2026-08-10",
+    "executableSha256": "5c3af3dda284d16510ba64b98497bfebaee440aa728d4af6e74b59e7fc839418",
+    "teamdataRelativeOffset": "0x2BCFD8",
+    "verifiedScope": "All 30 current NBA teams, all 46 classic teams, and all 10 hidden college teams resolved from a clean live Patch 0 roster without missing or ambiguous destinations.",
+    "collegeTopology": "The ten clean Patch 0 hidden college teams have 12 members each at TEAMDATA indices 64 through 73 and player slots 1419 through 1538.",
+    "layoutScores": {
+      "patch10": 0,
+      "patch0": 436,
+      "patch10ExactTeams": 0,
+      "patch0ExactTeams": 30
+    },
+    "goldenStateWarriors": {
+      "teamdataIndex": 28,
+      "slotFamily": { "start": 406, "count": 15 },
+      "verifiedOrderedLiveMembers": [406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420]
+    },
+    "classicGoldenStateWarriors1990_91": {
+      "teamdataIndex": 96,
+      "slotFamily": { "start": 1026, "count": 13 },
+      "verifiedOrderedLiveMembers": [1026, 1027, 1028, 1029, 1030, 1031, 1032, 1033, 1034, 1035, 1036, 1037, 1038]
+    }
+  }
+}

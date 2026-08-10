@@ -1,5 +1,29 @@
 # Release Notes
 
+## v1.1.2 — Patch 0/10 injection parity and roster correctness — August 10, 2026
+
+- Added a required two-choice **Patch 10** or **Patch 0** prompt to the injection screen and fail-closed live TEAMDATA validation so a mismatched selection cannot write players.
+- Captured the distinct Patch 0 TEAMDATA base and verified all 30 current NBA, 46 classic, and 10 hidden college destinations; Patch 10 retains its separately verified topology.
+- Replaced consecutive-row destination guesses with each team's authoritative ordered live TEAMDATA member pointers, preventing intermittent 12-of-13 injections on reordered team rosters such as Houston and Golden State.
+- Corrected the Patch 10 Orlando, Dallas, and Brooklyn roster boundaries and preserved version-specific Golden State mappings as regression references.
+- Added explicit `FlipFirstLastNames` ownership during injection: Yao Ming and hidden player Su Lu receive the Eastern-order flag, while every other incoming player clears a stale donor flag without changing neighboring bits.
+- Bundled the 1992 USA Olympic custom-card set and both Brandon Roy cards, corrected Alex English's jersey number, and added authoritative official-player model profiles and regression coverage.
+- Rebuilt and integrity-checked the portable MyTEAM Viewer and Card Studio ZIPs.
+
+- Made the bundled clean-player and exact-card template databases authoritative for all official-card identity IDs and verified signature-animation fields.
+- Removed mutable live roster rows as identity, animation, handedness, and accessory sources during lineup injection.
+- Added fail-closed planning so a card without a saved database source cannot silently borrow another live player's identity.
+- Added a regression reproducing the August 9 slot-420 contamination sequence and proving a Kirilenko-injected slot cannot leak into Draymond Green.
+- Added database-integrity coverage proving all 2,150 official cards have a saved authoritative source; complete custom cards use their saved parent or authored custom-player data.
+
+- Corrected the bundled 1983 Alex English custom card from jersey number 3 to his displayed Denver number 2.
+- Synchronized the correction into the Viewer, per-user custom-card storage, and Card Studio's complete Viewer-aligned preset database.
+
+- Added all 12 supplied 1992 USA Olympic Dream Team cards and both supplied Brandon Roy cards as complete bundled custom cards.
+- Captured 61 attributes, 84 tendencies, 45 signatures, 24 gear fields, 14 hot zones, all 82 badge fields, identity IDs, handedness, injuries, play types, jersey numbers, colleges, and linked appearance measurements from the currently loaded live roster.
+- Corrected the import workflow to derive visible height exclusively from each row's linked appearance block; stale/default row-height values are retained only in diagnostics and never used for these cards.
+- Added build-time and automated-test coverage for all 14 card manifests, exact PNG artwork, card OVR, source team/slot, complete field counts, and linked height.
+
 ## v1.1.1 — Equal-tier random teams — August 8, 2026
 
 - Updated **Create a random team** to include enabled custom cards and Pink Diamonds.

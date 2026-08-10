@@ -1,0 +1,295 @@
+{
+  "format": "nba2k16.official-model-profiles/v1",
+  "capturedAt": "2026-08-10T16:25:36.516756-04:00",
+  "profiles": {
+    "aaronharrison": {
+      "name": "Aaron Harrison",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "FF7F7F80B1807FEA55807F80F5B4FF805480FD80807F57FD01FB037F4D7FC100FE0402010202050580534A80E4FF2537AFACE50A",
+      "sculptDnaSha256": "cfc9c357e362e549d96bc5bbbc0a4fa4ceef10aea7d0b70195d2109d7e7144c0",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "B91E464370BD4D4300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F0000400000000000000000000000000100E0340500000008",
+      "appearanceBlockSha256": "9c6e1e2d74a08681f693e64051d029e57f6fa4692274ce9a1c54f2ab733b9169",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "arinzeonuaku": {
+      "name": "Arinze Onuaku",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "480613FF03FEFD02CDC400D9FFEA273D02F015F804D145FFDED604CAEB020F04FA0A0A000404040AF31F13073004E9C5B71A422B",
+      "sculptDnaSha256": "ad70a6afcb5cb9b439b8a860113b697ad7283dadcf9d16325c33424035acd7ea",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "70BD4D43C275534300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803FDACE773F0000803F0000803F0000803F0000C00000004000000000000000400000F0220500000010",
+      "appearanceBlockSha256": "99e10e6217f1d856b7d465c1adeed55dbb1e5cfafa3508e230377f42bf174380",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "bobanmarjanovic": {
+      "name": "Boban Marjanovic",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "DDF7D1E8E1F8B1F9CBFD0FE83DDC1A1A28DFE0D0DDD0081C07E0FF08F114F709C80201060C07020114E8FF31080E07072818FBEC",
+      "sculptDnaSha256": "9f33ceb9e83567e6d8e737d4e7db857665ffb7569bb31fe8abd27a0363631121",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "1F855F431F855F4300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F3AB4683F0000803F0000803F0000803F0000400000000000000000000000000000F8800600000000",
+      "appearanceBlockSha256": "74a4e9dc7ddbfd698f04b9d8fbfc39a27e104b35521beea59e7d9a5899dfb6bc",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "brandendawson": {
+      "name": "Branden Dawson",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "1352F65E250A3DD655B1C96238327FFDD3B2FDC7B30D8801ACFBA51A382FD8E69808020304060405A8A47BA2EAE6FA0743B0ABF3",
+      "sculptDnaSha256": "c16dbfe35ea926fe0f1f9114ef60d5ef981aace0d8eb02a74ee22f22cb6bf9be",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "B91E4643ECD1524300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F000080010000C00100000000000000000010360500000008",
+      "appearanceBlockSha256": "78886c7b0c84b1ada0a86170e569d6b0f610edf07b814448e1b8edfd3d54b8b3",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "christianwood": {
+      "name": "Christian Wood",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "DD257F1E0D09E4DEC1183980557B21B9DFF016DBC97F3569930E15BC2E021BDA320401050508040510473780F52D1E2E30FBDC00",
+      "sculptDnaSha256": "4c4d426434f58da29675c31bf440336224bf8e26988c385ac3945890bf01507d",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "AE475043E1FA5C4300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F0000C00000004000000000000000000000B8140500000000",
+      "appearanceBlockSha256": "02624d60b2c7f511eb07f01d63a240b5ebc309b7db9c9da90e66c03bb12c7bf3",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "cliffalexander": {
+      "name": "Cliff Alexander",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "9B2C99BA80DAC2A222E380D6A87C80B326E7DE7F18B5031B9562D1DA28022019C6020A01020A01032B8497CA25171020E7C5A605",
+      "sculptDnaSha256": "0627652e45c645d3586cbec07bcb8a6c139d2ebd9d005462ba34489e7e50fad2",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "33334B43E1FA5C4300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F0000800000004000000000000000000000B8BC0400000008",
+      "appearanceBlockSha256": "58d4de4828c535653e828a84eeaaf8aad0730671e43cb13c3f47f89d50e30646",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "cristianofelicio": {
+      "name": "Cristiano Felicio",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "B465D9FAD2C7EF90CA7F93809657AADEBE18DE513737827F80C080C57F2EE6F114030703020A0203B9B60BD2F9F3E9225BB1EFFD",
+      "sculptDnaSha256": "54eb86729d7734a53864c70e87d3c3b769428fcd822fae05ad28e5fe07c41824",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "AE475043AE47504300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F0000C0000000000000000000000000000080810400000000",
+      "appearanceBlockSha256": "d638f3fcf5a532b32a0adbccb4c643649fb4572acc6ff1bcb4d0c73f37c6c2c4",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "darrunhilliardii": {
+      "name": "Darrun Hilliard II",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "0706071C140B15ECCB0AF1F12705DE2BBC4DEBFE80E50F0412D31C1AF7FB0DBFCD0001020407090416031006F6FD21FED7FA360D",
+      "sculptDnaSha256": "ffbd2ff52ac1b7ac10bf02cbcec081edff870c8ca595425f14f79984a782af48",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "B91E464370BD4D4300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F000040000000C00000000000000080000010360500000000",
+      "appearanceBlockSha256": "75a90fa6f3f8e2c1f13f9abce8d0e38060cbe787fe8042e7f7c9dced3bee71ac",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "dujedukan": {
+      "name": "Duje Dukan",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "46807F0F62E6276AF8BFCCFC7F5A9835AA7FE9A88064C89F80459D41703A44093708030104090301F246C66528F0DD2785B614FA",
+      "sculptDnaSha256": "cee5c27f6d57bf212b3f6e5c2fcd8e42c252f59f4ae0e2dcb97240376135b1ac",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "AE475043AE47504300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F000040010000000000000000000000000068000600000000",
+      "appearanceBlockSha256": "0e0a01640c0759f3a9e434fce7cf4bedc0f3d90f79502de866663b0106083114",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "jonathonsimmons": {
+      "name": "Jonathon Simmons",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "FFB109801F280D71214FCFE9C87F8006EA9ED727D9C10A7FF63380A8137F16FF53050A0202050A023C6ABA07002425F9C1191749",
+      "sculptDnaSha256": "bb903713e224184f1741524139b980ae2f989b6960aa95b754f43004a17d8de7",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "B91E4643AE47504300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F0000C00000000001000000000000000000E0B20400000000",
+      "appearanceBlockSha256": "394524ba20f8665bd36779f0c19365f8fa31c46c55d6e456922018de3572b789",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "luismontero": {
+      "name": "Luis Montero",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "DD25101EEE2C102CFE1E08E2FC5C24F380E6161410E41AE2E80E221CDA3506180104010505080405050FECE2F51A051230FBDC00",
+      "sculptDnaSha256": "a3df94443d7acf316018bc2d0d53e8758543c1ec660254122414b9f3291750b0",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "F6A8484333334B4300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F0000C0000000000000000000000000000070810500000000",
+      "appearanceBlockSha256": "bb01f5876a1d9dbfa277ee1b499736c768477b7debeb2ed23a5c796af2ce62ba",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "mauricendour": {
+      "name": "Maurice N'dour",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "7DA26888586FD177C2DB2CF07F7F80E8D179E6EFC47B10C980DD807F7F5DE8AAFD07090100020A00807F7FE1DD300AEDD2656665",
+      "sculptDnaSha256": "548f2557ada2d4bb7d82f6e75d539f89a4beaa95195118d3d74e8f60aba85526",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "70BD4D4370BD4D4300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F000080000000400100000000000000000060360400000000",
+      "appearanceBlockSha256": "6f749950a9c4883c51ed0af2171aa3829717173f19b0c768417012845969951c",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "mikejames": {
+      "name": "Mike James",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "A65A644A21DAEBF7090732EE26DBCF2560F00D80EB3B0EF4D615DB06CD19D70CF90604050403000000E90FF0D702FCDDFFB4E8E9",
+      "sculptDnaSha256": "177f51e7cf572a7873f0f1c96f665af2763aa07413c721bb7e9cac4d5bcafe0c",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "48E13643856B394300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5939743F0000803F0000803F0000803F0000400900004000000040000000800000C89C0600000000",
+      "appearanceBlockSha256": "4e3a5a262a62acd223ed29ed15fce4cbaf61fd99c7fe0186c21f00737d7f1052",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "normanpowell": {
+      "name": "Norman Powell",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "FD01E5231024D7221D1C224F80CB492126F9FD034C3017D800FBB920F201E5E5DB05070603020505D9C57F97090FFF1FFD0F1925",
+      "sculptDnaSha256": "ec3e095d0f142acf3b05c8c21677f1cd93db69359dc188d0e5ee1c959fecc263",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "3D0A4143ECD1524300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F0000800000004000000000000000000000E09E0500000008",
+      "appearanceBlockSha256": "5fc87b26214ceb5423b4196e692ec3fe18dd6e4d80739948de34b7e17824a5c8",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "salahmejri": {
+      "name": "Salah Mejri",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "4C8033D354C26F0BDF128080A0537D40A04D07BB80097050801F83137F4BFC1A1F000601030307021B807F202E3414DFD0D55711",
+      "sculptDnaSha256": "ab28d9d72cc79f2acfc56a01f41d6c9a6a03ad67d5f995c7c81691c012e746bc",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "66E6574366E6574300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F3AB4683F0000803F0000803F0000803F000000010000000000000020000040020028BD0500000000",
+      "appearanceBlockSha256": "c0d48b94877200deacbc6b2a4078d86d5b6e4e7c2198cc28f65f142bcf4e86a1",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "tjmcconnell": {
+      "name": "T.J. McConnell",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "F04948D8F7C3B3F50D1F10C61D7FD76226360F80F4454E57A7E801FE281DEE111304030405030500C55A7F8076F81FE225E0DA21",
+      "sculptDnaSha256": "7b42948af7a0aaa5113f8c41cc190cd89ad31c0f6e9497f1a8e4e93a5dcfb8ef",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "C2F53B43856B394300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F0000C0000000000000000000000000000078810200000000",
+      "appearanceBlockSha256": "e88f8bd021fc255457d89a00e8dd17b106378bb0753bea0c735f03e273bb6ac4",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    },
+    "williereed": {
+      "name": "Willie Reed",
+      "graphicIdCondition": [
+        0,
+        1
+      ],
+      "sculptDnaHex": "24070D29128035D1EE1FB9DB406200034DBFE0EA06DAEF2CE0FDF0F80F6DCAF12604060104070200F55CE00A45E41B340511BD18",
+      "sculptDnaSha256": "137ea21bbc5200b2de6614d910909672056897cb1e59735344a63b364cd21f22",
+      "sculptDnaSize": 52,
+      "sculptPointerRowOffset": "0x78",
+      "sculptCaptureVerified": true,
+      "appearanceBlockHex": "AE475043AE47504300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803F5FBA693F0000803F0000803F0000803F0000C0000000C00000000000000000000080BB0400000000",
+      "appearanceBlockSha256": "42ff7353f6b1195cd68e18a7a89897200e8673564051fe28ce8dec9da7f4b96b",
+      "appearanceBlockSize": 132,
+      "appearancePointerRowOffset": "0x80",
+      "appearanceBlockCaptureVerified": true
+    }
+  }
+}

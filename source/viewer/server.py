@@ -30,11 +30,18 @@ from PIL import Image, ImageGrab
 
 ROOT = Path(__file__).resolve().parent
 DATA_PATH = ROOT / "data" / "cards.json"
+OFFICIAL_MODEL_PROFILES_PATH = ROOT / "data" / "official_model_profiles.json"
 MYTEAM_EXCLUSIVE_SOURCE_OVERRIDES_PATH = ROOT / "data" / "myteam_exclusive_source_overrides.json"
 ACCESSORY_OVERRIDES_PATH = ROOT / "data" / "accessory_overrides.json"
 CARD_CLEAN_SOURCE_OVERRIDES_PATH = ROOT / "data" / "card_clean_source_overrides.json"
 PLAY_INITIATOR_OVERRIDES_PATH = ROOT / "data" / "play_initiator_overrides.json"
 CARD_GAMEPLAY_OVERRIDES_PATH = ROOT / "data" / "card_gameplay_overrides.json"
+NAME_ALIASES = {
+    "gheorgemuresan": "gheorghemuresan",
+    "jefftaylor": "jefferytaylor",
+    "jonathansimmons": "jonathonsimmons",
+    "pattymills": "patrickmills",
+}
 if getattr(sys, "frozen", False):
     cache_root = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "NBA2K16MyTEAMViewer"
     ART_CACHE = cache_root / "cache" / "art"
@@ -49,6 +56,21 @@ else:
 ART_CACHE.mkdir(parents=True, exist_ok=True)
 PHOTO_CACHE.mkdir(parents=True, exist_ok=True)
 CARDS = json.loads(DATA_PATH.read_text(encoding="utf-8"))
+if OFFICIAL_MODEL_PROFILES_PATH.exists():
+    _official_model_payload = json.loads(OFFICIAL_MODEL_PROFILES_PATH.read_text(encoding="utf-8"))
+    _official_model_profiles = _official_model_payload.get("profiles", {})
+    if not isinstance(_official_model_profiles, dict):
+        raise RuntimeError("official_model_profiles.json has an invalid profiles object")
+    for _official_card in CARDS:
+        _profile_key = "".join(
+            character
+            for character in str(_official_card.get("name") or "").casefold()
+            if character.isalnum()
+        )
+        _profile_key = NAME_ALIASES.get(_profile_key, _profile_key)
+        _profile = _official_model_profiles.get(_profile_key)
+        if isinstance(_profile, dict):
+            _official_card["linkedModelData"] = _profile
 CARD_MAP = {(str(card["id"]), card["slug"]): card for card in CARDS}
 CARD_ID_MAP = {str(card["id"]): card for card in CARDS}
 CUSTOM_CARD_FORMAT = "nba2k16.custom-card/v1"
@@ -169,7 +191,10 @@ COLLEGE_TEAMS = [
 # supported executable, and each team record is 0x6E8 bytes. Player pointers,
 # team labels, internal IDs, and counts survive player-row injections, so they
 # remain safe validation anchors after users inject into the roster repeatedly.
-COLLEGE_TEAMDATA_RELATIVE_OFFSET = 0x2C6268
+PATCH10_TEAMDATA_RELATIVE_OFFSET = 0x2C6268
+PATCH0_TEAMDATA_RELATIVE_OFFSET = 0x2BCFD8
+# Backwards-compatible default used by the expanded Patch 10 college layout.
+COLLEGE_TEAMDATA_RELATIVE_OFFSET = PATCH10_TEAMDATA_RELATIVE_OFFSET
 COLLEGE_TEAMDATA_STRIDE = 0x6E8
 COLLEGE_TEAMDATA_NICKNAME_OFFSET = 0x15C
 COLLEGE_TEAMDATA_CITY_OFFSET = 0x18E
@@ -218,7 +243,10 @@ COLLEGE_TEAM_LAYOUTS = {
     },
 }
 
-ACTUAL_TEAM_SLOTS = {
+# Patch 10 destination topology. TEAMDATA supplies the authoritative live order;
+# these immutable slot families identify the executable/roster layout and guard
+# against writing through a mismatched version selection.
+PATCH10_TEAM_SLOTS = {
     "Philadelphia 76ers": (0, 15),
     "Milwaukee Bucks": (15, 15),
     "Chicago Bulls": (30, 15),
@@ -233,9 +261,9 @@ ACTUAL_TEAM_SLOTS = {
     "Sacramento Kings": (165, 15),
     "New York Knicks": (180, 15),
     "Los Angeles Lakers": (195, 15),
-    "Orlando Magic": (210, 15),
-    "Dallas Mavericks": (225, 15),
-    "Brooklyn Nets": (240, 14),
+    "Orlando Magic": (210, 14),
+    "Dallas Mavericks": (224, 15),
+    "Brooklyn Nets": (239, 15),
     "Denver Nuggets": (254, 15),
     "Indiana Pacers": (269, 15),
     "New Orleans Pelicans": (284, 15),
@@ -296,6 +324,22 @@ ACTUAL_TEAM_SLOTS = {
     "'07-'08 Houston Rockets": (1387, 13),
     "'12-'13 Miami Heat": (1400, 13),
 }
+
+# Clean Patch 0 exposes the same ten hidden college TEAMDATA records, but each
+# has 12 members in a compact consecutive player-row family.
+PATCH0_COLLEGE_TEAM_LAYOUTS = {
+    team: {
+        "team_index": int(layout["team_index"]),
+        "internal_id": int(layout["internal_id"]),
+        "city": str(layout["city"]),
+        "nickname": str(layout["nickname"]),
+        "slots": list(range(1419 + index * 12, 1419 + (index + 1) * 12)),
+    }
+    for index, (team, layout) in enumerate(COLLEGE_TEAM_LAYOUTS.items())
+}
+
+# Backwards-compatible name for code that also addresses classic-team slots.
+ACTUAL_TEAM_SLOTS = PATCH10_TEAM_SLOTS
 
 INJECTION_TEAMS = NBA_TEAMS + CLASSIC_TEAMS + COLLEGE_TEAMS
 
@@ -481,19 +525,217 @@ def teamdata_text(record: bytes, offset: int, size: int = 48) -> str:
     return value.split("\0", 1)[0].strip()
 
 
+def teamdata_record_at(
+    live_data: bytes,
+    team_index: int,
+    relative_offset: int = PATCH10_TEAMDATA_RELATIVE_OFFSET,
+) -> bytes:
+    offset = relative_offset + int(team_index) * COLLEGE_TEAMDATA_STRIDE
+    return live_data[offset:offset + COLLEGE_TEAMDATA_STRIDE]
+
+
+def teamdata_member_slots(
+    record: bytes,
+    array_base: int,
+    player_stride: int,
+    label: str,
+) -> list[int]:
+    if len(record) != COLLEGE_TEAMDATA_STRIDE:
+        raise RuntimeError(f"{label} TEAMDATA record was unreadable. No players were written.")
+    player_count = int(record[COLLEGE_TEAMDATA_PLAYER_COUNT_OFFSET])
+    if not 1 <= player_count <= 15:
+        raise RuntimeError(
+            f"{label} TEAMDATA declared {player_count} players; expected 1 through 15. "
+            "No players were written."
+        )
+    slots: list[int] = []
+    for index in range(player_count):
+        pointer = int.from_bytes(record[index * 8:index * 8 + 8], "little")
+        delta = pointer - array_base
+        if pointer < array_base or delta % player_stride:
+            raise RuntimeError(
+                f"{label} TEAMDATA member {index + 1} had invalid player pointer 0x{pointer:X}. "
+                "No players were written."
+            )
+        slot = delta // player_stride
+        if not 0 <= slot < 3000:
+            raise RuntimeError(
+                f"{label} TEAMDATA member {index + 1} resolved outside the player array. "
+                "No players were written."
+            )
+        if slot in slots:
+            raise RuntimeError(
+                f"{label} TEAMDATA repeated player slot {slot}. No players were written."
+            )
+        slots.append(slot)
+    return slots
+
+
+def standard_teamdata_layout(
+    live_data: bytes,
+    array_base: int,
+    player_stride: int,
+) -> tuple[str, dict[str, tuple[int, int]], dict[str, int]]:
+    """Detect the NBA/classic slot family from immutable team-member pointers."""
+    scores = {"patch10": 0, "patch0": 0}
+    exact = {"patch10": 0, "patch0": 0}
+    for layout_name, layout, relative_offset in (
+        ("patch10", PATCH10_TEAM_SLOTS, PATCH10_TEAMDATA_RELATIVE_OFFSET),
+        ("patch0", PATCH0_NBA_TEAM_SLOTS, PATCH0_TEAMDATA_RELATIVE_OFFSET),
+    ):
+        for team_index, team in enumerate(NBA_TEAMS):
+            record = teamdata_record_at(live_data, team_index, relative_offset)
+            try:
+                actual = set(teamdata_member_slots(record, array_base, player_stride, team))
+            except RuntimeError:
+                continue
+            start, count = layout[team]
+            expected = set(range(start, start + count))
+            overlap = len(actual & expected)
+            scores[layout_name] += overlap
+            if actual == expected:
+                exact[layout_name] += 1
+    if scores["patch10"] == scores["patch0"]:
+        raise RuntimeError(
+            "The loaded NBA roster matched both supported TEAMDATA layouts equally. "
+            "No players were written because the target layout was ambiguous."
+        )
+    layout_name = max(scores, key=scores.get)
+    layout = PATCH10_TEAM_SLOTS if layout_name == "patch10" else PATCH0_NBA_TEAM_SLOTS
+    return layout_name, layout, {**scores, **{f"{key}_exact": value for key, value in exact.items()}}
+
+
+def resolve_standard_team_member_slots(
+    team: str,
+    live_data: bytes,
+    array_base: int,
+    player_stride: int,
+    requested_version: str | None = None,
+) -> tuple[list[int], dict]:
+    """Resolve destinations from live TEAMDATA order, never consecutive-row guesses."""
+    layout_name, nba_layout, layout_scores = standard_teamdata_layout(
+        live_data, array_base, player_stride,
+    )
+    if requested_version is not None:
+        requested_version = str(requested_version).strip().lower()
+        if requested_version not in {"patch10", "patch0"}:
+            raise ValueError("Choose either Patch 10 or Patch 0 before injecting.")
+        if requested_version != layout_name:
+            requested_label = "Patch 10" if requested_version == "patch10" else "Patch 0"
+            detected_label = "Patch 10" if layout_name == "patch10" else "Patch 0"
+            raise RuntimeError(
+                f"{requested_label} was selected, but the loaded game has the {detected_label} "
+                "TEAMDATA layout. No players were written."
+            )
+    if team in NBA_TEAMS:
+        team_index = NBA_TEAMS.index(team)
+        relative_offset = (
+            PATCH10_TEAMDATA_RELATIVE_OFFSET
+            if layout_name == "patch10"
+            else PATCH0_TEAMDATA_RELATIVE_OFFSET
+        )
+        record = teamdata_record_at(live_data, team_index, relative_offset)
+        slots = teamdata_member_slots(record, array_base, player_stride, team)
+        expected_start, expected_count = nba_layout[team]
+        expected = set(range(expected_start, expected_start + expected_count))
+        minimum_overlap = max(3, min(len(slots), len(expected)) - 1)
+        if len(set(slots) & expected) < minimum_overlap:
+            raise RuntimeError(
+                f"{team} TEAMDATA did not match the detected {layout_name} NBA layout. "
+                "No players were written."
+            )
+        city = teamdata_text(record, COLLEGE_TEAMDATA_CITY_OFFSET)
+        nickname = teamdata_text(record, COLLEGE_TEAMDATA_NICKNAME_OFFSET)
+        if norm_name(f"{city} {nickname}") != norm_name(team):
+            raise RuntimeError(
+                f"TEAMDATA index {team_index} was {city} {nickname}, not {team}. "
+                "No players were written."
+            )
+        return slots, {
+            "source": "validated-live-nba-teamdata-members",
+            "layout": layout_name,
+            "layout_scores": layout_scores,
+            "team_index": team_index,
+            "teamdata_relative_offset": relative_offset,
+            "declared_player_count": len(slots),
+            "slots": slots,
+            "name_independent": True,
+            "repeat_injection_safe": True,
+        }
+
+    if team not in CLASSIC_TEAMS:
+        raise ValueError(f"{team} is not a standard NBA or classic team.")
+    classic_layout = PATCH10_TEAM_SLOTS if layout_name == "patch10" else PATCH0_CLASSIC_TEAM_SLOTS
+    relative_offset = (
+        PATCH10_TEAMDATA_RELATIVE_OFFSET
+        if layout_name == "patch10"
+        else PATCH0_TEAMDATA_RELATIVE_OFFSET
+    )
+    expected_start, expected_count = classic_layout[team]
+    expected = set(range(expected_start, expected_start + expected_count))
+    franchise = re.sub(r"^'\d{2}-'\d{2}\s+", "", team)
+    candidates: list[tuple[int, int, list[int], bytes]] = []
+    for team_index in range(30, 128):
+        record = teamdata_record_at(live_data, team_index, relative_offset)
+        if len(record) != COLLEGE_TEAMDATA_STRIDE:
+            continue
+        city = teamdata_text(record, COLLEGE_TEAMDATA_CITY_OFFSET)
+        nickname = teamdata_text(record, COLLEGE_TEAMDATA_NICKNAME_OFFSET)
+        if norm_name(f"{city} {nickname}") != norm_name(franchise):
+            continue
+        try:
+            slots = teamdata_member_slots(record, array_base, player_stride, team)
+        except RuntimeError:
+            continue
+        overlap = len(set(slots) & expected)
+        if overlap >= min(3, expected_count):
+            candidates.append((overlap, team_index, slots, record))
+    if not candidates:
+        raise RuntimeError(
+            f"{team} did not have a validated live TEAMDATA member record. No players were written."
+        )
+    candidates.sort(key=lambda item: (-item[0], item[1]))
+    best_overlap, team_index, slots, record = candidates[0]
+    if len(candidates) > 1 and candidates[1][0] == best_overlap:
+        raise RuntimeError(
+            f"{team} matched multiple live TEAMDATA records equally. "
+            "No players were written because the destination was ambiguous."
+        )
+    return slots, {
+        "source": "validated-live-classic-teamdata-members",
+        "layout": layout_name,
+        "layout_scores": layout_scores,
+        "team_index": team_index,
+        "teamdata_relative_offset": relative_offset,
+        "matched_expected_slots": best_overlap,
+        "declared_player_count": len(slots),
+        "slots": slots,
+        "name_independent": True,
+        "repeat_injection_safe": True,
+    }
+
+
 def validate_college_team_layout(
     team: str,
     live_data: bytes,
     array_base: int,
     player_stride: int,
+    game_version: str = "patch10",
 ) -> tuple[list[int], dict]:
-    """Validate the expanded college roster without relying on player names."""
-    layout = COLLEGE_TEAM_LAYOUTS.get(team)
+    """Validate a version-specific college TEAMDATA record without player names."""
+    game_version = str(game_version).strip().lower()
+    layouts = PATCH0_COLLEGE_TEAM_LAYOUTS if game_version == "patch0" else COLLEGE_TEAM_LAYOUTS
+    relative_offset = (
+        PATCH0_TEAMDATA_RELATIVE_OFFSET
+        if game_version == "patch0"
+        else PATCH10_TEAMDATA_RELATIVE_OFFSET
+    )
+    layout = layouts.get(team)
     if not layout:
         raise ValueError(f"{team} is not a configured college team.")
     expected_slots = [int(slot) for slot in layout["slots"]]
     record_offset = (
-        COLLEGE_TEAMDATA_RELATIVE_OFFSET
+        relative_offset
         + int(layout["team_index"]) * COLLEGE_TEAMDATA_STRIDE
     )
     record = live_data[record_offset:record_offset + COLLEGE_TEAMDATA_STRIDE]
@@ -536,25 +778,28 @@ def validate_college_team_layout(
         )
     if invalid_pointers:
         failures.append("invalid player pointers: " + ", ".join(invalid_pointers))
-    if actual_slots != expected_slots:
+    if len(actual_slots) != len(set(actual_slots)):
+        failures.append("TEAMDATA repeated a player slot")
+    if set(actual_slots) != set(expected_slots):
         failures.append(
             f"player slot topology was {actual_slots}, expected {expected_slots}"
         )
     if failures:
         raise RuntimeError(
-            f"{team} does not match the supported expanded hidden-college roster "
+            f"{team} does not match the supported {game_version} hidden-college roster "
             f"({'; '.join(failures)}). No players were written. Load the compatible "
             "roster, confirm the college teams are visible, and try again."
         )
-    return expected_slots, {
-        "source": "validated-expanded-hidden-college-teamdata",
+    return actual_slots, {
+        "source": "validated-hidden-college-teamdata",
+        "layout": game_version,
         "team_index": f"0x{int(layout['team_index']):X}",
         "internal_id": f"0x{internal_id:X}",
         "teamdata_record_offset": f"player_array+0x{record_offset:X}",
         "city": city,
         "nickname": nickname,
         "declared_player_count": player_count,
-        "slots": expected_slots,
+        "slots": actual_slots,
         # The signature remains valid after player names and attributes change.
         "name_independent": True,
         "repeat_injection_safe": True,
@@ -571,6 +816,8 @@ POSITION_TEMPLATE = {
 
 PLAYER_TEMPLATE_ALIASES = {
     "ronartest": "mettaworldpeace",
+    "yaoming": "mingyao",
+    "sulu": "lusu",
 }
 
 PREFERRED_LIVE_TEMPLATE_TEAMS = {
@@ -1394,14 +1641,6 @@ def ordered_lineup_players(kind: str, players: list[dict]) -> list[dict]:
         return (ROLE_ORDER.get(role, 9), POSITION_ORDER.get(position, 9), slot)
 
     return sorted(players, key=sort_key)
-
-
-NAME_ALIASES = {
-    "gheorgemuresan": "gheorghemuresan",
-    "jefftaylor": "jefferytaylor",
-    "jonathansimmons": "jonathonsimmons",
-    "pattymills": "patrickmills",
-}
 
 
 def norm_name(value: str) -> str:
@@ -2427,6 +2666,65 @@ def resolve_card_clean_source(
     return None, ""
 
 
+def authoritative_saved_player_source(
+    card: dict,
+    clean_source: dict | None,
+    template_bank: dict,
+    stride: int,
+) -> tuple[dict | None, str]:
+    """Resolve identity/animation bytes without consulting mutable live slots.
+
+    Clean roster captures are preferred. MyTEAM-only players fall back to the
+    exact-card row already stored in player_templates.json. Only named,
+    pointer-free field allow-lists are copied from these saved rows later.
+    """
+    if clean_source and len(clean_source.get("record") or b"") == stride:
+        return clean_source, "clean roster source database"
+    for source_kind, entry in (
+        ("exact-card player template database", card_template_entry(card, template_bank)),
+        ("same-name player template database", name_template_entry(card, template_bank)),
+    ):
+        if not isinstance(entry, dict) or not template_entry_matches_card(card, entry, stride):
+            continue
+        try:
+            record = bytes.fromhex(str(entry.get("hex") or entry.get("row_hex") or ""))
+        except ValueError:
+            continue
+        if len(record) != stride:
+            continue
+        return {
+            "record": record,
+            "roster_index": entry.get("source_template_roster_index"),
+            "full_name": record_full_name(record),
+            "source_file": entry.get("source_file", ""),
+            "source_roster": "player_templates.json",
+            "appearance_floats": entry.get("appearance_floats") if isinstance(entry.get("appearance_floats"), dict) else {},
+        }, source_kind
+    return None, ""
+
+
+def saved_database_template_plan(
+    template_source: dict,
+    saved_source: dict,
+    saved_reason: str,
+    destination: int,
+) -> dict:
+    """Disable mutable live identity/signature sources when saved data exists."""
+    return {
+        **template_source,
+        "kind": "saved-player-database",
+        # The live destination still owns process pointers and is the only row
+        # used as a safe shell. It is never an identity or animation source.
+        "slot": destination,
+        "identity_slot": None,
+        "signature_slot": None,
+        "allow_stable_template": False,
+        "database_source_slot": saved_source.get("roster_index"),
+        "database_source_file": saved_source.get("source_file", ""),
+        "reason": f"{saved_reason}; mutable live identity/signature sources disabled",
+    }
+
+
 def jersey_from_template_entry(template_entry: dict | None, stride: int, myteam) -> int | str | None:
     if not template_entry or not hasattr(myteam, "get_jersey_number"):
         return None
@@ -3364,7 +3662,12 @@ def verify_loaded_roster(roster_path: Path, tracking: dict | None = None) -> dic
     }
 
 
-def live_inject_lineup(team: str, players: list[dict], previous_team_record: dict | None = None) -> tuple[list[dict], list[dict], dict]:
+def live_inject_lineup(
+    team: str,
+    players: list[dict],
+    game_version: str,
+    previous_team_record: dict | None = None,
+) -> tuple[list[dict], list[dict], dict]:
     myteam, roster = load_live_tools()
 
     pid, array_base, exe_path, handle = myteam.open_game(write=True)
@@ -3373,18 +3676,42 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
         live_players = roster.parse_players(live_data, roster.DEFAULT_SLOTS)
         module_base = array_base - roster.PLAYER_ARRAY_RVA
         executable_sha256 = roster.sha256(exe_path)
+        requested_version = str(game_version).strip().lower()
+        if requested_version not in {"patch10", "patch0"}:
+            raise ValueError("Choose either Patch 10 or Patch 0 before injecting.")
+        detected_version, _detected_layout, version_scores = standard_teamdata_layout(
+            live_data, array_base, roster.PLAYER_STRIDE,
+        )
+        if requested_version != detected_version:
+            requested_label = "Patch 10" if requested_version == "patch10" else "Patch 0"
+            detected_label = "Patch 10" if detected_version == "patch10" else "Patch 0"
+            raise RuntimeError(
+                f"{requested_label} was selected, but the loaded game has the {detected_label} "
+                "TEAMDATA layout. No players were written."
+            )
         if team in COLLEGE_TEAM_LAYOUTS:
             team_slots, team_resolution = validate_college_team_layout(
                 team,
                 live_data,
                 array_base,
                 roster.PLAYER_STRIDE,
+                requested_version,
             )
             team_start = team_slots[0]
             team_count = len(team_slots)
         else:
-            team_start, team_count, team_resolution = resolve_live_team_slots(team, live_players)
-            team_slots = list(range(team_start, team_start + team_count))
+            team_slots, team_resolution = resolve_standard_team_member_slots(
+                team,
+                live_data,
+                array_base,
+                roster.PLAYER_STRIDE,
+                requested_version=game_version,
+            )
+            team_start = team_slots[0]
+            team_count = len(team_slots)
+        team_resolution["requested_game_version"] = requested_version
+        team_resolution["detected_game_version"] = detected_version
+        team_resolution["version_layout_scores"] = version_scores
         if len(players) > team_count:
             raise ValueError(f"{team} only has {team_count} visible roster slots in this save.")
         players_by_name: dict[str, list[int]] = {}
@@ -3447,10 +3774,7 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             name_key = norm_name(str(card.get("name") or ""))
             parent_card = official_parent_card(card) if card.get("custom") else None
             inheritance_card = parent_card or card
-            template_source = choose_template_source(inheritance_card, players_by_name, template_bank, destination)
-            template = template_source.get("slot")
-            identity_slot = template_source.get("identity_slot")
-            signature_slot = template_source.get("signature_slot")
+            custom_player_data = card.get("customPlayerData") if isinstance(card.get("customPlayerData"), dict) else {}
             clean_source, clean_source_reason = resolve_card_clean_source(
                 inheritance_card,
                 norm_name(str(inheritance_card.get("name") or "")),
@@ -3459,26 +3783,39 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 clean_sources_by_name,
                 myteam,
             )
-            use_clean_source = bool(clean_source) and name_key not in SIGNATURE_ONLY_TEMPLATE_TEAMS
-            uses_live_same_name = str(template_source.get("reason") or "").startswith("same-name live player template")
-            if name_key not in SIGNATURE_ONLY_TEMPLATE_TEAMS and uses_live_same_name:
-                identity_slot = None
-                signature_slot = None
-            if use_clean_source:
+            saved_source, saved_source_reason = authoritative_saved_player_source(
+                inheritance_card,
+                clean_source,
+                template_bank,
+                roster.PLAYER_STRIDE,
+            )
+            if saved_source:
+                template_source = saved_database_template_plan(
+                    {},
+                    saved_source,
+                    saved_source_reason,
+                    destination,
+                )
+            elif custom_player_data:
+                # Complete custom packages carry their identity and signature
+                # fields directly. Keep the destination-owned pointer shell,
+                # and never borrow identity or animations from a live player.
                 template_source = {
-                    **template_source,
+                    "kind": "custom-card-database",
+                    "slot": destination,
                     "identity_slot": None,
                     "signature_slot": None,
-                    "clean_roster_source": "Roster0010",
-                    "reason": f"{template_source.get('reason')}; {clean_source_reason or 'clean Roster0010 identity/signature source'}",
+                    "allow_stable_template": False,
+                    "reason": "customPlayerData identity/signature database; mutable live identity/signature sources disabled",
                 }
-            elif name_key not in SIGNATURE_ONLY_TEMPLATE_TEAMS and uses_live_same_name:
-                template_source = {
-                    **template_source,
-                    "identity_slot": None,
-                    "signature_slot": None,
-                    "reason": f"{template_source.get('reason')}; skipped dirty live same-name identity/signature source because clean Roster0010 source was unavailable",
-                }
+            else:
+                raise RuntimeError(
+                    f"No saved authoritative identity/animation source exists for {card.get('name')}. "
+                    "Injection was stopped before writing rather than reading identity from the loaded roster."
+                )
+            template = template_source.get("slot")
+            identity_slot = template_source.get("identity_slot")
+            signature_slot = template_source.get("signature_slot")
             template_reason = str(template_source.get("reason") or "")
             source = b""
             template = int(template if template is not None else destination)
@@ -3519,7 +3856,6 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             if stable_template_entry:
                 stable_template_ranges = apply_stable_template_fields(edited, stable_template_entry, roster.PLAYER_STRIDE)
             same_player_quality_fields = myteam.apply_same_player_quality_fields(edited, source, card)
-            custom_player_data = card.get("customPlayerData") if isinstance(card.get("customPlayerData"), dict) else {}
             face_id_override = card_face_override(card, face_overrides)
             if custom_player_data:
                 inherited_ids = custom_player_data.get("inheritedIdentityIds")
@@ -3560,19 +3896,19 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             stats = myteam.apply_card_to_record(edited, card, destination, face_id_override, jersey_override)
             if jersey_override_source:
                 stats["jersey_number_source"] = jersey_override_source
-            if use_clean_source and clean_source:
-                clean_record = clean_source["record"]
-                stats["clean_roster_source"] = {
-                    "source": clean_source.get("source_roster", "Roster0010"),
-                    "roster_index": clean_source.get("roster_index"),
-                    "resolved_slot_name": clean_source.get("full_name"),
-                    "source_file": clean_source.get("source_file"),
-                    "reason": clean_source_reason,
+            if saved_source:
+                saved_record = saved_source["record"]
+                stats["authoritative_saved_source"] = {
+                    "source": saved_source.get("source_roster", "saved player database"),
+                    "roster_index": saved_source.get("roster_index"),
+                    "resolved_slot_name": saved_source.get("full_name"),
+                    "source_file": saved_source.get("source_file"),
+                    "reason": saved_source_reason,
                 }
-                stats["clean_source_identity_fields"] = copy_same_name_identity(edited, clean_record, myteam)
-                stats["clean_source_signature_fields"] = copy_signature_source_fields(
+                stats["saved_source_identity_fields"] = copy_same_name_identity(edited, saved_record, myteam)
+                stats["saved_source_signature_fields"] = copy_signature_source_fields(
                     edited,
-                    clean_record,
+                    saved_record,
                     roster.PLAYER_STRIDE,
                     False,
                     myteam,
@@ -3588,12 +3924,12 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 }
             if handedness_override:
                 handedness_write = apply_handedness_override(edited, handedness_override)
-            elif clean_source:
-                handedness_write = copy_handedness_from_source(edited, clean_source["record"])
+            elif saved_source:
+                handedness_write = copy_handedness_from_source(edited, saved_source["record"])
             if handedness_write:
                 stats["handedness_fields_written"] = handedness_write
             prepared_name = record_full_name(edited)
-            if norm_name(prepared_name) != norm_name(str(card.get("name") or "")):
+            if not record_matches_card_or_alias(edited, card):
                 raise RuntimeError(
                     f"Prepared player identity mismatch for {card.get('name')}: got {prepared_name or 'blank'}. "
                     "Injection was stopped before writing."
@@ -3604,32 +3940,12 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 stats["stable_template_ranges"] = stable_template_ranges
             if same_player_quality_fields:
                 stats["same_player_quality_fields"] = same_player_quality_fields
-            if identity_slot is not None:
-                identity_start = identity_slot * roster.PLAYER_STRIDE
-                identity_record = live_data[identity_start:identity_start + roster.PLAYER_STRIDE]
-                if len(identity_record) == roster.PLAYER_STRIDE:
-                    stats["same_name_resolution_log"] = {
-                        "requested_player": str(card.get("name") or ""),
-                        "resolved_same_name_source_slot": identity_slot,
-                        "resolved_slot_name": record_full_name(identity_record),
-                    }
-                    stats["same_name_identity_source"] = identity_slot
-                    stats["same_name_identity_fields"] = copy_same_name_identity(edited, identity_record, myteam)
+            if identity_slot is not None or signature_slot is not None:
+                raise RuntimeError(
+                    f"Unsafe live identity/signature source survived database planning for {card.get('name')}. "
+                    "Injection was stopped before writing."
+                )
             saved_signature_record = saved_signature_captures.get(name_key)
-            if signature_slot is not None:
-                signature_start = signature_slot * roster.PLAYER_STRIDE
-                signature_record = live_data[signature_start:signature_start + roster.PLAYER_STRIDE]
-                if len(signature_record) == roster.PLAYER_STRIDE:
-                    stats["signature_source"] = signature_slot
-                    stats["signature_fields"] = copy_signature_source_fields(
-                        edited,
-                        signature_record,
-                        roster.PLAYER_STRIDE,
-                        bool(template_source.get("copy_signature_position")),
-                        myteam,
-                        bool(template_source.get("copy_signature_body")),
-                        bool(template_source.get("copy_signature_jersey")),
-                    )
             if saved_signature_record:
                 stats["saved_signature_capture"] = SAVED_SIGNATURE_CAPTURE_FILES.get(name_key, "")
                 stats["saved_signature_fields"] = copy_saved_signature_fields(
@@ -3706,32 +4022,19 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
             if hidden_display_fields:
                 stats["hidden_display_named_fields_written"] = hidden_display_fields
             gear_source_label = ""
-            # Resolve custom-card gear independently by the authored player's
-            # own name. Never borrow gear through a mismatched parent card.
-            gear_clean_source = clean_source_records.get(name_key) if card.get("custom") else clean_source
-            if gear_clean_source and (card.get("custom") or name_key not in myteam_exclusive_source_overrides):
-                clean_accessory_fields = copy_accessories_from_clean_source(
+            # Resolve gear from a saved same-player record, never a mutable live
+            # roster slot. Custom cards prefer their authored player's own name
+            # over a potentially different parent-card source.
+            gear_saved_source = clean_source_records.get(name_key) if card.get("custom") else saved_source
+            if gear_saved_source and (card.get("custom") or name_key not in myteam_exclusive_source_overrides):
+                saved_accessory_fields = copy_accessories_from_clean_source(
                     edited,
-                    gear_clean_source["record"],
-                    f"Roster0010:{gear_clean_source.get('roster_index')}",
+                    gear_saved_source["record"],
+                    f"saved-player-database:{gear_saved_source.get('roster_index')}",
                 )
-                if clean_accessory_fields:
-                    stats["clean_source_accessory_fields"] = clean_accessory_fields
-                    gear_source_label = f"same-name clean roster source {gear_clean_source.get('roster_index')}"
-            elif (
-                card.get("custom")
-                and norm_name(str(inheritance_card.get("name") or "")) == name_key
-                and uses_live_same_name
-                and len(source) == roster.PLAYER_STRIDE
-            ):
-                live_accessory_fields = copy_accessories_from_clean_source(
-                    edited,
-                    source,
-                    f"same-name live roster slot {template}",
-                )
-                if live_accessory_fields:
-                    stats["same_name_live_accessory_fields"] = live_accessory_fields
-                    gear_source_label = f"same-name live roster slot {template}"
+                if saved_accessory_fields:
+                    stats["saved_source_accessory_fields"] = saved_accessory_fields
+                    gear_source_label = f"saved same-name source {gear_saved_source.get('roster_index')}"
             accessory_fields = apply_accessory_override(edited, card, accessory_overrides)
             if accessory_fields:
                 stats["accessory_overrides"] = accessory_fields
@@ -3832,8 +4135,7 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 )
             copied_ranges = []
             copied_ranges.extend(stable_template_ranges)
-            copied_ranges.extend(stats.get("signature_fields") or [])
-            copied_ranges.extend(stats.get("clean_source_signature_fields") or [])
+            copied_ranges.extend(stats.get("saved_source_signature_fields") or [])
             copied_ranges.extend(stats.get("saved_signature_fields") or [])
             copied_ranges.extend((stats.get("card_gameplay_override") or {}).get("signature_fields") or [])
             stats["safe_row_injection"] = True
@@ -3873,9 +4175,11 @@ def live_inject_lineup(team: str, players: list[dict], previous_team_record: dic
                 "placement": "viewer_lineup_injection",
                 "source_template_roster_index": template,
                 "source_template_kind": template_source.get("kind"),
+                "saved_database_source_roster_index": template_source.get("database_source_slot"),
+                "saved_database_source_file": template_source.get("database_source_file", ""),
                 "visual_identity_roster_index": identity_slot,
                 "signature_source_roster_index": signature_slot,
-                "clean_roster_source": stats.get("clean_roster_source") or {},
+                "authoritative_saved_source": stats.get("authoritative_saved_source") or {},
                 "template_confidence": template_reason,
                 "template_bank_source": (template_source.get("entry") or {}).get("source_file") if isinstance(template_source.get("entry"), dict) else "",
                 "face_id_override": face_id_override or "",
@@ -4568,6 +4872,9 @@ class ViewerHandler(SimpleHTTPRequestHandler):
             team = str(payload.get("team") or "")
             if team not in INJECTION_TEAMS:
                 raise ValueError("Choose a valid NBA, classic, or college team.")
+            game_version = str(payload.get("gameVersion") or "").strip().lower()
+            if game_version not in {"patch10", "patch0"}:
+                raise ValueError("Choose either Patch 10 or Patch 0 before injecting.")
             kind_key = str(payload.get("kind") or "lineup")
             players = ordered_lineup_players(kind_key, validate_lineup_payload(payload))
             tracking = clean_injection_tracking(load_injection_tracking())
@@ -4609,12 +4916,18 @@ class ViewerHandler(SimpleHTTPRequestHandler):
                 "rosterPath": str(roster_path),
                 "rosterName": roster_path.name,
                 "team": team,
+                "gameVersion": game_version,
                 "players": players,
                 "status": "live-apply-requested",
                 "note": "This package was sent to the live-memory injector. Save the roster in NBA 2K16 after verifying it.",
             }
             package_path.write_text(json.dumps(package, indent=2, ensure_ascii=False), encoding="utf-8")
-            changes, warnings, live_metadata = live_inject_lineup(team, players, previous_team_record if overwrite_unlocked else None)
+            changes, warnings, live_metadata = live_inject_lineup(
+                team,
+                players,
+                game_version,
+                previous_team_record if overwrite_unlocked else None,
+            )
             rollback_path = backup_dir / f"{safe_roster} live rollback {safe_team} {timestamp}.json"
             rollback_path.write_text(json.dumps({
                 "metadata": {
@@ -4631,6 +4944,7 @@ class ViewerHandler(SimpleHTTPRequestHandler):
             used_teams[team] = {
                 "created": timestamp,
                 "kind": package["kind"],
+                "gameVersion": game_version,
                 "status": "live-applied",
                 "postWriteVerified": True,
                 "postWriteVerification": live_metadata.get("post_write_verification") or {},
