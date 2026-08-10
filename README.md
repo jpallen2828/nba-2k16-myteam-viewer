@@ -2,7 +2,7 @@
 
 An unofficial, non-commercial companion app for browsing archived NBA 2K16 MyTEAM cards and injecting selected cards into a roster loaded in a local copy of NBA 2K16.
 
-The v1.1 release is a two-app toolkit. **MyTEAM Viewer** is the browser, lineup builder, draft simulator, and live roster injector. **NBA 2K16 Card Studio 0.11.3** is the companion creator for designing card artwork and authoring complete custom-player data that imports directly into the Viewer.
+The v1.1.2 release is a two-app toolkit. **MyTEAM Viewer** is the browser, lineup builder, draft simulator, and live roster injector. **NBA 2K16 Card Studio 0.11.3** is the companion creator for designing card artwork and authoring complete custom-player data that imports directly into the Viewer.
 
 ## Downloads
 
