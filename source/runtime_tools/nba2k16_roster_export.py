@@ -177,6 +177,7 @@ BADGES = (
     ("interceptor", 0x428, 2, 2),
     ("pick_pocket", 0x428, 4, 2),
     ("eraser", 0x428, 6, 2),
+    ("chasedown_artist", 0x429, 0, 2),
     ("bruiser", 0x429, 2, 2),
     ("brick_wall", 0x429, 4, 2),
     ("one_man_fast_break", 0x429, 6, 2),

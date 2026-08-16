@@ -1,0 +1,28 @@
+{
+  "template_version": 1,
+  "template_id": "development_tier",
+  "display_name": "Development Tier (Placeholder)",
+  "canvas": {
+    "width": 512,
+    "height": 768
+  },
+  "layers": {
+    "background": "background.png",
+    "player_mask": "player_mask.png",
+    "foreground": "foreground.png"
+  },
+  "player_defaults": {
+    "anchor_x": 256,
+    "anchor_y": 700,
+    "scale": 1.0,
+    "rotation_degrees": 0.0,
+    "flip_horizontal": false
+  },
+  "text_fields": {
+    "overall": null,
+    "position": null,
+    "name": null
+  },
+  "development_placeholder": true,
+  "notes": "Neutral engineering asset. This is not authentic NBA 2K16 card artwork."
+}

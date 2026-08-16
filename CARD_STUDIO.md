@@ -2,6 +2,8 @@
 
 NBA 2K16 Card Studio is the companion creator for the MyTEAM Viewer. It makes finished card artwork and can package that artwork with complete authored player data for browsing, drafting, lineup building, and roster injection in the Viewer.
 
+The public source, tests, templates, and distributable art libraries are available in the repository's [`card-studio/`](card-studio/) directory.
+
 ## Install
 
 1. Download `NBA.2K16.Card.Studio.zip` from the project's [latest GitHub release](https://github.com/jpallen2828/nba-2k16-myteam-viewer/releases/latest).
@@ -18,7 +20,7 @@ The app is portable and does not need an installer. It is an unsigned fan-made W
 - Removes image backgrounds locally with the included BiRefNet ONNX model; no cloud service or generative image editing is used.
 - Provides Current, Historic, and EuroLeague team logos, 11 recovered MyTEAM backgrounds, and 13 promotion stickers including USA Olympics.
 - Renders OVR, position, and player name with packaged game-derived bitmap glyphs.
-- Edits vitals, all supported attributes and tendencies, signatures, personality and gameplay badges, hot zones, identity IDs, play types, and related custom-player fields.
+- Edits vitals, all supported attributes and tendencies, signatures, every verified personality and gameplay badge—including Chasedown Artist at Bronze, Silver, or Gold—hot zones, identity IDs, play types, and related custom-player fields.
 - Imports an official Viewer card as an editable starting point without replacing the custom name or season.
 - Saves editable projects, exports transparent PNG artwork, and exports complete Viewer-ready card packages.
 

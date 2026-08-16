@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -19,6 +20,24 @@ def sha256(path: Path) -> str:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest().upper()
+
+
+def diagnostic_report_root() -> Path:
+    """Keep diagnostic output out of the distribution-only outer directory."""
+    if getattr(sys, "frozen", False):
+        executable_root = Path(sys.executable).resolve().parent
+        for candidate in (executable_root / "_Project", executable_root.parent / "_Project"):
+            if candidate.is_dir():
+                return candidate / "Project Reports" / "Compatibility Diagnostics"
+        local_app_data = Path(os.environ.get("LOCALAPPDATA") or Path.home())
+        return local_app_data / "NBA2K16MyTEAMViewer" / "diagnostics"
+    return Path(__file__).resolve().parent.parent / "diagnostics"
+
+
+def diagnostic_report_path() -> Path:
+    root = diagnostic_report_root()
+    root.mkdir(parents=True, exist_ok=True)
+    return root / "nba2k16-myteam-compatibility-report.json"
 
 
 def main() -> int:
@@ -52,7 +71,7 @@ def main() -> int:
         "required_game_files_copied_by_mod": False,
         "note": "This report lists no game content and is safe to share with the mod maintainers.",
     }
-    output = Path.cwd() / "nba2k16-myteam-compatibility-report.json"
+    output = diagnostic_report_path()
     output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
     print(f"Saved {output}")

@@ -83,3 +83,42 @@ def test_draymond_plan_cannot_reuse_kirilenko_contaminated_live_slot_420():
     assert server.identity_id_snapshot(prepared, myteam) != server.identity_id_snapshot(kirilenko, myteam)
     for offset, size, _ in server.VERIFIED_SIGNATURE_FIELD_RANGES:
         assert prepared[offset:offset + size] == saved_source["record"][offset:offset + size]
+
+
+def test_zero_filled_custom_identity_keeps_manute_bol_8517_override():
+    myteam, *_ = source_context()
+    card = {
+        "id": 1070445652,
+        "slug": "custom-manute-bol-1993-1070445652",
+        "name": "Manute Bol",
+        "faceId": 0,
+        "portraitId": 0,
+    }
+    zero_identity = {field: 0 for field in myteam.IDENTITY_ID_FIELDS}
+    resolved = server.custom_face_identity_override(
+        card,
+        {
+            "faceId": 0,
+            "portraitId": 0,
+            "inheritedIdentityIds": zero_identity,
+        },
+        8517,
+        myteam,
+    )
+    assert resolved == 8517
+
+
+def test_wembanyama_custom_identity_is_fully_isolated_on_3599():
+    myteam, *_ = source_context()
+    identity = {field: 3599 for field in myteam.IDENTITY_ID_FIELDS}
+    resolved = server.custom_face_identity_override(
+        {"id": 1211485535, "slug": "custom-victor-wembanyama", "name": "Victor Wembanyama"},
+        {
+            "faceId": 3599,
+            "portraitId": 3599,
+            "inheritedIdentityIds": identity,
+        },
+        None,
+        myteam,
+    )
+    assert resolved == identity

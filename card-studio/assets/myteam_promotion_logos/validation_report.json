@@ -1,0 +1,302 @@
+[
+  {
+    "id": "all_star",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 41336,
+    "raw_dds_sha256": "cbd89615b823639260db0b77fb8f492101d97e55f942a2ad043fc0a302b437f4",
+    "runtime_png_sha256": "b69dff543c8f3ed2833ad3984fa1dbf3c1a2dc5c2d8d0716efd6cc7fce8aaf40"
+  },
+  {
+    "id": "current",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 28276,
+    "raw_dds_sha256": "e32aee04eefb9649835f570eee2a991f99581323f962830d1d9eff7f7bdb42f6",
+    "runtime_png_sha256": "e5dfec9d0cbea07458762fe5debb7577019c12270347010344b1c0f1699a37b2"
+  },
+  {
+    "id": "dpoty",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 33169,
+    "raw_dds_sha256": "0de61361b114f659f9c620b7de16cd41f251a37ceb9ddca325343d0d4afd18ed",
+    "runtime_png_sha256": "ed5fd7dfac38e84b5cc83048cb00f1653b320dbdeecbc0564d78be6ee44a06f8"
+  },
+  {
+    "id": "dynamic",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 42209,
+    "raw_dds_sha256": "175b5f0a03e657ffba704ce324824241be9806e18a4b79132ef66505c3b2330e",
+    "runtime_png_sha256": "27789156766fb2a0c02b1cd765e774336e9a60b16ea477bfcea6b4879d2e0e80"
+  },
+  {
+    "id": "euroleague",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 33990,
+    "raw_dds_sha256": "3077ea124c475853eb6e75eee25aff4f617c0f9306cab64cb02b1d357d77dc1a",
+    "runtime_png_sha256": "5f8fae245a9fc9cafafcc3a4fce72e3984ab82f7413e079812711ff63416203a"
+  },
+  {
+    "id": "finals",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 26132,
+    "raw_dds_sha256": "dbac0ddd526befee833fbe55c55e06bf19f693b837e29ffc5cb6cf3c91ff629a",
+    "runtime_png_sha256": "7a1b2d7b3292b84f4046138166b7f2834f9ff47e9f625dfa8e5066a0fc659ee2"
+  },
+  {
+    "id": "finals_mvp",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 31981,
+    "raw_dds_sha256": "1f0e1f3d24d1c83ec19b9b5770c8e592b394d43a9e1a1c3da14520c0de4c8b5e",
+    "runtime_png_sha256": "fec01f0befc89f1ccedbd957580a186c436674bbb3b7a5cf56999be5da16cfd2"
+  },
+  {
+    "id": "free_agents",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 31110,
+    "raw_dds_sha256": "69d55f4bd59af3a5f80934a6ad7829681fc0b071552057b1f6631bf6e7449fca",
+    "runtime_png_sha256": "db793972e78d00066149dc1f44bd640c5e61ea3562bf1a3b19b5b7ccd313bfe9"
+  },
+  {
+    "id": "historic",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 30040,
+    "raw_dds_sha256": "d729b4c84e235af4700cd2a126b4040cc608f57bf01f98052c7b0805be30de69",
+    "runtime_png_sha256": "244e156b99f042fd8e0c8521be4dd7364fd07edebd79928a42d7da4f60e3e7ae"
+  },
+  {
+    "id": "moments",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 29491,
+    "raw_dds_sha256": "94d2a5dece44b05d80b08fe21857c0ce8da348ef32a2243cfc9a4746a0fb101b",
+    "runtime_png_sha256": "541d11f9baf2362b11db4c9d5e069d074b22d085b66e426c3e1af00e10683f68"
+  },
+  {
+    "id": "mvp",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 45120,
+    "raw_dds_sha256": "cbd3864743663ad8d7f3b822b6b15796db4229d34ccdc2ced878a5960aebb561",
+    "runtime_png_sha256": "934fbf52e439d24c8234aa65711708efe0e108aeb25ac854357cda33aeb0b08c"
+  },
+  {
+    "id": "ninety_nine_club",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 40511,
+    "raw_dds_sha256": "321c231451d96b0dfb2051655cbf54aaaae814af7a79655d2f4ce14ea4f56cf2",
+    "runtime_png_sha256": "1dc9b4de07b9a4f4c4246cb242a8b4c2a1205f98630217f85f24278c12d3fd67"
+  },
+  {
+    "id": "playoffs",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 44822,
+    "raw_dds_sha256": "16f42567b91b9c9fa7306e22e6eeb47bd129d71681add52f6222801f7f77955c",
+    "runtime_png_sha256": "34c6c25d5a5e58d83fd71e69503452412b8ed83b5c6d21fe350b1e13848b8748"
+  },
+  {
+    "id": "rewards",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 32560,
+    "raw_dds_sha256": "97602fd8a9b55371bd94d6a734367446370256821fbc7e534ccde4ea08388ddd",
+    "runtime_png_sha256": "fc73266561ecaadd900fdcd2730cc97d94d5ac6a83ae17fcac90f33952aa9bb2"
+  },
+  {
+    "id": "roty",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 34462,
+    "raw_dds_sha256": "c3f18e4eb7102f08cd7e1a3849164f792c683776bff458e9b8e2e10425892b38",
+    "runtime_png_sha256": "73d7dbae3e05ffdf432884571696c8f5db9a3c68b1aa16751b96fc3fac2072fa"
+  },
+  {
+    "id": "sixth_man",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 39548,
+    "raw_dds_sha256": "b91d1682267b9fcd33093539873091a9d3b9addb7e80485f768dae6fd8f59a90",
+    "runtime_png_sha256": "99d0235c52ea50f25026891abb5f4c92356efff7b37458c564ce74529b339c33"
+  },
+  {
+    "id": "throwback",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 18309,
+    "raw_dds_sha256": "f07c1c0e53cb4d5dc24817dba48bcbb4b47d075652921fcddc7c2345c0542148",
+    "runtime_png_sha256": "009c673ad5b3da9c5fdf1112f6ee7712647d24f931aa22515a754be96e0f3e11"
+  },
+  {
+    "id": "unknown_01",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 34200,
+    "raw_dds_sha256": "0a3c6c046fa99a4d1710057293450e5cc99bf387362adebe8ceb3a589b54102a",
+    "runtime_png_sha256": "37adb0eaede90290652ef7174f85ca09857ce11bbd173ef8e6a20095da407ef3"
+  },
+  {
+    "id": "unknown_02",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 26990,
+    "raw_dds_sha256": "31d3c6669047d8ccbe6171646ea6dd4e2d1e76a2fb8115a9fb81c0fb0c980a93",
+    "runtime_png_sha256": "c1cbd2d56282c68853d0c714df2c48cd420eaaac19ffa3697aa5c60e54d2c43d"
+  },
+  {
+    "id": "unknown_03",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_pixels": 23867,
+    "raw_dds_sha256": "f6ba364ba7a07791d378841946135f6405ad733f1c5367b8ac0da2b94e288d63",
+    "runtime_png_sha256": "fdc524dd40d1514fc03a79d87e03632070c990a795b7a5f78a86f64d3492a4cd"
+  }
+]

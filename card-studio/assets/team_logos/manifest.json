@@ -1,0 +1,1046 @@
+{
+  "schema_version": 1,
+  "method": "byte-identical copy of recovered source PNG",
+  "categories": {
+    "current": {
+      "count": 31,
+      "assets": [
+        {
+          "asset_id": "Atlanta Hawks.png",
+          "display_name": "Atlanta Hawks",
+          "source": "NBA 2K16 3D Team Logos - Complete/Atlanta Hawks.png",
+          "sha256": "B4FB4B007EBFEB7D963CAE8535064EB9540464B85CFDA7F274A933BEF3262E98",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Boston Celtics.png",
+          "display_name": "Boston Celtics",
+          "source": "NBA 2K16 3D Team Logos - Complete/Boston Celtics.png",
+          "sha256": "DEC8DF1308B92385A288C9A46CC6937EB824B647633F041A247AAF38D8F0B7CF",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Brooklyn Nets.png",
+          "display_name": "Brooklyn Nets",
+          "source": "NBA 2K16 3D Team Logos - Complete/Brooklyn Nets.png",
+          "sha256": "EAA59EEA0D31077462C28FDAE27E5FF3F85E2C9960E3E2905F54599FC7099216",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Charlotte Hornets.png",
+          "display_name": "Charlotte Hornets",
+          "source": "NBA 2K16 3D Team Logos - Complete/Charlotte Hornets.png",
+          "sha256": "D86050B040F63046BDC4D11C24E488AD7ED70F600859E948DA562DD06E37F41A",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Chicago Bulls.png",
+          "display_name": "Chicago Bulls",
+          "source": "NBA 2K16 3D Team Logos - Complete/Chicago Bulls.png",
+          "sha256": "1A39138C73517D55374BA6025C37A16A75CF3820DEC90073FEF1B6DBF1BCC1C8",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Cleveland Cavaliers.png",
+          "display_name": "Cleveland Cavaliers",
+          "source": "NBA 2K16 3D Team Logos - Complete/Cleveland Cavaliers.png",
+          "sha256": "167B2DDF39F785645744D3631FF991D9A6E49830283638E68FBB0F32AEA002B3",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Dallas Mavericks.png",
+          "display_name": "Dallas Mavericks",
+          "source": "NBA 2K16 3D Team Logos - Complete/Dallas Mavericks.png",
+          "sha256": "70EA693593A1BE8F5EC13DE5991929BD307B838242C9E6BA8D222E02F1A2E986",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Denver Nuggets.png",
+          "display_name": "Denver Nuggets",
+          "source": "NBA 2K16 3D Team Logos - Complete/Denver Nuggets.png",
+          "sha256": "159574AB5F9FA84DD420C5DA4F6CDFE9138AB6592130A66F4C4C52E128D98AA8",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Detroit Pistons.png",
+          "display_name": "Detroit Pistons",
+          "source": "NBA 2K16 3D Team Logos - Complete/Detroit Pistons.png",
+          "sha256": "98BBC31086CD8184538B142B5B9A10F5A82E4DEFC59FFB214AB844EE5A521FE8",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Golden State Warriors.png",
+          "display_name": "Golden State Warriors",
+          "source": "NBA 2K16 3D Team Logos - Complete/Golden State Warriors.png",
+          "sha256": "57176C4DE424510BDB35DAC5C1DD46F80D518F5198CDADC37F6EDF2F4B06936F",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Houston Rockets.png",
+          "display_name": "Houston Rockets",
+          "source": "NBA 2K16 3D Team Logos - Complete/Houston Rockets.png",
+          "sha256": "8B74D62698225C098634EBC7E44384E580B8472E4543BE64BAB789C7BC4DD0A7",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Indiana Pacers.png",
+          "display_name": "Indiana Pacers",
+          "source": "NBA 2K16 3D Team Logos - Complete/Indiana Pacers.png",
+          "sha256": "DEB3A8209EAE1F179C5AA774975F2656B0DA93F3851E315ED2DEB76C6D6924A1",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Los Angeles Clippers.png",
+          "display_name": "Los Angeles Clippers",
+          "source": "NBA 2K16 3D Team Logos - Complete/Los Angeles Clippers.png",
+          "sha256": "7E2BBB7A659F2F60A344A9B46DAB9527E038D198C6B817971A9DA40CED3C9E91",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Los Angeles Lakers.png",
+          "display_name": "Los Angeles Lakers",
+          "source": "NBA 2K16 3D Team Logos - Complete/Los Angeles Lakers.png",
+          "sha256": "7BCF6B065D882569C64CEFB4D90790682514D27443866189A9714D7FD9A520F3",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Memphis Grizzlies.png",
+          "display_name": "Memphis Grizzlies",
+          "source": "NBA 2K16 3D Team Logos - Complete/Memphis Grizzlies.png",
+          "sha256": "5206911CCBE39BA8BD8014DAD51A61662A23B7E9F230B6ECA98392A6715EDF7B",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Miami Heat.png",
+          "display_name": "Miami Heat",
+          "source": "NBA 2K16 3D Team Logos - Complete/Miami Heat.png",
+          "sha256": "E02FC45D82421E719FA78C8044541E232631970F37425D1A99146A335315BC75",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Milwaukee Bucks.png",
+          "display_name": "Milwaukee Bucks",
+          "source": "NBA 2K16 3D Team Logos - Complete/Milwaukee Bucks.png",
+          "sha256": "A5D26E43043F1B0DDAD2672406940BA0C2D2FC7E5CD0E801872C9C2B963A0311",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Minnesota Timberwolves.png",
+          "display_name": "Minnesota Timberwolves",
+          "source": "NBA 2K16 3D Team Logos - Complete/Minnesota Timberwolves.png",
+          "sha256": "2519FB4BFA4551071B31ACC2838F4FF85D6AE4AE5789D960FC579D2A605D8B9D",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "NBA Free Agency.png",
+          "display_name": "NBA Free Agency",
+          "source": "NBA 2K16 3D Team Logos - Complete/NBA Free Agency.png",
+          "sha256": "CCE5C9C5B18E31CF7325AA31D6EAB61CEDF2FAEDB9C02751A18B505674169ED8",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "New Orleans Pelicans.png",
+          "display_name": "New Orleans Pelicans",
+          "source": "NBA 2K16 3D Team Logos - Complete/New Orleans Pelicans.png",
+          "sha256": "42BF22DF1926E3A3ED4EE5E41F0D0FBD6F4738E35C5A7B5713B215585CA9C893",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "New York Knicks.png",
+          "display_name": "New York Knicks",
+          "source": "NBA 2K16 3D Team Logos - Complete/New York Knicks.png",
+          "sha256": "C71EE5A7E5CA7C2C81E3553DB11EC101F33BC27F8DE1409757FD63C8B25BA47A",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Oklahoma City Thunder.png",
+          "display_name": "Oklahoma City Thunder",
+          "source": "NBA 2K16 3D Team Logos - Complete/Oklahoma City Thunder.png",
+          "sha256": "F332B201CF04EC1EF926A22B94D58BA0CCB76A5C71D3622453D887C7E1348D24",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Orlando Magic.png",
+          "display_name": "Orlando Magic",
+          "source": "NBA 2K16 3D Team Logos - Complete/Orlando Magic.png",
+          "sha256": "9E0E0B32EBC1BBCCF153829CE841FC0D67A64DA83E007F36F20881FDCEAE63BB",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Philadelphia 76ers.png",
+          "display_name": "Philadelphia 76ers",
+          "source": "NBA 2K16 3D Team Logos - Complete/Philadelphia 76ers.png",
+          "sha256": "4C520FF4D56AC630977BF89A28EC8F3D00E53871D3EF3CD1E99EBCA4F406A5CD",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Phoenix Suns.png",
+          "display_name": "Phoenix Suns",
+          "source": "NBA 2K16 3D Team Logos - Complete/Phoenix Suns.png",
+          "sha256": "8A5CB7A35AAAC87E855C154510E5551B7ADAD617D6B536702432778749F98EA7",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Portland Trail Blazers.png",
+          "display_name": "Portland Trail Blazers",
+          "source": "NBA 2K16 3D Team Logos - Complete/Portland Trail Blazers.png",
+          "sha256": "0AE065AA19F1671A4D589D528D3775DFD7AEBC8ABD83E7C7A0941D41269B3FCA",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Sacramento Kings.png",
+          "display_name": "Sacramento Kings",
+          "source": "NBA 2K16 3D Team Logos - Complete/Sacramento Kings.png",
+          "sha256": "C11E80EEFD49F42A67125A88542CCC65935F5AE6DEAA3E489F3B8734901EEE85",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "San Antonio Spurs.png",
+          "display_name": "San Antonio Spurs",
+          "source": "NBA 2K16 3D Team Logos - Complete/San Antonio Spurs.png",
+          "sha256": "A57BB40720A820ACA3DAA7975578183035E9A560A8565A818E629B04C9D05615",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Toronto Raptors.png",
+          "display_name": "Toronto Raptors",
+          "source": "NBA 2K16 3D Team Logos - Complete/Toronto Raptors.png",
+          "sha256": "3D74C642132C420EB8FBA9CB3895ED9DA22C12A8EF615EFB01C2706738FDD143",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Utah Jazz.png",
+          "display_name": "Utah Jazz",
+          "source": "NBA 2K16 3D Team Logos - Complete/Utah Jazz.png",
+          "sha256": "2C52845B71CE41720F60CD2FB7AAF4AE9ABED5E11AB0700A2F8FF82EFA2CFBBD",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Washington Wizards.png",
+          "display_name": "Washington Wizards",
+          "source": "NBA 2K16 3D Team Logos - Complete/Washington Wizards.png",
+          "sha256": "AA8BA416A6872FDD51856E849CCD07CDA51A67A8D0388626EFA7655CD84420CE",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        }
+      ]
+    },
+    "historic": {
+      "count": 46,
+      "assets": [
+        {
+          "asset_id": "1964-65 Boston Celtics.png",
+          "display_name": "1964-65 Boston Celtics",
+          "source": "NBA 2K16 Historic Team Logos/1964-65 Boston Celtics.png",
+          "sha256": "123B583A13519CA8CC248CF2E67DB52B5C76BFF0E87AC31CBDC27B3CA70266FB",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1964-65 Los Angeles Lakers.png",
+          "display_name": "1964-65 Los Angeles Lakers",
+          "source": "NBA 2K16 Historic Team Logos/1964-65 Los Angeles Lakers.png",
+          "sha256": "6C51BADE1057C4A27C9CB65169B9316E100FE0C20175511D055C34B2DEAB13EE",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1970-71 Atlanta Hawks.png",
+          "display_name": "1970-71 Atlanta Hawks",
+          "source": "NBA 2K16 Historic Team Logos/1970-71 Atlanta Hawks.png",
+          "sha256": "2B2304356F2790EECD2CFEC2D39C4195242CE91CD93B79A2F564B7E98535F90C",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1970-71 Los Angeles Lakers.png",
+          "display_name": "1970-71 Los Angeles Lakers",
+          "source": "NBA 2K16 Historic Team Logos/1970-71 Los Angeles Lakers.png",
+          "sha256": "E4B4D2D025961810CE8A47D685D1529DC3C6642FEE3EDAFA8B94992EED3FA7AA",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1970-71 Milwaukee Bucks.png",
+          "display_name": "1970-71 Milwaukee Bucks",
+          "source": "NBA 2K16 Historic Team Logos/1970-71 Milwaukee Bucks.png",
+          "sha256": "F890DF6D9FECE42E444A97EAAC581BBF389D575920147ADC17B44C9DB5621869",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1971-72 Los Angeles Lakers.png",
+          "display_name": "1971-72 Los Angeles Lakers",
+          "source": "NBA 2K16 Historic Team Logos/1971-72 Los Angeles Lakers.png",
+          "sha256": "E4B4D2D025961810CE8A47D685D1529DC3C6642FEE3EDAFA8B94992EED3FA7AA",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1971-72 New York Knicks.png",
+          "display_name": "1971-72 New York Knicks",
+          "source": "NBA 2K16 Historic Team Logos/1971-72 New York Knicks.png",
+          "sha256": "818BA210848347B437777A16F59BD6EC6A4BCC8AFF7DAA764B476A655E9ECEA2",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1976-77 Philadelphia 76ers.png",
+          "display_name": "1976-77 Philadelphia 76ers",
+          "source": "NBA 2K16 Historic Team Logos/1976-77 Philadelphia 76ers.png",
+          "sha256": "3323C2250722B32C3082B8CA8859FDE19FD99EEFB09664868CF4D74E7134F2B3",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1984-85 Milwaukee Bucks.png",
+          "display_name": "1984-85 Milwaukee Bucks",
+          "source": "NBA 2K16 Historic Team Logos/1984-85 Milwaukee Bucks.png",
+          "sha256": "F890DF6D9FECE42E444A97EAAC581BBF389D575920147ADC17B44C9DB5621869",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1984-85 Philadelphia 76ers.png",
+          "display_name": "1984-85 Philadelphia 76ers",
+          "source": "NBA 2K16 Historic Team Logos/1984-85 Philadelphia 76ers.png",
+          "sha256": "3323C2250722B32C3082B8CA8859FDE19FD99EEFB09664868CF4D74E7134F2B3",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1985-86 Atlanta Hawks.png",
+          "display_name": "1985-86 Atlanta Hawks",
+          "source": "NBA 2K16 Historic Team Logos/1985-86 Atlanta Hawks.png",
+          "sha256": "05C00E7C59D736F7B1F874C45E42ADCFC56F4224C85263AF6031D36ACCCA244C",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1985-86 Boston Celtics.png",
+          "display_name": "1985-86 Boston Celtics",
+          "source": "NBA 2K16 Historic Team Logos/1985-86 Boston Celtics.png",
+          "sha256": "DBC863B2FF469D910FA59C9C751D6DBAB99516395187AD22527403EC3BE06309",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1985-86 Chicago Bulls.png",
+          "display_name": "1985-86 Chicago Bulls",
+          "source": "NBA 2K16 Historic Team Logos/1985-86 Chicago Bulls.png",
+          "sha256": "46220E0DD37ADDDBF827E2B0997EDBBF36F70DB4AEBC5869CF7FFAEEDE02B404",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1986-87 Los Angeles Lakers.png",
+          "display_name": "1986-87 Los Angeles Lakers",
+          "source": "NBA 2K16 Historic Team Logos/1986-87 Los Angeles Lakers.png",
+          "sha256": "E4B4D2D025961810CE8A47D685D1529DC3C6642FEE3EDAFA8B94992EED3FA7AA",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1988-89 Chicago Bulls.png",
+          "display_name": "1988-89 Chicago Bulls",
+          "source": "NBA 2K16 Historic Team Logos/1988-89 Chicago Bulls.png",
+          "sha256": "46220E0DD37ADDDBF827E2B0997EDBBF36F70DB4AEBC5869CF7FFAEEDE02B404",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1988-89 Detroit Pistons.png",
+          "display_name": "1988-89 Detroit Pistons",
+          "source": "NBA 2K16 Historic Team Logos/1988-89 Detroit Pistons.png",
+          "sha256": "C3E019D722553E9C3E298259CC59C47CC2477FADB89F09E2564FF92883DCBEE7",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1989-90 Cleveland Cavaliers.png",
+          "display_name": "1989-90 Cleveland Cavaliers",
+          "source": "NBA 2K16 Historic Team Logos/1989-90 Cleveland Cavaliers.png",
+          "sha256": "75530D30E62B50DAC37DDE64152052C92A0BB05C9FA490FCAFBB58C59BEFC8ED",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1990-91 Chicago Bulls.png",
+          "display_name": "1990-91 Chicago Bulls",
+          "source": "NBA 2K16 Historic Team Logos/1990-91 Chicago Bulls.png",
+          "sha256": "46220E0DD37ADDDBF827E2B0997EDBBF36F70DB4AEBC5869CF7FFAEEDE02B404",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1990-91 Golden State Warriors.png",
+          "display_name": "1990-91 Golden State Warriors",
+          "source": "NBA 2K16 Historic Team Logos/1990-91 Golden State Warriors.png",
+          "sha256": "B311EBC3B14D023C371DF8A8B3DBBE32723BD85E8ACC7B1D4814344036683FC2",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1990-91 Los Angeles Lakers.png",
+          "display_name": "1990-91 Los Angeles Lakers",
+          "source": "NBA 2K16 Historic Team Logos/1990-91 Los Angeles Lakers.png",
+          "sha256": "C2C45FB5001C5C54B633A78F4570A36037CB7A51A89925AAB9A9441425A2F235",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1990-91 Portland Trail Blazers.png",
+          "display_name": "1990-91 Portland Trail Blazers",
+          "source": "NBA 2K16 Historic Team Logos/1990-91 Portland Trail Blazers.png",
+          "sha256": "5A85003BE36D73970CE1D8B0ED8C7E1C1758622E51FDA57A4CDA1670A7CA26FA",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1991-92 Chicago Bulls.png",
+          "display_name": "1991-92 Chicago Bulls",
+          "source": "NBA 2K16 Historic Team Logos/1991-92 Chicago Bulls.png",
+          "sha256": "46220E0DD37ADDDBF827E2B0997EDBBF36F70DB4AEBC5869CF7FFAEEDE02B404",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1992-93 Charlotte Hornets.png",
+          "display_name": "1992-93 Charlotte Hornets",
+          "source": "NBA 2K16 Historic Team Logos/1992-93 Charlotte Hornets.png",
+          "sha256": "5799266498DFBE35603F91644FDF8FFA4670FA3C8A7B4FE9BF570EAD86269DF4",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1993-94 Denver Nuggets.png",
+          "display_name": "1993-94 Denver Nuggets",
+          "source": "NBA 2K16 Historic Team Logos/1993-94 Denver Nuggets.png",
+          "sha256": "785C6B6AAF9CD01D3D7F76764B7B51B4D1FF31FD391698202482C89839D1C510",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1993-94 Houston Rockets.png",
+          "display_name": "1993-94 Houston Rockets",
+          "source": "NBA 2K16 Historic Team Logos/1993-94 Houston Rockets.png",
+          "sha256": "8DEBD494DC0CD108F420369CA7E057FD828013D4A3AD4111CA4FA119901A6C52",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1994-95 New York Knicks.png",
+          "display_name": "1994-95 New York Knicks",
+          "source": "NBA 2K16 Historic Team Logos/1994-95 New York Knicks.png",
+          "sha256": "51B7111235D6C9AFF234622FFC9C4F658C4EDADE02B07B83E986DF413312A91F",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1994-95 Orlando Magic.png",
+          "display_name": "1994-95 Orlando Magic",
+          "source": "NBA 2K16 Historic Team Logos/1994-95 Orlando Magic.png",
+          "sha256": "F2F78AD25E006E3EB45F7B17F59AC13292A38F37F5D256617ABE9B119B74D8FB",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1995-96 Chicago Bulls.png",
+          "display_name": "1995-96 Chicago Bulls",
+          "source": "NBA 2K16 Historic Team Logos/1995-96 Chicago Bulls.png",
+          "sha256": "46220E0DD37ADDDBF827E2B0997EDBBF36F70DB4AEBC5869CF7FFAEEDE02B404",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1995-96 Seattle SuperSonics.png",
+          "display_name": "1995-96 Seattle SuperSonics",
+          "source": "NBA 2K16 Historic Team Logos/1995-96 Seattle SuperSonics.png",
+          "sha256": "412A2651C90FAA8013E9242B24C2F4AE36B5D7AA9C0B88CC530635217D1C9676",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1997-98 Chicago Bulls.png",
+          "display_name": "1997-98 Chicago Bulls",
+          "source": "NBA 2K16 Historic Team Logos/1997-98 Chicago Bulls.png",
+          "sha256": "46220E0DD37ADDDBF827E2B0997EDBBF36F70DB4AEBC5869CF7FFAEEDE02B404",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1997-98 Los Angeles Lakers.png",
+          "display_name": "1997-98 Los Angeles Lakers",
+          "source": "NBA 2K16 Historic Team Logos/1997-98 Los Angeles Lakers.png",
+          "sha256": "E4B4D2D025961810CE8A47D685D1529DC3C6642FEE3EDAFA8B94992EED3FA7AA",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1997-98 San Antonio Spurs.png",
+          "display_name": "1997-98 San Antonio Spurs",
+          "source": "NBA 2K16 Historic Team Logos/1997-98 San Antonio Spurs.png",
+          "sha256": "4012433D9A8511A4C139AF13D48ED3844E973660E5D2086895D7E592820FA962",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1997-98 Utah Jazz.png",
+          "display_name": "1997-98 Utah Jazz",
+          "source": "NBA 2K16 Historic Team Logos/1997-98 Utah Jazz.png",
+          "sha256": "E41294B4572F58DBC1BB14CFFA2DB96B01A16D3710C88E2A92369CB1ACE63348",
+          "width": 512,
+          "height": 512,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1999-00 Portland Trail Blazers.png",
+          "display_name": "1999-00 Portland Trail Blazers",
+          "source": "NBA 2K16 Historic Team Logos/1999-00 Portland Trail Blazers.png",
+          "sha256": "6FB56A2ECB41841414EDE9B114C6183A7831D5B904B7664BADF90ED325622245",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "1999-00 Toronto Raptors.png",
+          "display_name": "1999-00 Toronto Raptors",
+          "source": "NBA 2K16 Historic Team Logos/1999-00 Toronto Raptors.png",
+          "sha256": "487D0C9777D22F9D8C3A1FE5A3576EC7368F134076112107ADC0DE0EDAA8F22C",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "2000-01 Los Angeles Lakers.png",
+          "display_name": "2000-01 Los Angeles Lakers",
+          "source": "NBA 2K16 Historic Team Logos/2000-01 Los Angeles Lakers.png",
+          "sha256": "E20FF5D1E11ADE1573E60B4CE80E0AAF5299114493029B54D8D6F6B743F5D65E",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "2000-01 Philadelphia 76ers.png",
+          "display_name": "2000-01 Philadelphia 76ers",
+          "source": "NBA 2K16 Historic Team Logos/2000-01 Philadelphia 76ers.png",
+          "sha256": "548F40C5DE23983AA22217DAB18BF20A29C0B31348D2F07F13E45C547D1C225D",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "2002-03 Dallas Mavericks.png",
+          "display_name": "2002-03 Dallas Mavericks",
+          "source": "NBA 2K16 Historic Team Logos/2002-03 Dallas Mavericks.png",
+          "sha256": "598465453D943791F13CA362C528F23E0A7C37E984B4ECC18C373E6D170DEE9F",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "2003-04 Detroit Pistons.png",
+          "display_name": "2003-04 Detroit Pistons",
+          "source": "NBA 2K16 Historic Team Logos/2003-04 Detroit Pistons.png",
+          "sha256": "B289B851957A609B321EEAEB8DB7C30F98D7A2A254DD5F9DD049509D07F1C81B",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "2003-04 Minnesota Timberwolves.png",
+          "display_name": "2003-04 Minnesota Timberwolves",
+          "source": "NBA 2K16 Historic Team Logos/2003-04 Minnesota Timberwolves.png",
+          "sha256": "9ABF31CF67E030A30644C9FC9D00322A2DC99EF1C5D5D2ECE4B9D01D667B31EF",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "2004-05 Phoenix Suns.png",
+          "display_name": "2004-05 Phoenix Suns",
+          "source": "NBA 2K16 Historic Team Logos/2004-05 Phoenix Suns.png",
+          "sha256": "8F129BB5BED7FEDD76A0F996CEC7EAE80E40F0E161718B548A9BB12BB4F13F65",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "2005-06 Miami Heat.png",
+          "display_name": "2005-06 Miami Heat",
+          "source": "NBA 2K16 Historic Team Logos/2005-06 Miami Heat.png",
+          "sha256": "EB1E094425C9683D636A49094CF43FF197533F409F91076C5F027EB3FD5D2C23",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "2006-07 Cleveland Cavaliers.png",
+          "display_name": "2006-07 Cleveland Cavaliers",
+          "source": "NBA 2K16 Historic Team Logos/2006-07 Cleveland Cavaliers.png",
+          "sha256": "3C061C53DB8398CF7F36D576FEC8A80249A8D1804C3D3E97867930C5B648E269",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "2007-08 Boston Celtics.png",
+          "display_name": "2007-08 Boston Celtics",
+          "source": "NBA 2K16 Historic Team Logos/2007-08 Boston Celtics.png",
+          "sha256": "F991B68EBBBA848D84484BB41711DCE8D8CEF5719B037064550F8A2D73BA76FC",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "2007-08 Houston Rockets.png",
+          "display_name": "2007-08 Houston Rockets",
+          "source": "NBA 2K16 Historic Team Logos/2007-08 Houston Rockets.png",
+          "sha256": "AABB931CF67D784D646E5D41AC4FA15B4C2877447D774F1A610D0D600680BDA9",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "2012-13 Miami Heat.png",
+          "display_name": "2012-13 Miami Heat",
+          "source": "NBA 2K16 Historic Team Logos/2012-13 Miami Heat.png",
+          "sha256": "EB1E094425C9683D636A49094CF43FF197533F409F91076C5F027EB3FD5D2C23",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        }
+      ]
+    },
+    "euroleague": {
+      "count": 25,
+      "assets": [
+        {
+          "asset_id": "ALBA Berlin.png",
+          "display_name": "ALBA Berlin",
+          "source": "NBA 2K16 EuroLeague Team Logos/ALBA Berlin.png",
+          "sha256": "3FAE2422375D97BFEBAA294462537A547FA87B39C8A81DA1ADD0A6093446D41F",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Anadolu Efes Istanbul.png",
+          "display_name": "Anadolu Efes Istanbul",
+          "source": "NBA 2K16 EuroLeague Team Logos/Anadolu Efes Istanbul.png",
+          "sha256": "1C03AA41DC4BA4F7E523799508C7CE8117B3F28C27D31FF0FB860413E1B0BA48",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Cedevita Zagreb.png",
+          "display_name": "Cedevita Zagreb",
+          "source": "NBA 2K16 EuroLeague Team Logos/Cedevita Zagreb.png",
+          "sha256": "2E5AD2C78B2E0B9279C21960A4B41B65B7B6391062DE1D01A1D240ECC61D03B9",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Crvena Zvezda Telekom Belgrade.png",
+          "display_name": "Crvena Zvezda Telekom Belgrade",
+          "source": "NBA 2K16 EuroLeague Team Logos/Crvena Zvezda Telekom Belgrade.png",
+          "sha256": "42E1C94EC647BB3E2DF719014F13668D142242B605A286A87370FFC2897198A5",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "CSKA Moscow.png",
+          "display_name": "CSKA Moscow",
+          "source": "NBA 2K16 EuroLeague Team Logos/CSKA Moscow.png",
+          "sha256": "6EC0462B6BD1DBE84510A3696CB69ACA961B67D8445807588712F5A348F91B08",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Dinamo Sassari.png",
+          "display_name": "Dinamo Sassari",
+          "source": "NBA 2K16 EuroLeague Team Logos/Dinamo Sassari.png",
+          "sha256": "20F210B40CD76F256B7861A3FA244E504739B2FECE062F8A79740DD91479E02F",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "EA7 Emporio Armani Milan.png",
+          "display_name": "EA7 Emporio Armani Milan",
+          "source": "NBA 2K16 EuroLeague Team Logos/EA7 Emporio Armani Milan.png",
+          "sha256": "6A4BD445F298B4835F3EFB0F57E82A46AD44BA594F6C95E9611F6F332E666E52",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "FC Barcelona.png",
+          "display_name": "FC Barcelona",
+          "source": "NBA 2K16 EuroLeague Team Logos/FC Barcelona.png",
+          "sha256": "5BE2C87C0FADF165B01CFF1E84BAB4A29255D29F3595362DA38422A62C7ADC7D",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "FC Bayern Munich.png",
+          "display_name": "FC Bayern Munich",
+          "source": "NBA 2K16 EuroLeague Team Logos/FC Bayern Munich.png",
+          "sha256": "016814DD3676847C3BEAD0AF09C725C61B3F78DDFEB179694FDF587D6BF8166D",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Fenerbahce Ulker Istanbul.png",
+          "display_name": "Fenerbahce Ulker Istanbul",
+          "source": "NBA 2K16 EuroLeague Team Logos/Fenerbahce Ulker Istanbul.png",
+          "sha256": "0BCF6DF8144D5D6BF9C575C5D6D3CB861124CA761A670108D10F3C708EFF621D",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Galatasaray Istanbul.png",
+          "display_name": "Galatasaray Istanbul",
+          "source": "NBA 2K16 EuroLeague Team Logos/Galatasaray Istanbul.png",
+          "sha256": "88786FDA4A7ECA4265615646B9A0041DCF689D13861B75E6122E5E4E0C1A1D03",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Laboral Kutxa Vitoria.png",
+          "display_name": "Laboral Kutxa Vitoria",
+          "source": "NBA 2K16 EuroLeague Team Logos/Laboral Kutxa Vitoria.png",
+          "sha256": "FFD94ABB1CA7E41645386BAC1D0C78E9FB9828EB679069B13E6A43E7BFB45100",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Limoges.png",
+          "display_name": "Limoges",
+          "source": "NBA 2K16 EuroLeague Team Logos/Limoges.png",
+          "sha256": "3BD1F8819A1DC4F955B0DE0D324B8EB2AE1A614E263B6AE9B5C68949D9F0419D",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Maccabi Tel Aviv.png",
+          "display_name": "Maccabi Tel Aviv",
+          "source": "NBA 2K16 EuroLeague Team Logos/Maccabi Tel Aviv.png",
+          "sha256": "897F0B6F1EE48D4DC91A36EF6097BFA083DF15B9E99DF8DA124286B9AC9FE61A",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Neptunas Klaipeda.png",
+          "display_name": "Neptunas Klaipeda",
+          "source": "NBA 2K16 EuroLeague Team Logos/Neptunas Klaipeda.png",
+          "sha256": "4A925F042833AA5815E6D62B68DDAFD192AE5936F21DFB786FBDAE09D1E69129",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Nizhny Novgorod.png",
+          "display_name": "Nizhny Novgorod",
+          "source": "NBA 2K16 EuroLeague Team Logos/Nizhny Novgorod.png",
+          "sha256": "17BD423F85BA92429491A24D327700EB054F95CA503FDA109BA764C17DCE96FF",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Olympiacos Piraeus.png",
+          "display_name": "Olympiacos Piraeus",
+          "source": "NBA 2K16 EuroLeague Team Logos/Olympiacos Piraeus.png",
+          "sha256": "D103185C8D329CFBFDF4E8B9F9B923BA7DBE8E6FCFEA994AA5E59CC924515EE9",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Panathinaikos Athens.png",
+          "display_name": "Panathinaikos Athens",
+          "source": "NBA 2K16 EuroLeague Team Logos/Panathinaikos Athens.png",
+          "sha256": "665FAF9B88D9210263EC1509830F741EAB8E2F3A9827BB0CBE68B664E7CABF65",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "PGE Turow Zgorzelec.png",
+          "display_name": "PGE Turow Zgorzelec",
+          "source": "NBA 2K16 EuroLeague Team Logos/PGE Turow Zgorzelec.png",
+          "sha256": "54BB0711C26B9A0F72EF52F3785DF0B483B48C6ABDD65D7C9F21FAAF924BEA3B",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Real Madrid.png",
+          "display_name": "Real Madrid",
+          "source": "NBA 2K16 EuroLeague Team Logos/Real Madrid.png",
+          "sha256": "DEBBA079BB910894DCFB6DB74E06B7B5A8FA916F39AFDCAF3C9B6BA718D5D586",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Strasbourg.png",
+          "display_name": "Strasbourg",
+          "source": "NBA 2K16 EuroLeague Team Logos/Strasbourg.png",
+          "sha256": "6E92D9339FE4E10088C5CE3AB24B0F15872C6FD8494C5B62E135C23188BE5B9C",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Unicaja Malaga.png",
+          "display_name": "Unicaja Malaga",
+          "source": "NBA 2K16 EuroLeague Team Logos/Unicaja Malaga.png",
+          "sha256": "73F87121F2902F05AB518E8C3C456DB9A5A7C662D49D2B4FDE4A05B7368C02EA",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "UNICS Kazan.png",
+          "display_name": "UNICS Kazan",
+          "source": "NBA 2K16 EuroLeague Team Logos/UNICS Kazan.png",
+          "sha256": "09EAD7AE193307273441CA74FFBE7DE52AA726F7D1985FEAE773FFEBD6B9D185",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Valencia.png",
+          "display_name": "Valencia",
+          "source": "NBA 2K16 EuroLeague Team Logos/Valencia.png",
+          "sha256": "82A6A60F1CD55BDE4FCE3B9D70ECA565BAA93D1F4135B627F330201420EC3240",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        },
+        {
+          "asset_id": "Zalgiris Kaunas.png",
+          "display_name": "Zalgiris Kaunas",
+          "source": "NBA 2K16 EuroLeague Team Logos/Zalgiris Kaunas.png",
+          "sha256": "0C2316F927E0F5762C0CB7233A66814263776BED026523C36674948D15CAB3EF",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "has_alpha": true
+        }
+      ]
+    }
+  },
+  "excluded_non_logo_files": [
+    "NBA 2K16 Historic Team Logos/Contact Sheet.png",
+    "NBA 2K16 EuroLeague Team Logos/Contact Sheet.png"
+  ],
+  "total_logo_count": 102
+}

@@ -1,0 +1,366 @@
+{
+  "schema_version": 1,
+  "style_id": "nba2k16_default",
+  "role": "overall",
+  "line_height": 25,
+  "baseline": 23,
+  "default_tracking": 0.0,
+  "minimum_tracking": -1.0,
+  "kerning": {
+    "11": 0.0,
+    "17": 0.0
+  },
+  "glyphs": {
+    "0": {
+      "character": "0",
+      "rect": [
+        0,
+        0,
+        15,
+        24
+      ],
+      "baseline": 23,
+      "advance": 16,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/119-dikembe-mutombo.png",
+      "source_rect": [
+        30,
+        26,
+        15,
+        24
+      ],
+      "source_sha256": "FCAD6023D272A9C17630D0E00890DAC90B4228D9F961D799DAE13EE1EEE042E4",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "1": {
+      "character": "1",
+      "rect": [
+        16,
+        0,
+        11,
+        24
+      ],
+      "baseline": 23,
+      "advance": 16,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/358-steve-nash.png",
+      "source_rect": [
+        29,
+        26,
+        11,
+        24
+      ],
+      "source_sha256": "5D54B8A8DC97883E974ECAEDB7414148389D0908D28B1C34032645C2C47D4CFA",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "2": {
+      "character": "2",
+      "rect": [
+        28,
+        0,
+        15,
+        24
+      ],
+      "baseline": 23,
+      "advance": 16,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/735-john-havlicek.png",
+      "source_rect": [
+        30,
+        26,
+        15,
+        24
+      ],
+      "source_sha256": "AFB7BF26A6E0F74DF305B1B6089FA63D8A417400375D1537B8821293CB1C05F9",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "3": {
+      "character": "3",
+      "rect": [
+        44,
+        0,
+        15,
+        24
+      ],
+      "baseline": 23,
+      "advance": 16,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/393-jermaine-oneal.png",
+      "source_rect": [
+        28,
+        26,
+        15,
+        24
+      ],
+      "source_sha256": "DC61967BEA5F64AE7ECA4149EB18627000F652085D6F981BBBE3AF1CA6AFF735",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "4": {
+      "character": "4",
+      "rect": [
+        60,
+        0,
+        18,
+        24
+      ],
+      "baseline": 23,
+      "advance": 16,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/174-mitch-richmond.png",
+      "source_rect": [
+        28,
+        26,
+        18,
+        24
+      ],
+      "source_sha256": "1FCCD28E3652D6099D4F036BAFC0AF688BDA461B8EA42D486CFB063535518798",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "5": {
+      "character": "5",
+      "rect": [
+        79,
+        0,
+        15,
+        24
+      ],
+      "baseline": 23,
+      "advance": 16,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/58-tyrone-hill.png",
+      "source_rect": [
+        28,
+        26,
+        15,
+        24
+      ],
+      "source_sha256": "952CF9269CE5FB6A5C914C4B417A37A79D0423AA677877480D1DE564BAF84723",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "6": {
+      "character": "6",
+      "rect": [
+        95,
+        0,
+        15,
+        24
+      ],
+      "baseline": 23,
+      "advance": 16,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/129-tim-hardaway.png",
+      "source_rect": [
+        30,
+        26,
+        15,
+        24
+      ],
+      "source_sha256": "A1D3E0DA4EBB2D95CFCFF991AAF3C5C4E460F728FB503D80C53A1FC1AE8DFB97",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "7": {
+      "character": "7",
+      "rect": [
+        111,
+        0,
+        14,
+        24
+      ],
+      "baseline": 23,
+      "advance": 16,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/58-tyrone-hill.png",
+      "source_rect": [
+        13,
+        26,
+        14,
+        24
+      ],
+      "source_sha256": "952CF9269CE5FB6A5C914C4B417A37A79D0423AA677877480D1DE564BAF84723",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "8": {
+      "character": "8",
+      "rect": [
+        126,
+        0,
+        15,
+        24
+      ],
+      "baseline": 23,
+      "advance": 16,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/119-dikembe-mutombo.png",
+      "source_rect": [
+        13,
+        26,
+        15,
+        24
+      ],
+      "source_sha256": "FCAD6023D272A9C17630D0E00890DAC90B4228D9F961D799DAE13EE1EEE042E4",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "9": {
+      "character": "9",
+      "rect": [
+        142,
+        0,
+        14,
+        24
+      ],
+      "baseline": 23,
+      "advance": 16,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/144-matt-geiger.png",
+      "source_rect": [
+        30,
+        26,
+        14,
+        24
+      ],
+      "source_sha256": "AC4E81336E82D33A91341BDA16AFE2721E58693905E2A229A1C5F7DD62546813",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "O": {
+      "character": "O",
+      "rect": [
+        157,
+        0,
+        9,
+        13
+      ],
+      "baseline": 12,
+      "advance": 9,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9857-kareem-abdul-jabbar.png",
+      "source_rect": [
+        15,
+        11,
+        9,
+        13
+      ],
+      "source_sha256": "67B387F3CC598770CB0ECA832788FB1C3F5C32B9674C99D9F29B79F7A6856BB7",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "R": {
+      "character": "R",
+      "rect": [
+        167,
+        0,
+        10,
+        13
+      ],
+      "baseline": 12,
+      "advance": 9,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9857-kareem-abdul-jabbar.png",
+      "source_rect": [
+        33,
+        11,
+        10,
+        13
+      ],
+      "source_sha256": "67B387F3CC598770CB0ECA832788FB1C3F5C32B9674C99D9F29B79F7A6856BB7",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "V": {
+      "character": "V",
+      "rect": [
+        178,
+        0,
+        11,
+        13
+      ],
+      "baseline": 12,
+      "advance": 9,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9857-kareem-abdul-jabbar.png",
+      "source_rect": [
+        23,
+        11,
+        11,
+        13
+      ],
+      "source_sha256": "67B387F3CC598770CB0ECA832788FB1C3F5C32B9674C99D9F29B79F7A6856BB7",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    }
+  }
+}

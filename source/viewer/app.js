@@ -31,7 +31,7 @@ const elements = {
 const tierOrder = ["Pink Diamond", "Diamond", "Amethyst", "Gold", "Silver", "Bronze"];
 const themeOrder = [
   "All-Star", "Current", "Defensive Player of the Year", "Dynamic Ratings", "Historic",
-  "Moments", "Most Valuable Player", "Playoffs", "Rewards", "Rookie of the Year",
+  "FIBA", "Moments", "Most Valuable Player", "Playoffs", "Rewards", "Rookie of the Year",
   "Sixth Man", "Throwback Thursday", "USA Olympics",
 ];
 const tierClass = tier => `tier-${(tier || "unknown").toLowerCase().replace(/[^a-z]+/g, "-")}`;

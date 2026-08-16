@@ -1,0 +1,1222 @@
+{
+  "schema_version": 1,
+  "style_id": "nba2k16_default",
+  "role": "name",
+  "line_height": 20,
+  "baseline": 16,
+  "default_tracking": 0.0,
+  "minimum_tracking": -1.0,
+  "kerning": {
+    "'A": -1.0,
+    "-A": -1.0,
+    "07": -1.0,
+    "75": 1.0,
+    "AB": 1.0,
+    "AD": 1.0,
+    "AF": 1.0,
+    "AG": 1.0,
+    "AH": 1.0,
+    "AK": 1.0,
+    "AM": 1.0,
+    "AN": 1.0,
+    "AO": 1.0,
+    "AQ": 1.0,
+    "AR": 1.0,
+    "AT": -2.0,
+    "AU": 1.0,
+    "AW": -1.0,
+    "AY": -1.0,
+    "AZ": 1.0,
+    "B.": 1.0,
+    "BE": 1.0,
+    "BI": 1.0,
+    "BL": 1.0,
+    "BO": 1.0,
+    "BR": 1.0,
+    "BS": 1.0,
+    "BU": 1.0,
+    "C.": 1.0,
+    "CC": 1.0,
+    "CD": 1.0,
+    "CE": 1.0,
+    "CH": 1.0,
+    "CK": 1.0,
+    "CM": 1.0,
+    "CR": 1.0,
+    "D.": 1.0,
+    "DE": 1.0,
+    "DG": 1.0,
+    "DL": 1.0,
+    "DM": 1.0,
+    "DN": 1.0,
+    "DO": 1.0,
+    "DR": 1.0,
+    "DS": 1.0,
+    "DW": 1.0,
+    "EE": 1.0,
+    "EH": 1.0,
+    "EI": 1.0,
+    "EM": 1.0,
+    "EN": 1.0,
+    "EO": 1.0,
+    "EP": 1.0,
+    "ES": 1.0,
+    "EW": 1.0,
+    "EX": 1.0,
+    "FA": -3.0,
+    "GE": 1.0,
+    "GG": 1.0,
+    "GH": 1.0,
+    "GI": 1.0,
+    "GN": 1.0,
+    "GO": 1.0,
+    "GR": 1.0,
+    "GS": 1.0,
+    "HI": 1.0,
+    "HO": 1.0,
+    "HR": 1.0,
+    "HU": 1.0,
+    "IB": 1.0,
+    "ID": 1.0,
+    "IN": 1.0,
+    "IP": 1.0,
+    "IS": 1.0,
+    "KL": 1.0,
+    "KN": 1.0,
+    "KO": 1.0,
+    "KR": 1.0,
+    "KU": 1.0,
+    "L-": -2.0,
+    "LA": -1.0,
+    "LT": -3.0,
+    "LV": -3.0,
+    "LY": -3.0,
+    "MA": -1.0,
+    "NE": 1.0,
+    "NI": 1.0,
+    "NJ": 1.0,
+    "NZ": 1.0,
+    "O.": 1.0,
+    "OB": 1.0,
+    "OE": 1.0,
+    "OF": 1.0,
+    "OG": 1.0,
+    "OH": 1.0,
+    "OW": 1.0,
+    "OX": 1.0,
+    "P.": -3.0,
+    "PA": -1.0,
+    "RA": -1.0,
+    "SC": 1.0,
+    "SH": 1.0,
+    "SI": 1.0,
+    "SL": 1.0,
+    "SM": 1.0,
+    "SO": 1.0,
+    "SP": 1.0,
+    "SS": 1.0,
+    "SU": 1.0,
+    "T.": -2.0,
+    "TA": -2.0,
+    "UC": 1.0,
+    "UE": 1.0,
+    "UF": 1.0,
+    "UN": 1.0,
+    "UO": 1.0,
+    "US": 1.0,
+    "UW": 1.0,
+    "VA": -1.0,
+    "VY": -1.0,
+    "WA": -2.0,
+    "XE": 1.0,
+    "XL": 1.0,
+    "YA": -2.0,
+    "YD": 1.0,
+    "YE": 1.0,
+    "YL": 1.0,
+    "YM": 1.0,
+    "YO": 1.0
+  },
+  "glyphs": {
+    " ": {
+      "character": " ",
+      "rect": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "baseline": 0,
+      "advance": 6,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/809-pau-gasol.png",
+      "source_rect": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "source_sha256": "7BA2C31A63B391D7CCCBBEB276F27FC0E4F09E34FDE2BE5CC0C7C61F59AAACDB",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 1,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "'": {
+      "character": "'",
+      "rect": [
+        2,
+        0,
+        4,
+        8
+      ],
+      "baseline": 15,
+      "advance": 5.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/4634-ray-allen.png",
+      "source_rect": [
+        128,
+        423,
+        4,
+        8
+      ],
+      "source_sha256": "201C37AA2443D1A773C839EFAFD78FBEFBE60286AE98851172B9F798969BCDAE",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "-": {
+      "character": "-",
+      "rect": [
+        7,
+        0,
+        8,
+        5
+      ],
+      "baseline": 9,
+      "advance": 8.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1957-al-farouq-aminu.png",
+      "source_rect": [
+        130,
+        429,
+        8,
+        5
+      ],
+      "source_sha256": "586E7190BD63993CF5FA03C3177BA7B95E81F1B3D71E2E39AA402D9B302330D8",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    ".": {
+      "character": ".",
+      "rect": [
+        16,
+        0,
+        5,
+        5
+      ],
+      "baseline": 4,
+      "advance": 5.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1167-jr-smith.png",
+      "source_rect": [
+        153,
+        434,
+        5,
+        5
+      ],
+      "source_sha256": "DF26EF49F8FA9938DDD63D514C09DCED0ECB759BA25DCA5F7BC67559D6F629B5",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "0": {
+      "character": "0",
+      "rect": [
+        22,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/4823-eric-snow.png",
+      "source_rect": [
+        132,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "10B19537E9A378A6C5FDC389948D5153FF1A67F9E5FEB1A44B0EB1A47CD6AA0E",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "1": {
+      "character": "1",
+      "rect": [
+        33,
+        0,
+        8,
+        16
+      ],
+      "baseline": 15,
+      "advance": 9.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/4523-rick-fox.png",
+      "source_rect": [
+        151,
+        423,
+        8,
+        16
+      ],
+      "source_sha256": "25C0974C67032F8C2C7663FDBDFCA7F3982AC35CCB323BD9A7E4C2290759CDB0",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 1.811,
+      "rejected_artifact_pixels": 0
+    },
+    "2": {
+      "character": "2",
+      "rect": [
+        42,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 10,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/749-willis-reed.png",
+      "source_rect": [
+        135,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "C8902EC754A9240F638ACF6DC34BEF6F1A70776A751337E02B8C689A4252E1A7",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "3": {
+      "character": "3",
+      "rect": [
+        53,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 10,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9432-glen-davis.png",
+      "source_rect": [
+        139,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "0DF4009383018724F5097BFC6DB6CC05589BE78EFEAB966872E41B3188125831",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "4": {
+      "character": "4",
+      "rect": [
+        64,
+        0,
+        12,
+        16
+      ],
+      "baseline": 15,
+      "advance": 12,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9647-dell-curry.png",
+      "source_rect": [
+        137,
+        423,
+        12,
+        16
+      ],
+      "source_sha256": "ABD64C04683533D49C83CECD3F5EE7E2BB5A3BD3402D6B837553E54703A46237",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "5": {
+      "character": "5",
+      "rect": [
+        77,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 10.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9328-bob-cousy.png",
+      "source_rect": [
+        132,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "B301B97DD9BBC4F25944127BB46ADC3B08965016824D6D9D6AFED58ED576841E",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "6": {
+      "character": "6",
+      "rect": [
+        88,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1732-larry-bird.png",
+      "source_rect": [
+        138,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "6BA6A1C46734708FED6EB59FE061BFC76A2819018F7E6C1C61FE686186822935",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "7": {
+      "character": "7",
+      "rect": [
+        100,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 10.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9377-glen-rice.png",
+      "source_rect": [
+        146,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "A877228B993BE85DE5FD81F5EECCCC25A3E94B3ED80691835BB8CEB4488B7544",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "8": {
+      "character": "8",
+      "rect": [
+        111,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1799-toni-kukoc.png",
+      "source_rect": [
+        138,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "B7CA7E0260A7ADBB7B3C54EB85046B3A3D2765CD03D7995F8497D90A7BA0CD5E",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "9": {
+      "character": "9",
+      "rect": [
+        123,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/4825-rick-fox.png",
+      "source_rect": [
+        139,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "FF036CAA3D84E8AECB107137023E579DE8AFC241C7716FFE67720B9EFF3E2A3B",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 1.287,
+      "rejected_artifact_pixels": 0
+    },
+    "A": {
+      "character": "A",
+      "rect": [
+        134,
+        0,
+        14,
+        16
+      ],
+      "baseline": 15,
+      "advance": 13.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/809-pau-gasol.png",
+      "source_rect": [
+        151,
+        423,
+        14,
+        16
+      ],
+      "source_sha256": "7BA2C31A63B391D7CCCBBEB276F27FC0E4F09E34FDE2BE5CC0C7C61F59AAACDB",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "B": {
+      "character": "B",
+      "rect": [
+        149,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9578-dave-bing.png",
+      "source_rect": [
+        208,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "ACE73BD74B41FD501DA47423A3822B0940441B6B32598D4334A1430592F1012C",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "C": {
+      "character": "C",
+      "rect": [
+        161,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9609-bob-cousy.png",
+      "source_rect": [
+        194,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "90A2721F14C0DF9A4E142777560020F686E7FC0CBA28E015EED76837A498DC71",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "D": {
+      "character": "D",
+      "rect": [
+        173,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9344-rudy-gay.png",
+      "source_rect": [
+        186,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "CB5143C7142AB04DD2A20028AA00E01FE3BE03A9708F208A6EC15BDAF6AFCEFD",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "E": {
+      "character": "E",
+      "rect": [
+        185,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 10.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1285-david-lee.png",
+      "source_rect": [
+        211,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "E2C70974DAA4823AE07113077BC396E431C92B2166B7972F9C6A8D071983C6D3",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "F": {
+      "character": "F",
+      "rect": [
+        196,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 10.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/4825-rick-fox.png",
+      "source_rect": [
+        208,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "FF036CAA3D84E8AECB107137023E579DE8AFC241C7716FFE67720B9EFF3E2A3B",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "G": {
+      "character": "G",
+      "rect": [
+        207,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1410-greg-oden.png",
+      "source_rect": [
+        141,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "AF77D81B309BB19B2FB12962EC5B2135BAD0E0597BE85B971CD1DE7B44313E7E",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "H": {
+      "character": "H",
+      "rect": [
+        219,
+        0,
+        12,
+        16
+      ],
+      "baseline": 15,
+      "advance": 12.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1016-chris-bosh.png",
+      "source_rect": [
+        227,
+        423,
+        12,
+        16
+      ],
+      "source_sha256": "C7D281C455A5AC3DEF5038D3AC0080F7AAEEB1D51CF2B04F582FD61ED034A7C2",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "I": {
+      "character": "I",
+      "rect": [
+        232,
+        0,
+        5,
+        16
+      ],
+      "baseline": 15,
+      "advance": 5.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/4620-ming-yao.png",
+      "source_rect": [
+        178,
+        423,
+        5,
+        16
+      ],
+      "source_sha256": "BB1CE6B64B8BECB11F9E7A7FD0E42D982B83EFB8C7CF70183DB8222B2F8372E7",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "J": {
+      "character": "J",
+      "rect": [
+        238,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/2089-sam-jones.png",
+      "source_rect": [
+        197,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "AE960E6CF1EF3B317C10846E7D4E9722AA94195FF2F8EF22F4EF392CC9D2AC75",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "K": {
+      "character": "K",
+      "rect": [
+        249,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/8868-ian-clark.png",
+      "source_rect": [
+        223,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "54BCF0B1FE937D5106C0365F7A78079D80BA874DD4C1803014EBBAA855330C6F",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "L": {
+      "character": "L",
+      "rect": [
+        261,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 10.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1156-luol-deng.png",
+      "source_rect": [
+        175,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "28501F4EDBEBD9EABCE1533FD63FAA96514A63CFA53B2F70E965435D4892CD96",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "M": {
+      "character": "M",
+      "rect": [
+        272,
+        0,
+        16,
+        16
+      ],
+      "baseline": 15,
+      "advance": 16.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9346-oj-mayo.png",
+      "source_rect": [
+        197,
+        423,
+        16,
+        16
+      ],
+      "source_sha256": "76F0B623E6CC482F3BA71B5E2A69592D3C6463961561D92C5BBCB940A3BBE23D",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "N": {
+      "character": "N",
+      "rect": [
+        289,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 12.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1410-greg-oden.png",
+      "source_rect": [
+        224,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "AF77D81B309BB19B2FB12962EC5B2135BAD0E0597BE85B971CD1DE7B44313E7E",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "O": {
+      "character": "O",
+      "rect": [
+        301,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1156-luol-deng.png",
+      "source_rect": [
+        164,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "28501F4EDBEBD9EABCE1533FD63FAA96514A63CFA53B2F70E965435D4892CD96",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "P": {
+      "character": "P",
+      "rect": [
+        313,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1775-ron-harper.png",
+      "source_rect": [
+        226,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "E9AFDAF8CA3F299DFC595EBE5896B1D4A72C568897FD8F456BC78127DCF50788",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "Q": {
+      "character": "Q",
+      "rect": [
+        324,
+        0,
+        10,
+        18
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/2490-quincy-acy.png",
+      "source_rect": [
+        138,
+        423,
+        10,
+        18
+      ],
+      "source_sha256": "AA698E03347C05164B92B7D4793BF1306014F510D39F30A84232B26D62EB047D",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 1.043,
+      "rejected_artifact_pixels": 0
+    },
+    "R": {
+      "character": "R",
+      "rect": [
+        335,
+        0,
+        12,
+        16
+      ],
+      "baseline": 15,
+      "advance": 12.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1410-greg-oden.png",
+      "source_rect": [
+        153,
+        423,
+        12,
+        16
+      ],
+      "source_sha256": "AF77D81B309BB19B2FB12962EC5B2135BAD0E0597BE85B971CD1DE7B44313E7E",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "S": {
+      "character": "S",
+      "rect": [
+        348,
+        0,
+        10,
+        16
+      ],
+      "baseline": 15,
+      "advance": 10.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/2089-sam-jones.png",
+      "source_rect": [
+        243,
+        423,
+        10,
+        16
+      ],
+      "source_sha256": "AE960E6CF1EF3B317C10846E7D4E9722AA94195FF2F8EF22F4EF392CC9D2AC75",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "T": {
+      "character": "T",
+      "rect": [
+        359,
+        0,
+        12,
+        16
+      ],
+      "baseline": 15,
+      "advance": 12.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/2800-raul-neto.png",
+      "source_rect": [
+        213,
+        423,
+        12,
+        16
+      ],
+      "source_sha256": "602A1CF6D2923DA96F09F53CD78A1EAE6B796963F208965572A7022F051AF05D",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "U": {
+      "character": "U",
+      "rect": [
+        372,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/9344-rudy-gay.png",
+      "source_rect": [
+        174,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "CB5143C7142AB04DD2A20028AA00E01FE3BE03A9708F208A6EC15BDAF6AFCEFD",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "V": {
+      "character": "V",
+      "rect": [
+        384,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 12.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1285-david-lee.png",
+      "source_rect": [
+        169,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "E2C70974DAA4823AE07113077BC396E431C92B2166B7972F9C6A8D071983C6D3",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "W": {
+      "character": "W",
+      "rect": [
+        396,
+        0,
+        18,
+        16
+      ],
+      "baseline": 15,
+      "advance": 18.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/1950-john-wall.png",
+      "source_rect": [
+        189,
+        423,
+        18,
+        16
+      ],
+      "source_sha256": "6689FF7D6CED570E332C18AB1493B9766E08FCDAA95A7933E76A2C0B813301CF",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "X": {
+      "character": "X",
+      "rect": [
+        415,
+        0,
+        13,
+        16
+      ],
+      "baseline": 15,
+      "advance": 13.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/4118-cj-wilcox.png",
+      "source_rect": [
+        229,
+        423,
+        13,
+        16
+      ],
+      "source_sha256": "05CAE95230E6DFEE9FCEA7C1133FCFDACB21A7FC96069DCE9A4180FD8DBCA767",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "Y": {
+      "character": "Y",
+      "rect": [
+        429,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/4634-ray-allen.png",
+      "source_rect": [
+        179,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "201C37AA2443D1A773C839EFAFD78FBEFBE60286AE98851172B9F798969BCDAE",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    },
+    "Z": {
+      "character": "Z",
+      "rect": [
+        441,
+        0,
+        11,
+        16
+      ],
+      "baseline": 15,
+      "advance": 11.0,
+      "left_bearing": 0.0,
+      "right_bearing": 0.0,
+      "vertical_offset": 0.0,
+      "source_reference": "data/card-images/4519-bonzi-wells.png",
+      "source_rect": [
+        182,
+        423,
+        11,
+        16
+      ],
+      "source_sha256": "502E87ECC1E9CC2816225727BDABED02D5118828B14691730B1D16751204050D",
+      "approval_status": "approved",
+      "approved": true,
+      "duplicate_examples_compared": 12,
+      "nearest_duplicate_alpha_rms": 0.0,
+      "rejected_artifact_pixels": 0
+    }
+  }
+}

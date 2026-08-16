@@ -153,6 +153,22 @@ class CustomImportTests(unittest.TestCase):
         self.assertEqual(loaded["theme"], "USA Olympics")
         self.assertEqual(loaded["collection"], "USA Olympics")
 
+    def test_fiba_promotion_metadata_uses_matching_theme_and_collection(self):
+        card = _import_manifest(_usa_olympics_manifest({
+            "id": 123456790,
+            "slug": "fiba-card",
+            "promotionLogoId": "fiba",
+            "theme": "Custom",
+            "collection": "Custom Cards",
+        }))
+        self.assertEqual(card["theme"], "FIBA")
+        self.assertEqual(card["collection"], "FIBA")
+        loaded = _load_imported_card(card)
+        self.assertIsNotNone(loaded)
+        assert loaded is not None
+        self.assertEqual(loaded["theme"], "FIBA")
+        self.assertEqual(loaded["collection"], "FIBA")
+
     def test_duplicate_id_slug_filter_support_for_persistence(self):
         card = _import_manifest(_usa_olympics_manifest())
         self.assertEqual(card["theme"], "USA Olympics")

@@ -1,0 +1,382 @@
+{
+  "canvas": [
+    256,
+    256
+  ],
+  "max_visible_dimension": 200,
+  "count": 12,
+  "logos": [
+    {
+      "id": "historic_players",
+      "file": "runtime/normalized/historic_players.png",
+      "normalization": {
+        "source_dimensions": [
+          133,
+          91
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          131,
+          89
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          135
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          60
+        ],
+        "scale": 1.550387596899225,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "moments",
+      "file": "runtime/normalized/moments.png",
+      "normalization": {
+        "source_dimensions": [
+          123,
+          105
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          121,
+          103
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          170
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          43
+        ],
+        "scale": 1.680672268907563,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "mvp",
+      "file": "runtime/normalized/mvp.png",
+      "normalization": {
+        "source_dimensions": [
+          65,
+          131
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          63,
+          129
+        ],
+        "normalized_visible_dimensions": [
+          96,
+          200
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          80,
+          28
+        ],
+        "scale": 1.5748031496062993,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "throwback",
+      "file": "runtime/normalized/throwback.png",
+      "normalization": {
+        "source_dimensions": [
+          133,
+          108
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          131,
+          106
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          161
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          47
+        ],
+        "scale": 1.550387596899225,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "dpoy",
+      "file": "runtime/normalized/dpoy.png",
+      "normalization": {
+        "source_dimensions": [
+          98,
+          115
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          96,
+          113
+        ],
+        "normalized_visible_dimensions": [
+          169,
+          200
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          43,
+          28
+        ],
+        "scale": 1.8018018018018018,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "roty",
+      "file": "runtime/normalized/roty.png",
+      "normalization": {
+        "source_dimensions": [
+          110,
+          100
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          108,
+          98
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          181
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          37
+        ],
+        "scale": 1.8867924528301887,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "current_player",
+      "file": "runtime/normalized/current_player.png",
+      "normalization": {
+        "source_dimensions": [
+          133,
+          102
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          131,
+          100
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          152
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          52
+        ],
+        "scale": 1.550387596899225,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "dynamic_ratings",
+      "file": "runtime/normalized/dynamic_ratings.png",
+      "normalization": {
+        "source_dimensions": [
+          114,
+          104
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          112,
+          102
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          182
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          37
+        ],
+        "scale": 1.8181818181818181,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "playoffs",
+      "file": "runtime/normalized/playoffs.png",
+      "normalization": {
+        "source_dimensions": [
+          256,
+          256
+        ],
+        "source_alpha_bbox": [
+          0,
+          72,
+          256,
+          183
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          87
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          84
+        ],
+        "scale": 0.78125,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "sixth_man",
+      "file": "runtime/normalized/sixth_man.png",
+      "normalization": {
+        "source_dimensions": [
+          256,
+          256
+        ],
+        "source_alpha_bbox": [
+          33,
+          10,
+          221,
+          246
+        ],
+        "normalized_visible_dimensions": [
+          159,
+          200
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          48,
+          28
+        ],
+        "scale": 0.847457627118644,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "all_star",
+      "file": "runtime/normalized/all_star.png",
+      "normalization": {
+        "source_dimensions": [
+          256,
+          256
+        ],
+        "source_alpha_bbox": [
+          50,
+          0,
+          204,
+          256
+        ],
+        "normalized_visible_dimensions": [
+          120,
+          200
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          68,
+          28
+        ],
+        "scale": 0.78125,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "rewards",
+      "file": "runtime/normalized/rewards.png",
+      "normalization": {
+        "source_dimensions": [
+          256,
+          256
+        ],
+        "source_alpha_bbox": [
+          32,
+          10,
+          222,
+          245
+        ],
+        "normalized_visible_dimensions": [
+          162,
+          200
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          47,
+          28
+        ],
+        "scale": 0.851063829787234,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    }
+  ]
+}

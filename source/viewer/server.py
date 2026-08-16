@@ -78,10 +78,25 @@ CUSTOM_CARD_NAME_OVERRIDES = {
     1066814751: "Tracy McGrady",
     1010276239: "LeBron James",
 }
+# These levels are an explicit card-data correction, verified against the
+# NBA 2K16 player-row field at offset 0x429 bits 0-1. Applying the correction
+# while resolving custom cards prevents an older LOCALAPPDATA import with the
+# same stable card ID from shadowing the corrected bundled manifest.
+CUSTOM_CHASEDOWN_ARTIST_LEVELS = {
+    1006651400: 3, 1010276239: 3, 1026275462: 3, 1033984617: 3,
+    1043168225: 3, 1048958371: 0, 1055454373: 3, 1056806959: 0,
+    1063534163: 0, 1066814751: 0, 1070445652: 3, 1074145654: 0,
+    1088719307: 3, 1091734326: 3, 1103454159: 0, 1111925735: 3,
+    1120096259: 3, 1143591139: 2, 1160029513: 3, 1163471105: 1,
+    1163589901: 3, 1167732103: 3, 1168974680: 0, 1188398978: 3,
+    1195319080: 0, 1211485535: 3, 1227118467: 3, 1229362198: 3,
+    1254348825: 3, 1761984123: 0,
+}
 CUSTOM_PROMOTION_LOGO_DIR = ROOT / "data" / "promotion-logos"
 CUSTOM_PROMOTION_THEMES = {
     "all_star": "All-Star", "current_player": "Current",
     "dpoy": "Defensive Player of the Year", "dynamic_ratings": "Dynamic Ratings",
+    "fiba": "FIBA",
     "historic_players": "Historic", "moments": "Moments",
     "mvp": "Most Valuable Player", "playoffs": "Playoffs", "rewards": "Rewards",
     "roty": "Rookie of the Year", "sixth_man": "Sixth Man",
@@ -1249,6 +1264,7 @@ def custom_promotion_taxonomy(card: dict) -> tuple[str, str] | None:
         prefixes, default = {
             "all_star": (("All-Star",), "All-Star"),
             "dpoy": (("Defensive Player of the Year ",), "Defensive Player of the Year 1"),
+            "fiba": (("FIBA",), "FIBA"),
             "moments": (("Moments ",), "Moments 1"),
             "mvp": (("MVP ",), "MVP 1"),
             "playoffs": (("Playoff Moments",), "Playoff Moments"),
@@ -1273,6 +1289,41 @@ def official_parent_card(card: dict) -> dict | None:
     return None
 
 
+def apply_custom_chasedown_artist_level(card: dict) -> dict:
+    """Apply the curated level without disturbing any unrelated card data."""
+    try:
+        card_id = int(card.get("id"))
+    except (TypeError, ValueError):
+        return card
+    if card_id not in CUSTOM_CHASEDOWN_ARTIST_LEVELS:
+        return card
+
+    level = CUSTOM_CHASEDOWN_ARTIST_LEVELS[card_id]
+    badges = dict(card.get("badges") or {})
+    try:
+        previous = int(badges.get("chasedown_artist") or 0)
+    except (TypeError, ValueError):
+        previous = 0
+    if level:
+        badges["chasedown_artist"] = level
+    else:
+        badges.pop("chasedown_artist", None)
+    card["badges"] = badges
+
+    counts = card.get("badgeCounts")
+    if isinstance(counts, dict) and previous != level:
+        adjusted = dict(counts)
+        labels = {1: "bronze", 2: "silver", 3: "gold"}
+        if previous in labels:
+            label = labels[previous]
+            adjusted[label] = max(0, int(adjusted.get(label) or 0) - 1)
+        if level in labels:
+            label = labels[level]
+            adjusted[label] = int(adjusted.get(label) or 0) + 1
+        card["badgeCounts"] = adjusted
+    return card
+
+
 def load_custom_cards(include_disabled: bool = False, include_hidden: bool = False) -> list[dict]:
     if not include_disabled and not custom_cards_enabled():
         return []
@@ -1295,6 +1346,7 @@ def load_custom_cards(include_disabled: bool = False, include_hidden: bool = Fal
                     continue
                 item = dict(card)
                 item["name"] = roster_display_name(item.get("name"), card_id=item.get("id"))
+                apply_custom_chasedown_artist_level(item)
                 item["custom"] = True
                 item["hidden"] = custom_card_key(item) in hidden_keys
                 item["customArtUrl"] = f"/custom-art/{item.get('id')}/{item.get('slug')}"
@@ -1362,10 +1414,9 @@ def import_custom_card_package(raw: bytes, original_name: str = "") -> dict:
         inferred_promotion_id = infer_custom_promotion_logo_id(art)
         if inferred_promotion_id:
             card["promotionLogoId"] = inferred_promotion_id
-    if not card.get("theme") and not card.get("collection"):
-        promotion_taxonomy = custom_promotion_taxonomy(card)
-        if promotion_taxonomy:
-            card["theme"], card["collection"] = promotion_taxonomy
+    promotion_taxonomy = custom_promotion_taxonomy(card)
+    if promotion_taxonomy:
+        card["theme"], card["collection"] = promotion_taxonomy
     card["custom"] = True
     stem = _safe_custom_stem(card)
     art_name = f"{stem}.png"
@@ -2767,6 +2818,51 @@ def card_face_override(card: dict, face_overrides: dict[str, int | dict]) -> int
     return face_overrides.get(f"card:{card_key}") or face_overrides.get(norm_name(str(card.get("name") or "")))
 
 
+def custom_face_identity_override(
+    card: dict,
+    custom_player_data: dict,
+    resolved_override: int | dict | None,
+    myteam,
+) -> int | dict | None:
+    """Resolve authored custom IDs without letting placeholder zeroes erase a known face.
+
+    Card Studio historically exported a populated ``inheritedIdentityIds`` mapping
+    containing five zeroes when a parent player's identity was unavailable.  A
+    non-empty mapping is truthy, so those placeholder values used to replace a
+    valid named/card override such as Manute Bol's cyberface 8517.  Keep the
+    authoritative override when the complete authored mapping is zero-only, but
+    preserve zero IDs for genuinely generic custom players that have no saved
+    override to fall back to.
+    """
+    inherited_ids = custom_player_data.get("inheritedIdentityIds")
+    if isinstance(inherited_ids, dict) and inherited_ids:
+        mapped: dict[str, int] = {}
+        for field in myteam.IDENTITY_ID_FIELDS:
+            if inherited_ids.get(field) in (None, ""):
+                continue
+            try:
+                mapped[field] = int(inherited_ids[field])
+            except (TypeError, ValueError):
+                continue
+        if mapped and (any(value != 0 for value in mapped.values()) or not resolved_override):
+            return mapped
+
+    try:
+        face_id = int(custom_player_data.get("faceId") or card.get("faceId") or 0)
+        portrait_id = int(custom_player_data.get("portraitId") or card.get("portraitId") or face_id)
+    except (TypeError, ValueError):
+        face_id = portrait_id = 0
+    if face_id or portrait_id:
+        return {
+            "graphic_id": face_id or portrait_id,
+            "portrait_ref_a": portrait_id or face_id,
+            "portrait_ref_b": portrait_id or face_id,
+            "portrait_ref_c": portrait_id or face_id,
+            "picture_id": portrait_id or face_id,
+        }
+    return resolved_override
+
+
 def applied_team_names(record: dict) -> set[str]:
     return {
         team
@@ -3858,26 +3954,12 @@ def live_inject_lineup(
             same_player_quality_fields = myteam.apply_same_player_quality_fields(edited, source, card)
             face_id_override = card_face_override(card, face_overrides)
             if custom_player_data:
-                inherited_ids = custom_player_data.get("inheritedIdentityIds")
-                try:
-                    face_id = int(custom_player_data.get("faceId") or card.get("faceId") or 0)
-                    portrait_id = int(custom_player_data.get("portraitId") or card.get("portraitId") or face_id)
-                except (TypeError, ValueError):
-                    face_id = portrait_id = 0
-                if isinstance(inherited_ids, dict) and inherited_ids:
-                    face_id_override = {
-                        field: int(inherited_ids[field])
-                        for field in myteam.IDENTITY_ID_FIELDS
-                        if inherited_ids.get(field) not in (None, "")
-                    }
-                elif face_id or portrait_id:
-                    face_id_override = {
-                        "graphic_id": face_id or portrait_id,
-                        "portrait_ref_a": portrait_id or face_id,
-                        "portrait_ref_b": portrait_id or face_id,
-                        "portrait_ref_c": portrait_id or face_id,
-                        "picture_id": portrait_id or face_id,
-                    }
+                face_id_override = custom_face_identity_override(
+                    card,
+                    custom_player_data,
+                    face_id_override,
+                    myteam,
+                )
             jersey_override, jersey_override_source = stable_card_jersey_number(
                 card,
                 jersey_overrides,

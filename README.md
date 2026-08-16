@@ -103,7 +103,9 @@ py -3.13 -m pip install -r requirements.txt
 py -3.13 source\build_public_release.py
 ```
 
-The source repository excludes generated caches and release binaries. The release builder validates bundled custom cards, builds the Viewer and diagnostic executables, packages the current repository documentation, verifies the companion Card Studio ZIP, and writes SHA-256 checksums for both public archives.
+The source repository excludes generated caches and release binaries. Viewer source lives under `source/`, while the Card Studio application source, tests, templates, and distributable art libraries live under [`card-studio/`](card-studio/). The release builder validates bundled custom cards, builds the Viewer and diagnostic executables, packages the current repository documentation, verifies the companion Card Studio ZIP, and writes SHA-256 checksums for both public archives.
+
+Card Studio can be run from source with `py -3.13 -m pip install -r card-studio\requirements.txt` followed by `py -3.13 card-studio\app\main.py`. Its optional 214 MB background-removal ONNX model is distributed in the official Card Studio release rather than Git because it exceeds GitHub's normal per-file limit. Copy that release's `models\player_background_removal.onnx` into `card-studio\models\` before using `card-studio\build_card_studio_release.ps1` to produce the complete portable ZIP.
 
 Developers adding an exact Create-A-Player face should follow [CUSTOM_SCULPT_CAPTURE_WORKFLOW.md](CUSTOM_SCULPT_CAPTURE_WORKFLOW.md). The injector persists verified sculpt and appearance bytes while retaining destination-owned live pointers.
 

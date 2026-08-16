@@ -256,12 +256,13 @@
       "bruiser": 3,
       "brick_wall": 1,
       "one_man_fast_break": 3,
-      "transition_finisher": 3
+      "transition_finisher": 3,
+      "chasedown_artist": 3
     },
     "badgeCounts": {
       "bronze": 10,
       "silver": 8,
-      "gold": 32
+      "gold": 33
     },
     "customPlayerData": {
       "signatures": {

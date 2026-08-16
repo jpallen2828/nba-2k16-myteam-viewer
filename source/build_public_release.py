@@ -16,14 +16,20 @@ from PIL import Image
 
 PUBLIC_ROOT = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = PUBLIC_ROOT.parent
-PUBLIC_OUTPUT_ROOT = PROJECT_ROOT.parent if PROJECT_ROOT.name == "_Project" else PROJECT_ROOT
-PUBLIC_EXTRACTED_ROOT = PUBLIC_OUTPUT_ROOT / "NBA 2K16 MyTEAM Viewer"
+if PROJECT_ROOT.name.casefold() != "_project":
+    raise RuntimeError(f"Expected the Viewer repository beneath _Project, found: {PROJECT_ROOT}")
+DISTRIBUTION_ROOT = PROJECT_ROOT.parent
 VIEWER = PUBLIC_ROOT / "source" / "viewer"
 RUNTIME_TOOLS = PUBLIC_ROOT / "source" / "runtime_tools"
 BUILD = PUBLIC_ROOT / "build"
 DIST = PUBLIC_ROOT / "dist"
 RELEASES_ROOT = PROJECT_ROOT / "Releases"
 RELEASE_CURRENT = RELEASES_ROOT / "Current"
+ROOT_CLEANLINESS_GUARD = PUBLIC_ROOT / "tools" / "validate_distribution_root.py"
+LOCAL_CARD_STUDIO_ROOT = PROJECT_ROOT / "NBA 2K16 Card Studio"
+TRACKED_CARD_STUDIO_ROOT = PUBLIC_ROOT / "card-studio"
+CARD_STUDIO_ROOT = LOCAL_CARD_STUDIO_ROOT if LOCAL_CARD_STUDIO_ROOT.is_dir() else TRACKED_CARD_STUDIO_ROOT
+CARD_STUDIO_SOURCE_ARCHIVE = CARD_STUDIO_ROOT / "release" / "NBA.2K16.Card.Studio.zip"
 APP_NAME = "NBA 2K16 MyTEAM Viewer"
 RELEASE_VERSION = "1.1.2"
 COMPATIBILITY_ROSTER_NAME = "Myteam Compatibility roster"
@@ -135,8 +141,13 @@ def sha256(path: Path) -> str:
 
 
 def main() -> int:
+    subprocess.run(
+        [sys.executable, str(ROOT_CLEANLINESS_GUARD), str(DISTRIBUTION_ROOT), "--require-project-hidden"],
+        cwd=PUBLIC_ROOT,
+        check=True,
+    )
     validate_required_manual_custom_cards()
-    card_studio_archive = PUBLIC_OUTPUT_ROOT / CARD_STUDIO_PUBLIC_ARCHIVE_NAME
+    card_studio_archive = CARD_STUDIO_SOURCE_ARCHIVE
     validate_card_studio_archive(card_studio_archive)
     icon = make_icon()
     compatibility_roster = PROJECT_ROOT / COMPATIBILITY_ROSTER_NAME
@@ -187,8 +198,9 @@ def main() -> int:
         for path in RELEASE_CURRENT.rglob("*"):
             if path.is_file() and path != archive:
                 bundle.write(path, path.relative_to(RELEASE_CURRENT))
-    public_executable = PUBLIC_OUTPUT_ROOT / f"{APP_NAME}.exe"
-    public_archive = PUBLIC_OUTPUT_ROOT / f"{APP_NAME}.zip"
+    public_executable = DISTRIBUTION_ROOT / f"{APP_NAME}.exe"
+    public_archive = DISTRIBUTION_ROOT / f"{APP_NAME}.zip"
+    public_diagnostic = DISTRIBUTION_ROOT / "Diagnose NBA 2K16 Install.exe"
     try:
         shutil.copy2(RELEASE_CURRENT / f"{APP_NAME}.exe", public_executable)
     except PermissionError:
@@ -197,11 +209,7 @@ def main() -> int:
         # prevent ZIP publication or the Card Studio release from completing.
         print(f"WARNING: {public_executable} is running and could not be replaced; close it before copying the new EXE from the ZIP.")
     shutil.copy2(archive, public_archive)
-    if PUBLIC_EXTRACTED_ROOT.exists():
-        shutil.rmtree(PUBLIC_EXTRACTED_ROOT)
-    PUBLIC_EXTRACTED_ROOT.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(public_archive) as public_bundle:
-        public_bundle.extractall(PUBLIC_EXTRACTED_ROOT)
+    shutil.copy2(RELEASE_CURRENT / "Diagnose NBA 2K16 Install.exe", public_diagnostic)
     release_card_studio_archive = RELEASE_CURRENT / CARD_STUDIO_RELEASE_ARCHIVE_NAME
     shutil.copy2(card_studio_archive, release_card_studio_archive)
 
@@ -211,10 +219,15 @@ def main() -> int:
         "".join(f"{sha256(path)}  {path.name}\n" for path in checksum_targets),
         encoding="utf-8",
     )
+    subprocess.run(
+        [sys.executable, str(ROOT_CLEANLINESS_GUARD), str(DISTRIBUTION_ROOT), "--require-project-hidden"],
+        cwd=PUBLIC_ROOT,
+        check=True,
+    )
     print(archive)
     print(public_executable)
     print(public_archive)
-    print(PUBLIC_EXTRACTED_ROOT)
+    print(public_diagnostic)
     print(release_card_studio_archive)
     print(checksums)
     return 0

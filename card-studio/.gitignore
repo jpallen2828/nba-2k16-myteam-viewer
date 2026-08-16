@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+build/
+dist/
+release/
+*.spec.bak
+*.log
+projects/*.2k16card
+exports/*.png
+diagnostics/*
+!diagnostics/.gitkeep
+template_work/
+models/*.onnx

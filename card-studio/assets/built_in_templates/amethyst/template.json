@@ -1,0 +1,139 @@
+{
+  "template_version": 2,
+  "template_id": "amethyst",
+  "display_name": "Amethyst",
+  "sort_order": 2,
+  "canvas": {
+    "width": 325,
+    "height": 455,
+    "resolution_status": "source-native"
+  },
+  "layers": {
+    "background": "background.png",
+    "player_mask": "player_mask.png",
+    "foreground": "foreground.png"
+  },
+  "player_defaults": {
+    "anchor_x": 187.0,
+    "anchor_y": 405.0,
+    "scale": 1.0,
+    "rotation_degrees": 0.0,
+    "flip_horizontal": false
+  },
+  "text_fields": {
+    "overall": {
+      "x": 10,
+      "y": 24,
+      "width": 36,
+      "height": 29,
+      "alignment": "center",
+      "vertical_alignment": "center",
+      "baseline": 49,
+      "source_baseline": 23,
+      "safe_inset_left": 2,
+      "safe_inset_right": 2,
+      "safe_inset_top": 2,
+      "safe_inset_bottom": 1,
+      "force_uppercase": true,
+      "fit_mode": "scale_to_fit",
+      "max_width": 32,
+      "maximum_width": 32,
+      "min_scale": 0.72,
+      "preferred_tracking": 0.0,
+      "minimum_tracking": -1.0,
+      "text_style": "nba2k16_default",
+      "expected_color": [
+        244,
+        247,
+        246,
+        255
+      ],
+      "clean": true,
+      "label": {
+        "x": 15,
+        "y": 0,
+        "width": 27,
+        "height": 25,
+        "alignment": "center",
+        "baseline": 23,
+        "source_baseline": 23,
+        "maximum_width": 27,
+        "min_scale": 1.0
+      },
+      "notes": "Blank native OVR panel with dynamic source-extracted label and digits."
+    },
+    "position": {
+      "x": 13,
+      "y": 416,
+      "width": 26,
+      "height": 35,
+      "alignment": "center",
+      "vertical_alignment": "center",
+      "baseline": 438,
+      "source_baseline": 16,
+      "safe_inset_left": 1,
+      "safe_inset_right": 1,
+      "safe_inset_top": 3,
+      "safe_inset_bottom": 3,
+      "force_uppercase": true,
+      "fit_mode": "scale_to_fit",
+      "max_width": 24,
+      "maximum_width": 24,
+      "min_scale": 0.68,
+      "preferred_tracking": 0.0,
+      "minimum_tracking": -1.0,
+      "text_style": "nba2k16_default",
+      "expected_color": [
+        242,
+        244,
+        239,
+        255
+      ],
+      "clean": true,
+      "notes": "Dynamic position centered inside the preserved circular badge."
+    },
+    "name": {
+      "x": 68,
+      "y": 417,
+      "width": 253,
+      "height": 35,
+      "alignment": "center",
+      "vertical_alignment": "center",
+      "baseline": 438,
+      "source_baseline": 16,
+      "safe_inset_left": 2,
+      "safe_inset_right": 8,
+      "safe_inset_top": 4,
+      "safe_inset_bottom": 3,
+      "force_uppercase": true,
+      "fit_mode": "tighten_tracking_then_scale",
+      "max_width": 243,
+      "maximum_width": 243,
+      "min_scale": 0.62,
+      "preferred_tracking": 0.0,
+      "minimum_tracking": -1.0,
+      "text_style": "nba2k16_default",
+      "expected_color": [
+        244,
+        247,
+        246,
+        255
+      ],
+      "clean": true,
+      "notes": "Dynamic centered name kept outside the protected tier corner and position badge."
+    }
+  },
+  "extraction": {
+    "source_count": 1,
+    "single_source": true,
+    "source_filename": "codex-clipboard-c50bd6c8-03d5-48bf-b108-710e93ac52fd.png",
+    "source_description": "1989 Michael Jordan, Chicago Bulls, 90 OVR Amethyst",
+    "source_sha256": "DA0388E37A6E84E66F575D12766488B63FF948C2C4240B684F23D1748133BCA6",
+    "method": "transparent-variable-field-with-source-pixel-text-cleanup",
+    "source_patched_pixel_count": 7414,
+    "deterministic_composite_pixel_count": 2084,
+    "transparent_center_pixel_count": 111504,
+    "provenance_available": true,
+    "authenticity_note": "Visible frame pixels are direct or deterministically cleaned from the attached native source. Card-specific center art is transparent, not reconstructed."
+  }
+}

@@ -1,0 +1,242 @@
+[
+  {
+    "id": "historic_players",
+    "source_card_sha256": "1258bd4759cfcc29f055f2485c093134cc02433e1adfe6f7426a9302d9f6d6a4",
+    "runtime_sha256": "60859044870c29dc2fae1783187d5be830a5804da85db9bdd2685f3aeac2cf98",
+    "dimensions": [
+      133,
+      91
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_border": true,
+    "manifest_mask": "icon_mt_sticker_historic.0c3b5e11b0444c3d.dds",
+    "asset_to_card_transform": {
+      "origin": [
+        51,
+        271
+      ],
+      "scale": 0.504
+    },
+    "scaled_asset_size": 129,
+    "uncropped_alpha_bbox": [
+      0,
+      21,
+      129,
+      108
+    ],
+    "padding": 2
+  },
+  {
+    "id": "moments",
+    "source_card_sha256": "76e16da2da25b376fcd06a60800147c7e4584729baaa79b67ad98eb99ecad327",
+    "runtime_sha256": "967cc0b1f3e61e9a76261d44105afff6422bc93334ac42584c8747f2f9f9ff6d",
+    "dimensions": [
+      123,
+      105
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_border": true,
+    "manifest_mask": "icon_mt_sticker_moments.5d755a4e5ac9d6d8.dds",
+    "asset_to_card_transform": {
+      "origin": [
+        51,
+        271
+      ],
+      "scale": 0.504
+    },
+    "scaled_asset_size": 129,
+    "uncropped_alpha_bbox": [
+      5,
+      14,
+      124,
+      115
+    ],
+    "padding": 2
+  },
+  {
+    "id": "mvp",
+    "source_card_sha256": "6944ec600fdcb748397e5545b43709b3354da537211350dd809671a2d6bc71bb",
+    "runtime_sha256": "16fb634d19c47b4273e89eae0bf0645509fc17916b693f04b4957f3325957125",
+    "dimensions": [
+      65,
+      131
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_border": true,
+    "manifest_mask": "icon_mt_sticker_mvp.a339b588703bdb4e.dds",
+    "asset_to_card_transform": {
+      "origin": [
+        52,
+        272
+      ],
+      "scale": 0.496
+    },
+    "scaled_asset_size": 127,
+    "uncropped_alpha_bbox": [
+      18,
+      0,
+      79,
+      127
+    ],
+    "padding": 2
+  },
+  {
+    "id": "throwback",
+    "source_card_sha256": "ae556de533894fa47ab20fef7bdb846ef905a8dc0af8cb3ba51bbf59eca68621",
+    "runtime_sha256": "b447dee2edb58d437f364f90037665dedd92449f8317423f2307aea579dfbf4d",
+    "dimensions": [
+      133,
+      108
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_border": true,
+    "manifest_mask": "icon_mt_sticker_throwback.c11f069acbc0daaf.dds",
+    "asset_to_card_transform": {
+      "origin": [
+        51,
+        271
+      ],
+      "scale": 0.504
+    },
+    "scaled_asset_size": 129,
+    "uncropped_alpha_bbox": [
+      0,
+      12,
+      129,
+      116
+    ],
+    "padding": 2
+  },
+  {
+    "id": "dpoy",
+    "source_card_sha256": "6f153345e053960fa24331875f4fdfbe1af14679f05bc321057e84524c9dca64",
+    "runtime_sha256": "95e772f570abc9fefe45294912f87d097f1dc427e2f0255a86594fd3bfdbfefc",
+    "dimensions": [
+      98,
+      115
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_border": true,
+    "manifest_mask": "icon_mt_sticker_dpoty.b953ab7304589171.dds",
+    "asset_to_card_transform": {
+      "origin": [
+        52,
+        272
+      ],
+      "scale": 0.496
+    },
+    "scaled_asset_size": 127,
+    "uncropped_alpha_bbox": [
+      16,
+      8,
+      110,
+      119
+    ],
+    "padding": 2
+  },
+  {
+    "id": "roty",
+    "source_card_sha256": "7a9c48ed3cd007da11a2fb3a66276b2d1adc9c24cf29260461f533964eb53ad7",
+    "runtime_sha256": "7187dab5bf12c78c334223189dc6fbb86e2e671e65f610c35231520536d38295",
+    "dimensions": [
+      110,
+      100
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_border": true,
+    "manifest_mask": "icon_mt_sticker_roty.f78d193198e0ecce.dds",
+    "asset_to_card_transform": {
+      "origin": [
+        51,
+        271
+      ],
+      "scale": 0.504
+    },
+    "scaled_asset_size": 129,
+    "uncropped_alpha_bbox": [
+      11,
+      16,
+      117,
+      112
+    ],
+    "padding": 2
+  },
+  {
+    "id": "current_player",
+    "source_card_sha256": "fba3e9b9e62ac63211e0800a0a565e970d0d16d2713dcd1e1598655fe82558d5",
+    "runtime_sha256": "9476cf6accb841130c287f9679f8d1d1ae86604140584fe3076d0870bbcc219e",
+    "dimensions": [
+      133,
+      102
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_border": true,
+    "manifest_mask": "icon_mt_sticker_current.5f7bf4b7d45b6984.dds",
+    "asset_to_card_transform": {
+      "origin": [
+        51,
+        271
+      ],
+      "scale": 0.504
+    },
+    "scaled_asset_size": 129,
+    "uncropped_alpha_bbox": [
+      0,
+      15,
+      129,
+      113
+    ],
+    "padding": 2
+  },
+  {
+    "id": "dynamic_ratings",
+    "source_card_sha256": "ace76283dcbda1ebaec897f74706dd3fbbb015f38866ec491b12d7d2d35ef24c",
+    "runtime_sha256": "177f3ffce2ab9f089bd9fc716ca88f41051c7866c1221b8043e831d69d4a5c09",
+    "dimensions": [
+      114,
+      104
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "transparent_border": true,
+    "manifest_mask": "icon_mt_sticker_dynamic.fab74970ff55c9fd.dds",
+    "asset_to_card_transform": {
+      "origin": [
+        51,
+        271
+      ],
+      "scale": 0.504
+    },
+    "scaled_asset_size": 129,
+    "uncropped_alpha_bbox": [
+      7,
+      14,
+      117,
+      114
+    ],
+    "padding": 2
+  }
+]

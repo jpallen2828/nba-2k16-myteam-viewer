@@ -251,12 +251,13 @@
       "eraser": 1,
       "bruiser": 3,
       "one_man_fast_break": 3,
-      "transition_finisher": 3
+      "transition_finisher": 3,
+      "chasedown_artist": 3
     },
     "badgeCounts": {
       "bronze": 2,
       "silver": 3,
-      "gold": 40
+      "gold": 41
     },
     "customPlayerData": {
       "loyalty": 100,

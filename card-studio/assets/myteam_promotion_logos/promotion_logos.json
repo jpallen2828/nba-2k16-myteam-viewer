@@ -1,0 +1,838 @@
+{
+  "version": 1,
+  "render_layer": "above_player",
+  "logos": [
+    {
+      "id": "all_star",
+      "display_name": "All-Star",
+      "file": "runtime/normalized/all_star.png",
+      "original_source": "icon_mt_sticker_all_star.97d53951ff3d9706.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Clean native manifest promotion sticker; no card burn-out or reconstruction was required.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      },
+      "alpha": true,
+      "native_file": "runtime/all_star.png",
+      "normalization": {
+        "source_dimensions": [
+          256,
+          256
+        ],
+        "source_alpha_bbox": [
+          50,
+          0,
+          204,
+          256
+        ],
+        "normalized_visible_dimensions": [
+          120,
+          200
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          68,
+          28
+        ],
+        "scale": 0.78125,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "current_player",
+      "display_name": "Current Player",
+      "file": "runtime/normalized/current_player.png",
+      "source_card_filename": "codex-clipboard-2cc88830-63f2-44fe-b72c-b9065fac14de.png",
+      "source_card": "raw/source_cards/current_player_source_card.png",
+      "original_source": "icon_mt_sticker_current.5f7bf4b7d45b6984.dds",
+      "width": 256,
+      "height": 256,
+      "alpha": true,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Deterministically extracted from the attached card at its rendered pixel size; native manifest alpha/RGB supplied the clean silhouette and edge decontamination. Internal text and fully opaque artwork come directly from the source card.",
+      "render_layer": "above_player",
+      "default_enabled": false,
+      "native_file": "runtime/current_player.png",
+      "normalization": {
+        "source_dimensions": [
+          133,
+          102
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          131,
+          100
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          152
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          52
+        ],
+        "scale": 1.550387596899225,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "dpoy",
+      "display_name": "Defensive Player of the Year",
+      "file": "runtime/normalized/dpoy.png",
+      "source_card_filename": "codex-clipboard-0740eeac-1b05-429d-ac8e-c8b4dbaf43a4.png",
+      "source_card": "raw/source_cards/dpoy_source_card.png",
+      "original_source": "icon_mt_sticker_dpoty.b953ab7304589171.dds",
+      "width": 256,
+      "height": 256,
+      "alpha": true,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Deterministically extracted from the attached card at its rendered pixel size; native manifest alpha/RGB supplied the clean silhouette and edge decontamination. Internal text and fully opaque artwork come directly from the source card.",
+      "render_layer": "above_player",
+      "default_enabled": false,
+      "native_file": "runtime/dpoy.png",
+      "normalization": {
+        "source_dimensions": [
+          98,
+          115
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          96,
+          113
+        ],
+        "normalized_visible_dimensions": [
+          169,
+          200
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          43,
+          28
+        ],
+        "scale": 1.8018018018018018,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "dynamic_ratings",
+      "display_name": "Dynamic Ratings",
+      "file": "runtime/normalized/dynamic_ratings.png",
+      "source_card_filename": "codex-clipboard-c9b3bc40-2b40-4877-b34f-65a91eaa6e7d.png",
+      "source_card": "raw/source_cards/dynamic_ratings_source_card.png",
+      "original_source": "icon_mt_sticker_dynamic.fab74970ff55c9fd.dds",
+      "width": 256,
+      "height": 256,
+      "alpha": true,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Deterministically extracted from the attached card at its rendered pixel size; native manifest alpha/RGB supplied the clean silhouette and edge decontamination. Internal text and fully opaque artwork come directly from the source card.",
+      "render_layer": "above_player",
+      "default_enabled": false,
+      "native_file": "runtime/dynamic_ratings.png",
+      "normalization": {
+        "source_dimensions": [
+          114,
+          104
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          112,
+          102
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          182
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          37
+        ],
+        "scale": 1.8181818181818181,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "euroleague",
+      "display_name": "EuroLeague",
+      "file": "runtime/euroleague.png",
+      "original_source": "icon_mt_sticker_euroleague.4ed160a57c2e7c93.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Identified from the original internal asset name.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      }
+    },
+    {
+      "id": "finals",
+      "display_name": "NBA Finals",
+      "file": "runtime/finals.png",
+      "original_source": "icon_mt_sticker_finals.724f463ed1591dfd.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Identified from the original internal asset name.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      }
+    },
+    {
+      "id": "finals_mvp",
+      "display_name": "Finals MVP",
+      "file": "runtime/finals_mvp.png",
+      "original_source": "icon_mt_sticker_finals_mvp.f6c078c1f711945b.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Identified from the original internal asset name.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      }
+    },
+    {
+      "id": "free_agents",
+      "display_name": "Free Agents",
+      "file": "runtime/free_agents.png",
+      "original_source": "icon_mt_sticker_free_agents.5eac777d28926bad.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Identified from the original internal asset name.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      }
+    },
+    {
+      "id": "historic_players",
+      "display_name": "Historic Players",
+      "file": "runtime/normalized/historic_players.png",
+      "source_card_filename": "codex-clipboard-e55addbb-2747-48e9-9782-8d2c6c8a622e.png",
+      "source_card": "raw/source_cards/historic_players_source_card.png",
+      "original_source": "icon_mt_sticker_historic.0c3b5e11b0444c3d.dds",
+      "width": 256,
+      "height": 256,
+      "alpha": true,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Deterministically extracted from the attached card at its rendered pixel size; native manifest alpha/RGB supplied the clean silhouette and edge decontamination. Internal text and fully opaque artwork come directly from the source card.",
+      "render_layer": "above_player",
+      "default_enabled": false,
+      "native_file": "runtime/historic_players.png",
+      "normalization": {
+        "source_dimensions": [
+          133,
+          91
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          131,
+          89
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          135
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          60
+        ],
+        "scale": 1.550387596899225,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "moments",
+      "display_name": "Moments",
+      "file": "runtime/normalized/moments.png",
+      "original_source": "icon_mt_sticker_moments.5d755a4e5ac9d6d8.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Deterministically extracted from the attached card at its rendered pixel size; native manifest alpha/RGB supplied the clean silhouette and edge decontamination. Internal text and fully opaque artwork come directly from the source card.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      },
+      "source_card_filename": "codex-clipboard-1f22251c-d54a-46e2-9b92-7f4601a7d058.png",
+      "source_card": "raw/source_cards/moments_source_card.png",
+      "alpha": true,
+      "native_file": "runtime/moments.png",
+      "normalization": {
+        "source_dimensions": [
+          123,
+          105
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          121,
+          103
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          170
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          43
+        ],
+        "scale": 1.680672268907563,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "mvp",
+      "display_name": "Most Valuable Player",
+      "file": "runtime/normalized/mvp.png",
+      "original_source": "icon_mt_sticker_mvp.a339b588703bdb4e.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Deterministically extracted from the attached card at its rendered pixel size; native manifest alpha/RGB supplied the clean silhouette and edge decontamination. Internal text and fully opaque artwork come directly from the source card.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      },
+      "source_card_filename": "codex-clipboard-dee085f5-8295-481f-9d27-6642a3a29a11.png",
+      "source_card": "raw/source_cards/mvp_source_card.png",
+      "alpha": true,
+      "native_file": "runtime/mvp.png",
+      "normalization": {
+        "source_dimensions": [
+          65,
+          131
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          63,
+          129
+        ],
+        "normalized_visible_dimensions": [
+          96,
+          200
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          80,
+          28
+        ],
+        "scale": 1.5748031496062993,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "ninety_nine_club",
+      "display_name": "99 Club",
+      "file": "runtime/ninety_nine_club.png",
+      "original_source": "icon_mt_sticker_ninety_nine_club.fdcdc823a752d984.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Identified from the original internal asset name.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      }
+    },
+    {
+      "id": "playoffs",
+      "display_name": "Playoffs",
+      "file": "runtime/normalized/playoffs.png",
+      "original_source": "icon_mt_sticker_playoffs.b0bc472e519527ae.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Clean native manifest promotion sticker; no card burn-out or reconstruction was required.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      },
+      "alpha": true,
+      "native_file": "runtime/playoffs.png",
+      "normalization": {
+        "source_dimensions": [
+          256,
+          256
+        ],
+        "source_alpha_bbox": [
+          0,
+          72,
+          256,
+          183
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          87
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          84
+        ],
+        "scale": 0.78125,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "rewards",
+      "display_name": "Rewards",
+      "file": "runtime/normalized/rewards.png",
+      "original_source": "icon_mt_sticker_rewards.2e95c0854e4ba3bc.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Clean native manifest promotion sticker; no card burn-out or reconstruction was required.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      },
+      "alpha": true,
+      "native_file": "runtime/rewards.png",
+      "normalization": {
+        "source_dimensions": [
+          256,
+          256
+        ],
+        "source_alpha_bbox": [
+          32,
+          10,
+          222,
+          245
+        ],
+        "normalized_visible_dimensions": [
+          162,
+          200
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          47,
+          28
+        ],
+        "scale": 0.851063829787234,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "roty",
+      "display_name": "Rookie of the Year",
+      "file": "runtime/normalized/roty.png",
+      "original_source": "icon_mt_sticker_roty.f78d193198e0ecce.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Deterministically extracted from the attached card at its rendered pixel size; native manifest alpha/RGB supplied the clean silhouette and edge decontamination. Internal text and fully opaque artwork come directly from the source card.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      },
+      "source_card_filename": "codex-clipboard-88c7112d-93fb-4804-9b9a-a57df26a00bc.png",
+      "source_card": "raw/source_cards/roty_source_card.png",
+      "alpha": true,
+      "native_file": "runtime/roty.png",
+      "normalization": {
+        "source_dimensions": [
+          110,
+          100
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          108,
+          98
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          181
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          37
+        ],
+        "scale": 1.8867924528301887,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "sixth_man",
+      "display_name": "Sixth Man of the Year",
+      "file": "runtime/normalized/sixth_man.png",
+      "original_source": "icon_mt_sticker_sixth_man.18de65f87ee14e04.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Clean native manifest promotion sticker; no card burn-out or reconstruction was required.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      },
+      "alpha": true,
+      "native_file": "runtime/sixth_man.png",
+      "normalization": {
+        "source_dimensions": [
+          256,
+          256
+        ],
+        "source_alpha_bbox": [
+          33,
+          10,
+          221,
+          246
+        ],
+        "normalized_visible_dimensions": [
+          159,
+          200
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          48,
+          28
+        ],
+        "scale": 0.847457627118644,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "throwback",
+      "display_name": "Throwback",
+      "file": "runtime/normalized/throwback.png",
+      "original_source": "icon_mt_sticker_throwback.c11f069acbc0daaf.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Deterministically extracted from the attached card at its rendered pixel size; native manifest alpha/RGB supplied the clean silhouette and edge decontamination. Internal text and fully opaque artwork come directly from the source card.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      },
+      "source_card_filename": "codex-clipboard-d6adbb96-225a-4f10-bdc3-7d5c91e33295.png",
+      "source_card": "raw/source_cards/throwback_source_card.png",
+      "alpha": true,
+      "native_file": "runtime/throwback.png",
+      "normalization": {
+        "source_dimensions": [
+          133,
+          108
+        ],
+        "source_alpha_bbox": [
+          2,
+          2,
+          131,
+          106
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          161
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          47
+        ],
+        "scale": 1.550387596899225,
+      "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+      "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "usa_olympic",
+      "display_name": "USA Olympic",
+      "file": "runtime/normalized/usa_olympic.png",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Added from user-supplied `USA basketball.png` and normalized for this project pipeline.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 33,
+        "y": 253,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "adapted from Throwback point; preserve bottom-left stack fit"
+      },
+      "alpha": true,
+      "native_file": "runtime/normalized/usa_olympic.png",
+      "normalization": {
+        "source_dimensions": [
+          222,
+          252
+        ],
+        "source_alpha_bbox": [
+          0,
+          0,
+          218,
+          248
+        ],
+        "normalized_visible_dimensions": [
+          179,
+          203
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          38,
+          26
+        ],
+        "scale": 0.8064516129032258,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "fiba",
+      "display_name": "FIBA",
+      "file": "runtime/normalized/fiba.png",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": true,
+      "notes": "Added from the user-supplied International Basketball Federation logo and normalized for the Card Studio promotion-logo pipeline.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 33,
+        "y": 253,
+        "scale": 0.64453125,
+        "coordinate_space": "325x455 reference card",
+        "status": "bottom-left promotion placement"
+      },
+      "alpha": true,
+      "native_file": "raw/user_supplied/fiba.png",
+      "normalization": {
+        "source_dimensions": [
+          452,
+          221
+        ],
+        "source_alpha_bbox": [
+          1,
+          0,
+          451,
+          221
+        ],
+        "normalized_visible_dimensions": [
+          200,
+          98
+        ],
+        "canvas_dimensions": [
+          256,
+          256
+        ],
+        "offset": [
+          28,
+          79
+        ],
+        "scale": 0.4444444444444444,
+        "method": "proportional fit by visible alpha bounds; premultiplied-alpha Lanczos; centered",
+        "max_visible_dimension": 200
+      }
+    },
+    {
+      "id": "unknown_01",
+      "display_name": "Unknown 01",
+      "file": "runtime/unknown_01.png",
+      "original_source": "icon_mt_sticker_undefined_1.60ecf748e54a74fe.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": false,
+      "notes": "Unidentified digital 24 display with two orange stars.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      }
+    },
+    {
+      "id": "unknown_02",
+      "display_name": "Unknown 02",
+      "file": "runtime/unknown_02.png",
+      "original_source": "icon_mt_sticker_undefined_2.1290c339b83aaa38.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": false,
+      "notes": "Unidentified orange basketball emblem with three orange stars.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      }
+    },
+    {
+      "id": "unknown_03",
+      "display_name": "Unknown 03",
+      "file": "runtime/unknown_03.png",
+      "original_source": "icon_mt_sticker_undefined_3.d67e5c439200f6f3.dds",
+      "width": 256,
+      "height": 256,
+      "alpha_available": true,
+      "identified": false,
+      "notes": "Unidentified orange basketball with a bright blue paint-splash surround.",
+      "default_enabled": false,
+      "render_layer": "above_player",
+      "default_transform": {
+        "x": 51,
+        "y": 271,
+        "scale": 0.502,
+        "coordinate_space": "325x455 reference card",
+        "status": "suggested from Wade reference; verify per template"
+      }
+    }
+  ]
+}
