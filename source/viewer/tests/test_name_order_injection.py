@@ -60,3 +60,20 @@ def test_other_clean_roster_eastern_order_player_su_lu_is_supported():
     assert text_at(record, 0x00) == "Su"
     assert stats["flip_first_last_names"] is True
     assert server.record_matches_card_or_alias(record, {"name": "Su Lu"})
+
+
+def test_mc_surnames_keep_their_internal_capitalization_for_every_injection_type():
+    for source_name, expected_first, expected_last in (
+        ("ANTONIO MCDYESS", "Antonio", "McDyess"),
+        ("WALTER MCCARTY", "Walter", "McCarty"),
+        ("TRACY MCGRADY", "Tracy", "McGrady"),
+    ):
+        assert server.roster_display_name(source_name) == f"{expected_first} {expected_last}"
+        record = bytearray(live.roster.PLAYER_STRIDE)
+        live.apply_card_to_record(
+            record,
+            {"name": source_name, "position": "SF", "custom": False},
+            destination_index=100,
+        )
+        assert text_at(record, 0x24) == expected_first
+        assert text_at(record, 0x00) == expected_last

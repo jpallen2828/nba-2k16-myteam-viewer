@@ -3,7 +3,7 @@
   "version": 1,
   "description": "Monotonic position-specific OVR formulas fitted only from official non-hidden, non-Pink-Diamond NBA 2K16 MyTEAM cards.",
   "source": "player_presets.json",
-  "sourceSha256": "85b2279dcbae015b6cad6577f8aec723e5e85170f011330c4d5b1e130ea63244",
+  "sourceSha256": "e383df116bd624b7771cc36e57a015e89bf00d5181de3d5ba8867b6e412100a9",
   "sourceCardCount": 2151,
   "attributes": [
     "standing_layup",

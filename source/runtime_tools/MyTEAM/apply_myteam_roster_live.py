@@ -637,6 +637,8 @@ def roster_display_name(value: str) -> str:
             return piece.upper()
         if piece.upper() in {"II", "III", "IV", "V"}:
             return piece.upper()
+        if len(piece) > 2 and piece[:2].casefold() == "mc":
+            return f"Mc{piece[2].upper()}{piece[3:].lower()}"
         return piece[:1].upper() + piece[1:].lower()
 
     def cap_word(word: str) -> str:
@@ -1096,9 +1098,7 @@ def apply_card_to_record(
     face_id_override: int | dict | None = None,
     jersey_number_override: int | str | None = None,
 ) -> dict:
-    card_name = card.get("name") or ""
-    if card.get("custom"):
-        card_name = roster_display_name(card_name)
+    card_name = roster_display_name(card.get("name") or "")
     first, last = split_name(card_name)
     player_key = norm_player_name(card.get("name") or "")
     card_id = int(card.get("id") or 0)

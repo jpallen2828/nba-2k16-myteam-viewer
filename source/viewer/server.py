@@ -1171,6 +1171,8 @@ def roster_display_name(value: object, card_id: object = None) -> str:
             return piece.upper()
         if piece.upper() in {"II", "III", "IV", "V"}:
             return piece.upper()
+        if len(piece) > 2 and piece[:2].casefold() == "mc":
+            return f"Mc{piece[2].upper()}{piece[3:].lower()}"
         return piece[:1].upper() + piece[1:].lower()
 
     def capitalize_word(word: str) -> str:
