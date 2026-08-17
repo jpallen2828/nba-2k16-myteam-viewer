@@ -78,6 +78,45 @@ CUSTOM_CARD_NAME_OVERRIDES = {
     1066814751: "Tracy McGrady",
     1010276239: "LeBron James",
 }
+ROSTER_NAME_CAPITALIZATION_OVERRIDES = {
+    "tracymcgrady": "Tracy McGrady",
+    "antoniomcdyess": "Antonio McDyess",
+    "waltermccarty": "Walter McCarty",
+    "kevinmchale": "Kevin McHale",
+    "bobmcadoo": "Bob McAdoo",
+    "xaviermcdaniel": "Xavier McDaniel",
+    "rodneymccray": "Rodney McCray",
+    "georgemcginnis": "George McGinnis",
+    "natemcmillan": "Nate McMillan",
+    "jimmcmillian": "Jim McMillian",
+    "jonmcglocklin": "Jon McGlocklin",
+    "williemccarter": "Willie McCarter",
+    "aaronmckie": "Aaron McKie",
+    "javalemcgee": "JaVale McGee",
+    "jamesmichaelmcadoo": "James Michael McAdoo",
+    "cjmccollum": "C.J. McCollum",
+    "tjmconnell": "T.J. McConnell",
+    "kjmcdaniels": "K.J. McDaniels",
+    "dougmcdermott": "Doug McDermott",
+    "chrismccullough": "Chris McCullough",
+    "mitchmcgary": "Mitch McGary",
+    "benmclemore": "Ben McLemore",
+    "jordanmcrae": "Jordan McRae",
+    "joshmcroberts": "Josh McRoberts",
+    "raymccallum": "Ray McCallum",
+    "lebronjames": "LeBron James",
+    "lamarcusaldridge": "LaMarcus Aldridge",
+    "demarcuscousins": "DeMarcus Cousins",
+    "deandrejordan": "DeAndre Jordan",
+    "demarderozan": "DeMar DeRozan",
+    "demarrecarroll": "DeMarre Carroll",
+    "jamychalgreen": "JaMychal Green",
+    "jakarrsampson": "JaKarr Sampson",
+    "lavoyallen": "LaVoy Allen",
+    "dejuanblair": "DeJuan Blair",
+    "laphonsoellis": "LaPhonso Ellis",
+    "deshawnstevenson": "DeShawn Stevenson",
+}
 # These levels are an explicit card-data correction, verified against the
 # NBA 2K16 player-row field at offset 0x429 bits 0-1. Applying the correction
 # while resolving custom cards prevents an older LOCALAPPDATA import with the
@@ -1161,6 +1200,11 @@ def roster_display_name(value: object, card_id: object = None) -> str:
     except (TypeError, ValueError):
         pass
     text = normalize_custom_player_name(value)
+    canonical = ROSTER_NAME_CAPITALIZATION_OVERRIDES.get(
+        re.sub(r"[^a-z0-9]+", "", text.casefold())
+    )
+    if canonical:
+        return canonical
 
     def capitalize_piece(piece: str) -> str:
         if not piece:

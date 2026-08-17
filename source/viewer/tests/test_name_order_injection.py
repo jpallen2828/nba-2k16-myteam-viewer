@@ -62,13 +62,25 @@ def test_other_clean_roster_eastern_order_player_su_lu_is_supported():
     assert server.record_matches_card_or_alias(record, {"name": "Su Lu"})
 
 
-def test_mc_surnames_keep_their_internal_capitalization_for_every_injection_type():
-    for source_name, expected_first, expected_last in (
-        ("ANTONIO MCDYESS", "Antonio", "McDyess"),
-        ("WALTER MCCARTY", "Walter", "McCarty"),
-        ("TRACY MCGRADY", "Tracy", "McGrady"),
-    ):
-        assert server.roster_display_name(source_name) == f"{expected_first} {expected_last}"
+def test_hard_coded_names_keep_their_exact_capitalization_for_every_injection_type():
+    canonical_names = (
+        "Tracy McGrady", "Antonio McDyess", "Walter McCarty", "Kevin McHale", "Bob McAdoo",
+        "Xavier McDaniel", "Rodney McCray", "George McGinnis", "Nate McMillan",
+        "Jim McMillian", "Jon McGlocklin", "Willie McCarter", "Aaron McKie",
+        "JaVale McGee", "James Michael McAdoo", "C.J. McCollum", "T.J. McConnell",
+        "K.J. McDaniels", "Doug McDermott", "Chris McCullough", "Mitch McGary",
+        "Ben McLemore", "Jordan McRae", "Josh McRoberts", "Ray McCallum",
+        "LeBron James", "LaMarcus Aldridge", "DeMarcus Cousins", "DeAndre Jordan",
+        "DeMar DeRozan", "DeMarre Carroll", "JaMychal Green", "JaKarr Sampson",
+        "LaVoy Allen", "DeJuan Blair", "LaPhonso Ellis", "DeShawn Stevenson",
+    )
+    assert set(server.ROSTER_NAME_CAPITALIZATION_OVERRIDES.values()) == set(canonical_names)
+    assert live.ROSTER_NAME_CAPITALIZATION_OVERRIDES == server.ROSTER_NAME_CAPITALIZATION_OVERRIDES
+    for canonical_name in canonical_names:
+        source_name = canonical_name.upper()
+        expected_first, expected_last = canonical_name.rsplit(" ", 1)
+        assert server.roster_display_name(source_name) == canonical_name
+        assert live.roster_display_name(source_name) == canonical_name
         record = bytearray(live.roster.PLAYER_STRIDE)
         live.apply_card_to_record(
             record,

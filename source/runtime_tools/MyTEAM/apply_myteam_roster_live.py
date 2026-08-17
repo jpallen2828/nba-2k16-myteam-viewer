@@ -28,6 +28,45 @@ import nba2k16_roster_export as roster  # noqa: E402
 PROCESS_VM_WRITE = 0x0020
 PROCESS_VM_OPERATION = 0x0008
 APPLY_PHRASE = "APPLY-MYTEAM-ROSTER0005"
+ROSTER_NAME_CAPITALIZATION_OVERRIDES = {
+    "tracymcgrady": "Tracy McGrady",
+    "antoniomcdyess": "Antonio McDyess",
+    "waltermccarty": "Walter McCarty",
+    "kevinmchale": "Kevin McHale",
+    "bobmcadoo": "Bob McAdoo",
+    "xaviermcdaniel": "Xavier McDaniel",
+    "rodneymccray": "Rodney McCray",
+    "georgemcginnis": "George McGinnis",
+    "natemcmillan": "Nate McMillan",
+    "jimmcmillian": "Jim McMillian",
+    "jonmcglocklin": "Jon McGlocklin",
+    "williemccarter": "Willie McCarter",
+    "aaronmckie": "Aaron McKie",
+    "javalemcgee": "JaVale McGee",
+    "jamesmichaelmcadoo": "James Michael McAdoo",
+    "cjmccollum": "C.J. McCollum",
+    "tjmconnell": "T.J. McConnell",
+    "kjmcdaniels": "K.J. McDaniels",
+    "dougmcdermott": "Doug McDermott",
+    "chrismccullough": "Chris McCullough",
+    "mitchmcgary": "Mitch McGary",
+    "benmclemore": "Ben McLemore",
+    "jordanmcrae": "Jordan McRae",
+    "joshmcroberts": "Josh McRoberts",
+    "raymccallum": "Ray McCallum",
+    "lebronjames": "LeBron James",
+    "lamarcusaldridge": "LaMarcus Aldridge",
+    "demarcuscousins": "DeMarcus Cousins",
+    "deandrejordan": "DeAndre Jordan",
+    "demarderozan": "DeMar DeRozan",
+    "demarrecarroll": "DeMarre Carroll",
+    "jamychalgreen": "JaMychal Green",
+    "jakarrsampson": "JaKarr Sampson",
+    "lavoyallen": "LaVoy Allen",
+    "dejuanblair": "DeJuan Blair",
+    "laphonsoellis": "LaPhonso Ellis",
+    "deshawnstevenson": "DeShawn Stevenson",
+}
 
 # Kept here rather than in the retired hot-zone diff utility: portrait cache
 # repair needs a small, read-only walk of writable process regions.
@@ -627,6 +666,11 @@ def split_name(full_name: str) -> tuple[str, str]:
 def roster_display_name(value: str) -> str:
     """Normalize custom-card text for the mixed-case in-game roster fields."""
     text = re.sub(r"^['\u2019](?:\d{2})\s+", "", (value or "").strip())
+    canonical = ROSTER_NAME_CAPITALIZATION_OVERRIDES.get(
+        re.sub(r"[^a-z0-9]+", "", text.casefold())
+    )
+    if canonical:
+        return canonical
 
     def cap_piece(piece: str) -> str:
         if not piece:
